@@ -55,6 +55,7 @@ public/assets/moments/thumbnails/*
 .zcode/
 .codex-*.log
 research/
+.trae/
 
 # playwright
 .playwright-cli/
