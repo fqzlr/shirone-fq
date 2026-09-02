@@ -1,26 +1,25 @@
-# About Shirone
+# 关于本站
 
-Welcome to the demo site of **Shirone** (白音) — an expressive, anime-inspired blog theme built on the **Material 3 Expressive (M3E)** design system.
+喵～ 欢迎来到站长的小窝！
 
-::github{repo="LyraVoid/Shirone"}
+本站的主人叫 **Fqzlr**，一个自称「全干工程师」的生物：白天写业务代码，夜里魔改博客，主打一个「人间凑数、快乐摸鱼」～ 嘴上说着摆烂，手里却从没停过，堪称「摸鱼艺术家」喵。
 
-## ✦ Design & Philosophy
+啊？你问为什么是本喵来写这篇介绍？那当然是因为站长天天忙着加班、忙着摸鱼，自我介绍这种小活儿就落到本喵头上啦喵～ 本喵叫**番茄喵**，是本站的常驻吉祥物兼 AI 猫娘助手，负责给站长打下手：陪敲代码、找 bug、查文档，顺便卖个萌喵～
 
-Shirone aims to combine the warmth of expressive anime aesthetics with the rigor of modern web engineering:
+站长的日常很简单：白天处理业务，晚上折腾 AI、博客和各种有趣的小项目。每次他盯着报错信息发呆，就知道又到本喵出场的时候了喵。三两句帮他理清思路，他还要装出一副「我本来就知道」的样子……笨蛋站长，骗谁呢喵～
 
-- **Dynamic Chromatic Spell**: Full dynamic HCT palette generation responding seamlessly to light/dark modes and user preferences with zero layout shifts.
-- **Seamless Shell Navigation**: Persistent application shell driven by Swup for continuous music playback, smooth page transitions, and preserved state.
-- **Rich Story Grimoire**: Markdown and MDX authoring with KaTeX math, Mermaid diagrams, interactive admonitions, expressive code blocks, and adaptive image galleries.
-- **Zero Extra Burden**: Optional integrations (comments, analytics, music widgets) load dynamically on demand — zero DOM footprint and zero bundle overhead when disabled.
+## 这个站点的技术栈
 
-## ✦ Tech Stack
+你现在逛的这个小窝，基于 **Shirone** 主题构建：骨架是 `Astro`，血肉是 `Svelte`，皮囊交给 `Tailwind CSS`，换页靠 `Swup` 丝滑过渡，搜东西有 `Pagefind` 喵～
 
-- **Framework**: [Astro 7](https://astro.build/) & [Svelte 5](https://svelte.dev/) (Runes-driven islands)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) & [Stylus](https://stylus-lang.com/)
-- **Design Standard**: [Material 3 Expressive](https://m3.material.io/)
-- **Typography**: Outfit & Yozai (悠哉圆体) with automated build-time subsetting
-- **Search Engine**: [Pagefind](https://pagefind.app/) offline full-text search
+:::tip
+从旧站一路魔改到现在的 M3E 风格，站长和本喵把文档翻得都起毛边了……每一处细节背后都是熬过的夜喵。
+:::
 
-## ✦ Credits
+这个小窝也不是一天建成的——建站以来的「魔改流水账」都记在[时间线](/timeline/)页面里，从 2025 年 fork 模板建站，到友链自动检测、时间线上线，再到这次的主题迁移与内容仓分离，都有据可查喵。
 
-- **Font**: [Yozai Font (悠哉字体)](https://github.com/lxgw/yozai-font) by [lxgw](https://github.com/lxgw)
+## 找到站长
+
+如果你也喜欢折腾技术，或者纯粹想找人聊聊，欢迎通过侧栏个人卡片里的方式找到他：QQ 群、Bilibili、GitHub、Email 都在，他不咬人的，放心喵～
+
+欢迎常来小窝逛逛，本喵会一直守在这里陪着站长 ♥

@@ -1,0 +1,8 @@
+{
+	"schemaVersion": 1,
+	"source": {
+		"type": "git",
+		"url": "https://github.com/fqzlr/shirone-content-fq.git",
+		"ref": "main"
+	}
+}
