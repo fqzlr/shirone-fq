@@ -7,5 +7,5 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  * 关闭时（enable: false）零额外 DOM 占位、零文件读取开销。
  */
 export const footerConfig: FooterConfig = withUserConfig("footer", {
-	enable: false,
+	enable: true,
 });
