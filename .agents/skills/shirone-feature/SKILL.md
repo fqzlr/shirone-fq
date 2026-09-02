@@ -1,6 +1,6 @@
 ---
 name: shirone-feature
-description: Adding optional features, third-party integrations, or new config domains to the Shirone theme under the zero-extra-burden rule - config/data split, on-demand loading, and remote data contracts. Use when adding comments, analytics, widgets, remote data sources, or new toggleable capabilities.
+description: 在零额外负担规则下为 Shirone 主题新增可选功能、第三方集成或新配置域 - 配置/数据分离、按需加载与远程数据契约。在新增评论、统计、小组件、远程数据源或新的可开关能力时使用。
 ---
 
 # Shirone 可选功能与第三方集成

@@ -1,6 +1,6 @@
 ---
 name: shirone-dev-workflow
-description: Daily development workflow for the Shirone Astro blog theme - environment setup, validation gates, cache clearing, commit conventions, npm package-mode smoke tests, and release validation. Use when building, testing, validating, formatting, committing, or preparing a Shirone package release.
+description: Shirone Astro 博客主题的日常开发工作流 - 环境搭建、验证门禁、缓存清理、提交约定、npm 包模式冒烟测试与发布验证。在构建、测试、验证、格式化、提交或准备 Shirone 包发布时使用。
 ---
 
 ## CI 与 Node 测试排查

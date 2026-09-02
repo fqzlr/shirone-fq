@@ -1,6 +1,6 @@
 ---
 name: shirone-writing
-description: Writing blog posts and moments for a Shirone blog - frontmatter schemas, drafts, pinned posts, encrypted posts, images, tags, categories, and the new-post scaffold. Use when creating or editing content under src/content/.
+description: 为 Shirone 博客撰写博文和动态 - frontmatter 模式、草稿、置顶文章、加密文章、图片、标签、分类以及新文章脚手架。在创建或编辑 src/content/ 下的内容时使用。
 ---
 
 # Shirone 内容写作(文章与动态)

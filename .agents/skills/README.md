@@ -26,6 +26,7 @@
 
 | 技能 | 适用任务 |
 |---|---|
+| [shirone-tech-guide](shirone-tech-guide/SKILL.md) | 总体技术参考:架构、分层、内容体系、性能、部署与扩展方向的总入口(承载 `docs/tech-guide.md`) |
 | [shirone-dev-workflow](shirone-dev-workflow/SKILL.md) | 日常开发与 npm 包发布工作流:环境、双模式验证、缓存清理、提交约定 |
 | [shirone-component-dev](shirone-component-dev/SKILL.md) | 新增/修改/移动组件:分层、M3E 令牌、图标、动效、无障碍 |
 | [shirone-context-menu](shirone-context-menu/SKILL.md) | 扩展桌面右键菜单:动作注册、定位、生命周期与 Markdown 内容能力契约 |
@@ -48,6 +49,6 @@
 ## 约定
 
 - **命名**:目录名与 frontmatter `name` 一致,统一使用 `shirone-` 前缀——仓库已有面向访客的"技能展示页"(`src/pages/skills.astro`)占用 `skills` 一词,前缀避免歧义,也保证多仓库场景下不与其他项目的技能冲突。
-- **语言**:frontmatter 的 `name`/`description` 用英文(`description` 面向触发匹配),正文用中文。
+- **语言**:frontmatter 的 `name` 用英文,`description` 用中文(面向触发匹配,保留英文专有名词),正文用中文。
 - **单一真源**:技能正文不得复制 `rules/`/`docs/` 的具体规范,只写摘要与路径;正文与文档清单中引用的仓库路径由 `scripts/check-skills.mjs`(`pnpm check:manifest` 的一部分)校验真实存在,防止文档移动后技能漂移。
 - **新增技能**:创建 `<name>/SKILL.md` 后运行 `pnpm.cmd check:manifest` 验证。

@@ -1,6 +1,6 @@
 ---
 name: shirone-sidebar
-description: Working on the Shirone sidebar system, widgets, FAB floating controls, and Swup persistent-shell synchronization. Use when adding or configuring sidebar widgets, changing sidebar arrangement or page filters, adjusting FAB items, or building route-reactive shell behavior.
+description: 开发 Shirone 侧边栏系统、小组件、FAB 悬浮控件以及 Swup 持久外壳同步。在新增或配置侧边栏小组件、更改侧边栏排布或页面过滤、调整 FAB 项，或构建响应路由的外壳行为时使用。
 ---
 
 # Shirone 侧栏 / FAB / Swup 持久壳

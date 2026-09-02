@@ -1,6 +1,6 @@
 ---
 name: shirone-content-config
-description: Configure Shirone content separation and external content repositories. Use when setting up or changing CONTENT_DIR, CONTENT_REPO_URL, CONTENT_REPO_REF, shirone.content.json, content-repository mounts, config/*.yaml overlays, source precedence, or content-repository configuration validation. Use shirone-content-workflow for day-to-day sync, export, clean, status, and deployment operations after configuration is established.
+description: 配置 Shirone 内容分离与外部内容仓库。在设置或修改 CONTENT_DIR、CONTENT_REPO_URL、CONTENT_REPO_REF、shirone.content.json、内容仓库挂载点、config/*.yaml 覆盖层、来源优先级或内容仓库配置校验时使用。配置建立后的日常同步、导出、清理、状态与部署操作，请使用 shirone-content-workflow。
 ---
 
 # Shirone 内容分离配置

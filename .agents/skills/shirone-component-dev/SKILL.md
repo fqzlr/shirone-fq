@@ -1,6 +1,6 @@
 ---
 name: shirone-component-dev
-description: Creating or modifying UI components in the Shirone theme - atomic design layering, M3E tokens, component API, icons, motion, and accessibility. Use when adding, changing, moving, or refactoring anything under src/components/.
+description: 在 Shirone 主题中创建或修改 UI 组件 - 原子化设计分层、M3E 令牌、组件 API、图标、动效与无障碍。在新增、修改、移动或重构 src/components/ 下的任何内容时使用。
 ---
 
 # Shirone 组件开发

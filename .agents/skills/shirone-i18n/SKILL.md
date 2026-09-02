@@ -1,6 +1,6 @@
 ---
 name: shirone-i18n
-description: Adding or changing user-facing UI copy in the Shirone theme - I18nKey enum, ten locale modules, placeholder parity, and translation lookup. Use when introducing, renaming, or editing interface strings, or adding supported languages.
+description: 在 Shirone 主题中新增或修改用户可见的界面文案 - I18nKey 枚举、十个语言模块、占位符一致性与翻译查找。在引入、重命名或编辑界面字符串，或新增支持语言时使用。
 ---
 
 # Shirone 国际化(i18n)

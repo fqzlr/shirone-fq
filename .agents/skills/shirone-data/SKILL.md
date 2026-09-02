@@ -1,6 +1,6 @@
 ---
 name: shirone-data
-description: Managing Shirone data-backed pages and albums - adding or editing album folders, info.json metadata, local or external photos, friends, compass, anime, projects, skills, devices, timelines, and music data. Use when changing content outside src/content/ that feeds these pages.
+description: 管理 Shirone 的数据支撑页面和相册 - 新增或编辑相册文件夹、info.json 元数据、本地或外部照片、朋友、罗盘、追番、项目、技能、设备、时间线和音乐数据。在修改 src/content/ 之外、为这些页面提供数据的文件时使用。
 ---
 
 # Shirone 数据与相册

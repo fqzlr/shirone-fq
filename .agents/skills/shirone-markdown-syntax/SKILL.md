@@ -1,6 +1,6 @@
 ---
 name: shirone-markdown-syntax
-description: Authoring content with Shirone's custom Markdown syntaxes - admonitions, code trees, tabs, steps, field parameter cards, marker highlights, math, mermaid, image grids and sizing, abbreviations, annotations, spoilers, includes, and GitHub cards. Use when writing or editing Markdown/MDX content and choosing the right syntax.
+description: 使用 Shirone 的自定义 Markdown 语法创作内容 - 提示框、代码树、标签页、步骤、字段参数卡、标记高亮、数学公式、mermaid、图片网格与尺寸、缩写、注释、剧透、include 以及 GitHub 卡片。在撰写或编辑 Markdown/MDX 内容并选择合适语法时使用。
 ---
 
 # Shirone 自定义 Markdown 语法(作者向)

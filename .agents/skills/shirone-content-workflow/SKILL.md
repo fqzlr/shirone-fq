@@ -1,6 +1,6 @@
 ---
 name: shirone-content-workflow
-description: Operate Shirone content separation and dual-repository workflows after configuration is established. Use for content:sync, content:watch, content:status, content:export, content:clean, content:eject, safe backups, reverse-export diffing, and dual-repository CI/CD operations. Use shirone-content-config to configure CONTENT_DIR, CONTENT_REPO_URL, shirone.content.json, mounts, or config/*.yaml overlays.
+description: 在配置建立后操作 Shirone 内容分离与双仓库工作流。用于 content:sync、content:watch、content:status、content:export、content:clean、content:eject、安全备份、反向导出对比以及双仓库 CI/CD 操作。配置 CONTENT_DIR、CONTENT_REPO_URL、shirone.content.json、挂载点或 config/*.yaml 覆盖层时，请使用 shirone-content-config。
 ---
 
 # Shirone 内容分离工作流与双仓运维

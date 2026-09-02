@@ -1,6 +1,6 @@
 ---
 name: shirone-config
-description: Configuring a Shirone blog site - site identity, theme colors, navigation, sidebar, pages, comments, Umami analytics, music, anime sources, fonts, llms.txt, npm package initialization, and build/deploy. Use when enabling or tuning features, changing site behavior, preparing deployment, or configuring a project that consumes shirones.
+description: 配置 Shirone 博客站点 - 站点身份、主题色、导航、侧边栏、页面、评论、Umami 统计、音乐、追番源、字体、llms.txt、npm 包初始化以及构建/部署。在启用或调优功能、更改站点行为、准备部署，或配置使用 shirones 的项目时使用。
 ---
 
 # Shirone 站点配置

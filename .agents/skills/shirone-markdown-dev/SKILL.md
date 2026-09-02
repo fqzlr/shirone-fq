@@ -1,6 +1,6 @@
 ---
 name: shirone-markdown-dev
-description: Developing custom Markdown syntaxes and remark/rehype plugins for the Shirone theme - plugin ownership boundaries, registration order, syntax manifest, content-driven on-demand loading, npm integration sync, and tests. Use when adding or changing Markdown extensions, prose plugins, generated component styles, or package-mode wiring.
+description: 为 Shirone 主题开发自定义 Markdown 语法和 remark/rehype 插件 - 插件归属边界、注册顺序、语法清单、按内容驱动的按需加载、npm 集成同步与测试。在新增或修改 Markdown 扩展、正文插件、生成的组件样式或包模式接线时使用。
 ---
 
 # Shirone Markdown 扩展开发

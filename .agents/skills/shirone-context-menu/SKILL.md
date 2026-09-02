@@ -1,6 +1,6 @@
 ---
 name: shirone-context-menu
-description: Extending or integrating Shirone's optional desktop context menu, including action registration, M3E keyboard behavior, shared clipboard actions, Swup lifecycle, and coordination with Markdown-rendered features such as code trees.
+description: 扩展或集成 Shirone 的可选桌面右键菜单，包括动作注册、M3E 键盘行为、共享剪贴板动作、Swup 生命周期，以及与代码树等 Markdown 渲染特性的协调。
 ---
 
 # Shirone 右键菜单扩展
