@@ -1,9 +1,5 @@
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
-import { devicesConfig } from "@/config/devicesConfig";
-import { projectsConfig } from "@/config/projectsConfig";
-import { skillsConfig } from "@/config/skillsConfig";
-import { timelineConfig } from "@/config/timelineConfig";
 import type {
 	NavBarConfig,
 	NavBarConfigOverride,
@@ -11,6 +7,8 @@ import type {
 	NavBarLinkOverride,
 } from "@/types/navBarConfig";
 import { getUserConfig } from "../utils/config-overlay.ts";
+import { filterDisabledPageLinks } from "../utils/nav-utils.ts";
+import { isPageAvailable } from "../utils/page-availability.ts";
 
 /**
  * 导航栏配置（统一单一来源）。
@@ -20,6 +18,9 @@ import { getUserConfig } from "../utils/config-overlay.ts";
  * 新增入口：先在 LinkPresets 登记预设，再在 navBarConfig.links 按序引用。
  *
  * 内容仓可用 `config/nav-bar.yaml` 整体替换 `links`，写法见 `NavBarLinkOverride`。
+ * 导出前统一按页面可用性过滤（`siteConfig.pages` 与各行为领域 enable 取 AND，
+ * 见 src/utils/page-availability.ts）：指向被关闭页面的条目自动隐藏，
+ * children 全被过滤的分组整组隐藏——默认结构与 `nav-bar.yaml` 覆盖共用同一过滤点。
  */
 export const LinkPresets: Record<string, NavBarLink> = {
 	Home: {
@@ -127,11 +128,13 @@ const defaultNavBarConfig: NavBarConfig = {
 		{
 			name: i18n(I18nKey.more),
 			icon: "material-symbols:apps-rounded",
+			// 条目去留由导出前的页面可用性过滤统一决定（siteConfig.pages
+			// 与各行为领域 enable 取 AND），此处不再内联条件展开。
 			children: [
-				...(timelineConfig.enable ? [LinkPresets.Timeline] : []),
-				...(projectsConfig.enable ? [LinkPresets.Projects] : []),
-				...(devicesConfig.enable ? [LinkPresets.Devices] : []),
-				...(skillsConfig.enable ? [LinkPresets.Skills] : []),
+				LinkPresets.Timeline,
+				LinkPresets.Projects,
+				LinkPresets.Devices,
+				LinkPresets.Skills,
 				// 分类/标签入口不进导航菜单（避免菜单项过多），预设已登记指向独立页面，
 				// 需要时取消注释即可
 				// LinkPresets.Categories,
@@ -205,8 +208,18 @@ export function resolveNavBarLinks(
 	});
 }
 
+/**
+ * 最终导航 = 默认结构或内容仓 `nav-bar.yaml` 整体替换，再按统一页面可用性过滤：
+ * `siteConfig.pages.<page>` 与各行为领域 `enable` 双因子共同决定去留，
+ * children 全被过滤的分组整组隐藏。默认结构不再内联条件展开，避免双份逻辑漂移。
+ */
 const userNavBar = getUserConfig("navBar") as NavBarConfigOverride | undefined;
 
-export const navBarConfig: NavBarConfig = userNavBar
-	? { links: resolveNavBarLinks(userNavBar.links) }
-	: defaultNavBarConfig;
+export const navBarConfig: NavBarConfig = {
+	links: filterDisabledPageLinks(
+		userNavBar
+			? resolveNavBarLinks(userNavBar.links)
+			: defaultNavBarConfig.links,
+		isPageAvailable,
+	),
+};

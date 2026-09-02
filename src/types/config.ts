@@ -5,6 +5,38 @@ import type { TextureConfig } from "./textureConfig";
 
 export type WallpaperMode = "banner" | "none";
 
+/**
+ * 统一页面开关：`false` 时该页路由跳转 `/404/`，顶栏与移动抽屉的导航入口
+ * 自动隐藏（navBarConfig 输出统一过滤，无需改 nav-bar.yaml）。
+ * 键名是 navBar `pageKey` 语义的子集；`home` 与 `archive` 永远开放，不提供开关。
+ */
+export type PageToggles = {
+	/** 友链页 /friends/ */
+	friends: boolean;
+	/** 动态页 /moments/ */
+	moments: boolean;
+	/** 番剧页 /anime/，与 animeConfig.enable 取 AND */
+	anime: boolean;
+	/** 罗盘页 /compass/ */
+	compass: boolean;
+	/** 技能页 /skills/，与 skillsConfig.enable 取 AND */
+	skills: boolean;
+	/** 项目页 /projects/，与 projectsConfig.enable 取 AND */
+	projects: boolean;
+	/** 设备页 /devices/，与 devicesConfig.enable 取 AND */
+	devices: boolean;
+	/** 时间线页 /timeline/，与 timelineConfig.enable 取 AND */
+	timeline: boolean;
+	/** 相册页 /albums/ 与 /albums/[id]/ */
+	albums: boolean;
+	/** 分类索引页 /categories/ */
+	categories: boolean;
+	/** 标签索引页 /tags/ */
+	tags: boolean;
+	/** 关于页 /about/ */
+	about: boolean;
+};
+
 export type TopAppBarContentAlign = "left" | "center";
 
 export type DisplaySettingsConfig = {
@@ -34,6 +66,9 @@ export type SiteConfig = {
 
 	/** 显示设置浮层各切换项的前端可见性控制 */
 	displaySettings?: DisplaySettingsConfig;
+
+	/** 统一页面开关（12 个内容页，默认全开；与行为领域 enable 取 AND，判定见 src/utils/page-availability.ts） */
+	pages: PageToggles;
 
 	lang:
 		| "en"

@@ -439,4 +439,19 @@ describe("类型校验（真实 tsc，跑在本仓库上）", () => {
 			/config\/llms\.yaml's descriptionMaxLength/,
 		);
 	});
+
+	it("site.yaml 的统一页面开关（pages）合法覆盖通过校验", () => {
+		const result = validate({
+			"site.yaml":
+				"pages:\n  friends: true\n  skills: false\n  anime: true\n  timeline: false\n",
+		});
+		assert.deepEqual(result.files, ["config/site.yaml"]);
+	});
+
+	it("site.yaml 的 pages 拼错键给出 Did you mean 提示", () => {
+		expectFailure(
+			() => validate({ "site.yaml": "pages:\n  friendss: false\n" }),
+			/config\/site\.yaml's pages\.friendss.*Did you mean to write 'friends'/s,
+		);
+	});
 });

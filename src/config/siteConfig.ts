@@ -27,6 +27,24 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		reduceMotion: true, // 是否展示减少动效切换
 		texture: true, // 是否展示背景纹理选择
 	},
+	// 统一页面开关：false 时对应页面跳转 /404/，顶栏与移动抽屉的导航入口自动隐藏
+	// （无需再改 nav-bar.yaml）；与各行为领域 enable 取 AND
+	// （如技能页可用 = pages.skills && skillsConfig.enable），判定见 src/utils/page-availability.ts。
+	// home 与 archive 永远开放，不提供开关。
+	pages: {
+		friends: true, // 友链页 /friends/
+		moments: true, // 动态页 /moments/
+		anime: true, // 番剧页 /anime/（与 animeConfig.enable 取 AND）
+		compass: true, // 罗盘页 /compass/
+		skills: true, // 技能页 /skills/（与 skillsConfig.enable 取 AND）
+		projects: true, // 项目页 /projects/（与 projectsConfig.enable 取 AND）
+		devices: true, // 设备页 /devices/（与 devicesConfig.enable 取 AND）
+		timeline: true, // 时间线页 /timeline/（与 timelineConfig.enable 取 AND）
+		albums: true, // 相册页 /albums/ 与 /albums/[id]/
+		categories: true, // 分类索引页 /categories/
+		tags: true, // 标签索引页 /tags/
+		about: true, // 关于页 /about/
+	},
 	lang: "en", // Language code, e.g. 'en', 'zh_CN', 'ja', etc.
 	// IANA time zone for precise post and moment timestamps. It is independent of lang.
 	timeZone: "Asia/Shanghai",

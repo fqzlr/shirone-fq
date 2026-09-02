@@ -8,6 +8,7 @@ import CategoryList from "@components/atoms/blog/CategoryList.astro";
  */
 import { Icon } from "astro-icon/components";
 import type { CategoriesWidget } from "@/types/sidebarConfig";
+import { isPageAvailable } from "@/utils/page-availability";
 import I18nKey from "../../i18n/i18nKey";
 import { i18n } from "../../i18n/translation";
 import { getCategoryList } from "../../utils/content-utils";
@@ -36,7 +37,7 @@ const categoryItems = categories.slice(0, DISPLAY_LIMIT).map((c) => ({
 
 <WidgetLayout name={i18n(I18nKey.categories)} id="categories" class={className} style={style}>
 	<CategoryList categories={categoryItems} />
-	{hasOverflow && (
+	{hasOverflow && isPageAvailable("categories") && (
 		<div slot="footer" class="widget-index-link">
 			<a href={url("/categories/")}>
 				{i18n(I18nKey.categoriesViewAll)}

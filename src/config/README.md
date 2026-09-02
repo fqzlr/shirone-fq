@@ -101,11 +101,11 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 | 文件 | 职责 |
 |---|---|
 | `footerConfig.ts` | 页脚自定义 HTML 注入开关（控制是否读取并注入 `src/config/FooterConfig.html`，关闭时零开销） |
-| `siteConfig.ts` | 站点部署 URL / base 路径 / 标题标识 / 语言 / IANA 时区 / HCT 主题色 / 背景纹理系统 / 显示设置浮层开关 / 横幅 / TOC 深度 / 进度条 / favicon（含 `getDefaultStyle` / `getDefaultSpec` / `resolveDisplaySettings` 回退值） |
+| `siteConfig.ts` | 站点部署 URL / base 路径 / 标题标识 / 语言 / IANA 时区 / HCT 主题色 / 背景纹理系统 / 显示设置浮层开关 / **统一页面开关 `pages`（12 个内容页，关闭时路由 404 且导航入口自动隐藏，判定见 `src/utils/page-availability.ts`）** / 横幅 / TOC 深度 / 进度条 / favicon（含 `getDefaultStyle` / `getDefaultSpec` / `resolveDisplaySettings` 回退值） |
 | `profileConfig.ts` | 博主资料：头像 / 名称 / 简介 / 社交链接 |
 | `licenseConfig.ts` | 文章版权声明 |
 | `expressiveCodeConfig.ts` | 代码块明暗主题 |
-| `navBarConfig.ts` | 导航栏链接（`LinkPresets` 预设表 + 组装） |
+| `navBarConfig.ts` | 导航栏链接（`LinkPresets` 预设表 + 组装；导出前统一按页面可用性过滤——指向被 `siteConfig.pages` 或行为领域 enable 关闭页面的条目自动隐藏，空分组整组隐藏） |
 | `sidebarConfig.ts` | 侧栏编排与 widget 清单（`arrangement` 单/双栏、`side` 主栏物理侧、widget `column` 分栏标签；判别联合类型见 `types/sidebarConfig.ts`；编排指导见 `docs/sidebar-system.md`，组件文档见 `docs/sidebar-widgets.md`，新增 widget checklist 见 `docs/common-components.md` §3.1） |
 | `fabConfig.ts` | 右下角悬浮控制流（FAB）配置：总开关、各操作项（返回顶部、悬浮目录、直达评论、返回首页、自定义操作）、细粒度设备受控矩阵（`devices?: ("mobile" | "tablet" | "desktop")[]`）、页面范围过滤与图标定制；架构见 `docs/fab-system.md` |
 | `announcementConfig.ts` | 公告内容（侧栏 announcement widget 消费，text 为空不渲染） |

@@ -8,6 +8,7 @@ import TagList from "@components/atoms/blog/TagList.astro";
  */
 import { Icon } from "astro-icon/components";
 import type { TagsWidget } from "@/types/sidebarConfig";
+import { isPageAvailable } from "@/utils/page-availability";
 import I18nKey from "../../i18n/i18nKey";
 import { i18n } from "../../i18n/translation";
 import { getTagList } from "../../utils/content-utils";
@@ -34,7 +35,7 @@ const tagItems = tags.slice(0, DISPLAY_LIMIT).map((t) => ({
 ---
 <WidgetLayout name={i18n(I18nKey.tags)} id="tags" class={className} style={style}>
 	<TagList tags={tagItems} />
-	{hasOverflow && (
+	{hasOverflow && isPageAvailable("tags") && (
 		<div slot="footer" class="widget-index-link">
 			<a href={url("/tags/")}>
 				{i18n(I18nKey.tagsViewAll)}

@@ -7,7 +7,12 @@ import CompassSection from "@components/organisms/CompassSection.svelte";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { isPageAvailable } from "@/utils/page-availability";
 import { compassData } from "../data/compass";
+
+if (!isPageAvailable("compass")) {
+	return Astro.redirect("/404/");
+}
 ---
 
 <MainGridLayout title={i18n(I18nKey.compass)} description={i18n(I18nKey.compassBanner)} page="compass">

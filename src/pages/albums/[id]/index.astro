@@ -10,6 +10,7 @@ import { encryptProtectedContent } from "@utils/password-protection";
 import { Icon } from "astro-icon/components";
 import type { AlbumGroup } from "@/types/album";
 import type { ProtectedPayload } from "@/types/protectedContent";
+import { isPageAvailable } from "@/utils/page-availability";
 
 export function getStaticPaths() {
 	return scanAllAlbums().map((album) => ({
@@ -20,6 +21,10 @@ export function getStaticPaths() {
 
 interface Props {
 	album: AlbumGroup;
+}
+
+if (!isPageAvailable("albums")) {
+	return Astro.redirect("/404/");
 }
 
 const { album } = Astro.props as Props;

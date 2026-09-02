@@ -37,3 +37,30 @@ export function resolvePageKey(
 	if (pathname === "/about") return "about";
 	return "";
 }
+
+/**
+ * 按 pageKey 过滤导航树中指向不可用页面的条目（构建期在 navBarConfig 输出上执行一次，
+ * 谓词注入保持本模块零配置依赖，客户端可安全导入）。
+ * - 叶子条目按 `isAllowed(pageKey)` 判定；未携带 pageKey 的自定义条目无法判定目标页，
+ *   一律保留（自定义链接若指向被关闭的页面，应由作者自行不再书写）；
+ * - 含 children 的分组递归过滤，children 全被过滤的分组整组隐藏（避免空下拉）。
+ */
+export function filterDisabledPageLinks(
+	links: readonly NavBarLink[],
+	isAllowed: (pageKey: string) => boolean = () => true,
+): NavBarLink[] {
+	return links
+		.map((link) =>
+			link.children
+				? {
+						...link,
+						children: filterDisabledPageLinks(link.children, isAllowed),
+					}
+				: link,
+		)
+		.filter((link) =>
+			link.children
+				? link.children.length > 0
+				: link.pageKey === undefined || isAllowed(link.pageKey),
+		);
+}

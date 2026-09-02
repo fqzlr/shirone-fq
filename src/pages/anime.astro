@@ -7,7 +7,12 @@ import AnimeSection from "@components/organisms/AnimeSection.svelte";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { isPageAvailable } from "@/utils/page-availability";
 import { getAnimeList } from "../utils/anime-data";
+
+if (!isPageAvailable("anime")) {
+	return Astro.redirect("/404/");
+}
 
 const animes = await getAnimeList();
 ---

@@ -4,6 +4,11 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { scanVisibleAlbums, toAlbumIndexItem } from "@utils/album-scanner";
+import { isPageAvailable } from "@/utils/page-availability";
+
+if (!isPageAvailable("albums")) {
+	return Astro.redirect("/404/");
+}
 
 const albums = scanVisibleAlbums().map(toAlbumIndexItem);
 ---

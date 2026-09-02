@@ -6,8 +6,9 @@ import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { skillsConfig } from "@/config/skillsConfig";
 import { resolveSkillsData } from "@/utils/feature-data";
+import { isPageAvailable } from "@/utils/page-availability";
 
-if (!skillsConfig.enable) {
+if (!isPageAvailable("skills")) {
 	return Astro.redirect("/404/");
 }
 

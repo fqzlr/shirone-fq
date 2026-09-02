@@ -13,6 +13,11 @@ import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getTagList } from "@utils/content-utils";
 import { getTagUrl } from "@utils/url-utils";
+import { isPageAvailable } from "@/utils/page-availability";
+
+if (!isPageAvailable("tags")) {
+	return Astro.redirect("/404/");
+}
 
 const tags = await getTagList();
 const totalPosts = tags.reduce((sum, tag) => sum + tag.count, 0);

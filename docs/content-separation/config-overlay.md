@@ -39,7 +39,7 @@ themeColor:
 
 | 配置文件 | 覆盖的主题配置 | 配置文件 | 覆盖的主题配置 |
 | --- | --- | --- | --- |
-| `site.yaml` | `siteConfig` 站点基本信息 | `skills.yaml` | `skillsConfig` 技能清单 |
+| `site.yaml` | `siteConfig` 站点基本信息（含统一页面开关 `pages`） | `skills.yaml` | `skillsConfig` 技能清单 |
 | `profile.yaml` | `profileConfig` 个人资料与社交链接 | `projects.yaml` | `projectsConfig` 开源项目 |
 | `sidebar.yaml` | `sidebarConfig` 侧边栏组件与布局 | `timeline.yaml` | `timelineConfig` 时间轴 |
 | `nav-bar.yaml` | `navBarConfig` 顶部导航栏 | `devices.yaml` | `devicesConfig` 我的设备 |
@@ -120,6 +120,23 @@ customSections:
 - **配置文件名拼写错误**：例如误将文件名保存为 `config/sidbar.yaml`，系统会提示 `Did you mean sidebar.yaml?` 并列出所有合法的配置文件名；
 - **文件名冲突**：同一个配置领域同时存在了 `.yaml` 与 `.yml` 两份文件；
 - **循环引用**：YAML 语法锚点造成的递归死循环。
+
+---
+
+### 统一页面开关 (`site.yaml` 的 `pages` 段)
+
+`siteConfig.pages` 集中管理 12 个内容页（friends/moments/anime/compass/skills/projects/devices/timeline/albums/categories/tags/about）的布尔开关，`home` 与 `archive` 永远开放：
+
+```yaml
+# config/site.yaml
+pages:
+  friends: true
+  skills: false   # 关闭技能页：/skills/ 跳转 /404/，导航入口自动隐藏
+```
+
+- 关闭某页后，**顶栏与移动抽屉的导航入口自动隐藏**（`navBarConfig` 导出前统一过滤，`nav-bar.yaml` 覆盖条目同样被过滤，无需手工同步）；children 全被过滤的分组整组隐藏；
+- 与各行为领域开关取 **AND** 交集：技能页可用 = `pages.skills && skillsConfig.enable`；
+- 侧栏「查看全部分类/标签」入口同步隐藏；未携带 `pageKey` 的 `nav-bar.yaml` 自定义外链不受过滤影响。
 
 ---
 

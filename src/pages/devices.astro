@@ -6,8 +6,9 @@ import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { devicesConfig } from "@/config/devicesConfig";
 import { resolveDevicesData } from "@/utils/feature-data";
+import { isPageAvailable } from "@/utils/page-availability";
 
-if (!devicesConfig.enable) {
+if (!isPageAvailable("devices")) {
 	return Astro.redirect("/404/");
 }
 

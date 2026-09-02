@@ -7,6 +7,11 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { resolveImageAsset } from "@utils/asset-utils";
 import { getSortedMoments } from "@utils/content-utils";
 import { profileConfig } from "@/config";
+import { isPageAvailable } from "@/utils/page-availability";
+
+if (!isPageAvailable("moments")) {
+	return Astro.redirect("/404/");
+}
 
 const moments = await getSortedMoments();
 const avatarAsset = await resolveImageAsset(profileConfig.avatar ?? "");

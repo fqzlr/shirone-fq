@@ -6,8 +6,9 @@ import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { projectsConfig } from "@/config/projectsConfig";
 import { resolveProjectsData } from "@/utils/feature-data";
+import { isPageAvailable } from "@/utils/page-availability";
 
-if (!projectsConfig.enable) {
+if (!isPageAvailable("projects")) {
 	return Astro.redirect("/404/");
 }
 

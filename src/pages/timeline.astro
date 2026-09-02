@@ -6,8 +6,9 @@ import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { timelineConfig } from "@/config/timelineConfig";
 import { resolveTimelineData } from "@/utils/feature-data";
+import { isPageAvailable } from "@/utils/page-availability";
 
-if (!timelineConfig.enable) {
+if (!isPageAvailable("timeline")) {
 	return Astro.redirect("/404/");
 }
 

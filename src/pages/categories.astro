@@ -12,6 +12,11 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getCategoryList } from "@utils/content-utils";
+import { isPageAvailable } from "@/utils/page-availability";
+
+if (!isPageAvailable("categories")) {
+	return Astro.redirect("/404/");
+}
 
 const categories = await getCategoryList();
 const totalPosts = categories.reduce(
