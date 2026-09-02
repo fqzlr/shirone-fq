@@ -44,7 +44,7 @@ export const th: Translation = {
 	[Key.animeConfigMissingBilibili]: "ยังไม่ได้กำหนดค่า UID ของ Bilibili",
 	[Key.animeSyncEmpty]: "ไม่พบบันทึกอนิเมะในแหล่งข้อมูลนี้",
 
-	[Key.compass]: "เข็มทิศ",
+	[Key.compass]: "ไดเรกทอรีเว็บ",
 	[Key.compassBanner]: "เว็บไซต์ที่ฉันกลับมาใช้บ่อย — เครื่องมือพัฒนา เอกสาร และหลุมกระต่าย",
 	[Key.compassNoResults]: "ไม่พบเว็บไซต์ที่ตรงกับคำค้นหา",
 	[Key.compassCounts]: "เว็บไซต์",

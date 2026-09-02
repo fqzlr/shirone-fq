@@ -46,7 +46,7 @@ export const tr: Translation = {
 	[Key.animeConfigMissingBilibili]: "Bilibili UID yapılandırılmadı",
 	[Key.animeSyncEmpty]: "Bu veri kaynağında anime öğesi bulunamadı",
 
-	[Key.compass]: "Pusula",
+	[Key.compass]: "Web Rehberi",
 	[Key.compassBanner]:
 		"Sık sık döndüğüm siteler — geliştirme araçları, dokümanlar ve tavşan delikleri.",
 	[Key.compassNoResults]: "Aramanızla eşleşen site yok",

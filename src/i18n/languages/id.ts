@@ -47,7 +47,7 @@ export const id: Translation = {
 	[Key.animeConfigMissingBilibili]: "UID Bilibili belum dikonfigurasi",
 	[Key.animeSyncEmpty]: "Tidak ada anime yang ditemukan di sumber data ini",
 
-	[Key.compass]: "Kompas",
+	[Key.compass]: "Direktori Web",
 	[Key.compassBanner]:
 		"Situs yang sering saya kunjungi — alat pengembangan, dokumentasi, dan lubang kelinci.",
 	[Key.compassNoResults]: "Tidak ada situs yang cocok dengan pencarian",

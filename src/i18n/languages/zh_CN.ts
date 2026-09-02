@@ -44,7 +44,7 @@ export const zh_CN: Translation = {
 	[Key.animeConfigMissingBilibili]: "未配置哔哩哔哩 UID",
 	[Key.animeSyncEmpty]: "当前数据源中暂无番剧条目",
 
-	[Key.compass]: "站点罗盘",
+	[Key.compass]: "网址导航",
 	[Key.compassBanner]: "常去的站点 —— 开发工具、文档与各种兔子洞。",
 	[Key.compassNoResults]: "没有符合条件的站点",
 	[Key.compassCounts]: "个站点",

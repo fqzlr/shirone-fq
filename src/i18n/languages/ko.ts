@@ -46,7 +46,7 @@ export const ko: Translation = {
 	[Key.animeConfigMissingBilibili]: "Bilibili UID가 설정되지 않았습니다",
 	[Key.animeSyncEmpty]: "이 데이터 소스에 애니메이션 항목이 없습니다",
 
-	[Key.compass]: "나침반",
+	[Key.compass]: "웹 디렉터리",
 	[Key.compassBanner]:
 		"자주 찾는 사이트 — 개발 도구, 문서, 그리고 토끼굴 속으로.",
 	[Key.compassNoResults]: "검색어와 일치하는 사이트가 없습니다",
