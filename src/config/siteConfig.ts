@@ -33,6 +33,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	// home 与 archive 永远开放，不提供开关。
 	pages: {
 		friends: true, // 友链页 /friends/
+		guestbook: true, // 留言板页 /guestbook/
 		moments: true, // 动态页 /moments/
 		anime: true, // 番剧页 /anime/（与 animeConfig.enable 取 AND）
 		compass: true, // 罗盘页 /compass/

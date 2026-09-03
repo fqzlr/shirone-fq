@@ -18,6 +18,8 @@ export const tr: Translation = {
 		"Bağlantı takası yapabilirsiniz — ayrıntılar için Hakkında sayfasına bakın.",
 	[Key.friendsCount]: "arkadaş",
 	[Key.friendsCounts]: "arkadaş",
+	[Key.guestbook]: "Ziyaretçi Defteri",
+	[Key.guestbookBanner]: "Bir mesaj bırakın ve selam verin.",
 
 	[Key.moments]: "Anlar",
 	[Key.momentsNoResults]: "Filtrelerle eşleşen an yok",

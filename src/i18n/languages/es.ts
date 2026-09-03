@@ -18,6 +18,8 @@ export const es: Translation = {
 		"Se aceptan intercambios de enlaces; consulta la página Acerca de.",
 	[Key.friendsCount]: "amigo",
 	[Key.friendsCounts]: "amigos",
+	[Key.guestbook]: "Libro de visitas",
+	[Key.guestbookBanner]: "Deja un mensaje y saluda.",
 
 	[Key.moments]: "Momentos",
 	[Key.momentsNoResults]: "No hay momentos que coincidan con los filtros",

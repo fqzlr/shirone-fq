@@ -30,6 +30,7 @@ export type SidebarPage =
 	| "home" // 首页（[...page].astro 及其分页）
 	| "archive" // 归档
 	| "friends" // 友链
+	| "guestbook" // 留言板
 	| "moments" // 动态
 	| "anime" // 番剧收藏
 	| "compass" // 站点罗盘

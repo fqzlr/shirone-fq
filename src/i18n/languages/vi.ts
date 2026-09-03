@@ -18,6 +18,8 @@ export const vi: Translation = {
 		"Chào đón trao đổi liên kết — xem trang Giới thiệu để biết cách đăng ký.",
 	[Key.friendsCount]: "liên kết bạn bè",
 	[Key.friendsCounts]: "liên kết bạn bè",
+	[Key.guestbook]: "Sổ lưu bút",
+	[Key.guestbookBanner]: "Hãy để lại lời nhắn và lời chào.",
 
 	[Key.moments]: "Khoảnh khắc",
 	[Key.momentsNoResults]: "Không có khoảnh khắc nào khớp bộ lọc",

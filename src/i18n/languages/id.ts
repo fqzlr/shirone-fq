@@ -18,6 +18,8 @@ export const id: Translation = {
 		"Tukar tautan dipersilakan — lihat halaman Tentang untuk cara mendaftar.",
 	[Key.friendsCount]: "teman",
 	[Key.friendsCounts]: "teman",
+	[Key.guestbook]: "Buku tamu",
+	[Key.guestbookBanner]: "Tinggalkan pesan dan sapa.",
 
 	[Key.moments]: "Momen",
 	[Key.momentsNoResults]: "Tidak ada momen yang cocok dengan filter",

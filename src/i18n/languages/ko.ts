@@ -18,6 +18,8 @@ export const ko: Translation = {
 		"링크 교환을 환영합니다. 신청 방법은 소개 페이지를 참고하세요.",
 	[Key.friendsCount]: "개의 친구 링크",
 	[Key.friendsCounts]: "개의 친구 링크",
+	[Key.guestbook]: "방명록",
+	[Key.guestbookBanner]: "자유롭게 인사와 메시지를 남겨 주세요.",
 
 	[Key.moments]: "모먼트",
 	[Key.momentsNoResults]: "조건에 맞는 모먼트가 없습니다",

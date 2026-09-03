@@ -18,6 +18,8 @@ export const en: Translation = {
 		"Link exchange is welcome — see the About page for how to apply.",
 	[Key.friendsCount]: "friend",
 	[Key.friendsCounts]: "friends",
+	[Key.guestbook]: "Guestbook",
+	[Key.guestbookBanner]: "Leave a message and say hello.",
 
 	[Key.moments]: "Moments",
 	[Key.momentsNoResults]: "No moments matched your filters",

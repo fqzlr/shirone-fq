@@ -16,6 +16,9 @@ enum I18nKey {
 	friendsCount = "friendsCount",
 	friendsCounts = "friendsCounts",
 
+	guestbook = "guestbook",
+	guestbookBanner = "guestbookBanner",
+
 	moments = "moments",
 	momentsNoResults = "momentsNoResults",
 	momentsBanner = "momentsBanner",

@@ -18,6 +18,8 @@ export const ja: Translation = {
 		"リンクの交換を歓迎します。申請方法は About ページをご覧ください。",
 	[Key.friendsCount]: "件の友達リンク",
 	[Key.friendsCounts]: "件の友達リンク",
+	[Key.guestbook]: "ゲストブック",
+	[Key.guestbookBanner]: "気軽にメッセージを残してください。",
 
 	[Key.moments]: "モーメンツ",
 	[Key.momentsNoResults]: "条件に一致するモーメンツはありません",

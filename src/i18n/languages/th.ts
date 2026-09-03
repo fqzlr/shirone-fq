@@ -15,6 +15,8 @@ export const th: Translation = {
 	[Key.friends]: "เพื่อน",
 	[Key.friendsNoResults]: "ไม่พบเพื่อนที่ตรงกับตัวกรอง",
 	[Key.friendsBanner]: "ยินดีแลกลิงก์ ดูวิธีสมัครได้ที่หน้าเกี่ยวกับ",
+	[Key.guestbook]: "สมุดเยี่ยม",
+	[Key.guestbookBanner]: "ฝากข้อความทักทายได้เลย",
 	[Key.friendsCount]: "ลิงก์",
 	[Key.friendsCounts]: "ลิงก์",
 

@@ -1,0 +1,28 @@
+---
+import CommentSection from "@components/organisms/comment/CommentSection.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { siteConfig } from "@/config/siteConfig";
+import { isPageAvailable } from "@/utils/page-availability";
+
+if (!isPageAvailable("guestbook")) {
+	return Astro.redirect("/404/");
+}
+---
+
+<MainGridLayout
+	title={i18n(I18nKey.guestbook)}
+	description={i18n(I18nKey.guestbookBanner)}
+	page="guestbook"
+>
+	<CommentSection
+		context={{
+			key: "guestbook",
+			path: "/guestbook/",
+			title: i18n(I18nKey.guestbook),
+			language: siteConfig.lang,
+		}}
+		class="onload-animation"
+	/>
+</MainGridLayout>

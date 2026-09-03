@@ -13,6 +13,8 @@ export type WallpaperMode = "banner" | "none";
 export type PageToggles = {
 	/** 友链页 /friends/ */
 	friends: boolean;
+	/** 留言板页 /guestbook/ */
+	guestbook: boolean;
 	/** 动态页 /moments/ */
 	moments: boolean;
 	/** 番剧页 /anime/，与 animeConfig.enable 取 AND */
