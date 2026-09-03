@@ -67,7 +67,8 @@ test.describe("文章列表布局模式", () => {
 		await page.locator("#display-settings-switch").click();
 		// DisplaySettings 为 client:only 岛，等水合产物出现；radio 被
 		// 标签遮挡，点击可见段标签（真实用户路径）
-		const gridLabel = page.locator("#display-setting").getByText("Grid");
+		// 站点语言可为中/英，段标签兼容两种文案
+		const gridLabel = page.locator("#display-setting").getByText(/Grid|网格/);
 		await gridLabel.waitFor({ state: "visible", timeout: 10_000 });
 		await gridLabel.click();
 		await expect(page.locator("#post-list")).toHaveClass(/m3e-post-list--grid/);
@@ -149,7 +150,7 @@ test.describe("文章列表布局模式", () => {
 			{ timeout: 15_000 },
 		);
 		await page.locator("#display-settings-switch").click();
-		const gridLabel = page.locator("#display-setting").getByText("Grid");
+		const gridLabel = page.locator("#display-setting").getByText(/Grid|网格/);
 		await gridLabel.waitFor({ state: "visible", timeout: 10_000 });
 		await gridLabel.click();
 		await expect(page.locator("#post-list")).toHaveClass(/m3e-post-list--grid/);

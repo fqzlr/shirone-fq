@@ -16,7 +16,6 @@ const pages = [
 	{ name: "首页-网格", path: "/", layout: "grid" },
 	{ name: "归档", path: "/archive/" },
 	{ name: "友链", path: "/friends/" },
-	{ name: "留言板", path: "/guestbook/" },
 	{ name: "动态", path: "/moments/" },
 	{ name: "番剧", path: "/anime/" },
 	{ name: "站点罗盘", path: "/compass/" },
@@ -26,8 +25,7 @@ const pages = [
 	{ name: "时间线", path: "/timeline/" },
 	{ name: "受保护相册", path: "/albums/EncryptedExample/" },
 	{ name: "关于", path: "/about/" },
-	{ name: "文章页", path: "/posts/guide/" },
-	{ name: "MDX文章页", path: "/posts/mdx-showcase/" },
+	{ name: "文章页", path: "/posts/tech/git-guide/" },
 	{ name: "分类索引", path: "/categories/" },
 	{ name: "标签索引", path: "/tags/" },
 ];
