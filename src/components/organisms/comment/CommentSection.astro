@@ -9,10 +9,17 @@ import type { CommentContext } from "@/types/commentConfig";
 interface Props {
 	context: CommentContext;
 	postCommentEnabled?: boolean;
+	/** 标题下的副标题描述（可选，仅展示用途） */
+	description?: string;
 	class?: string;
 }
 
-const { context, postCommentEnabled = true, class: className } = Astro.props;
+const {
+	context,
+	postCommentEnabled = true,
+	description,
+	class: className,
+} = Astro.props;
 const options = resolveCommentOptions(commentConfig);
 
 if (!options || !postCommentEnabled) {
@@ -42,6 +49,13 @@ const Waline =
 				{i18n(I18nKey.comments)}
 			</h2>
 		</div>
+		{
+			description && (
+				<p class="text-sm text-[var(--on-surface-variant)] leading-relaxed -mt-4 mb-6">
+					{description}
+				</p>
+			)
+		}
 
 		{options.provider === "twikoo" && Twikoo && (
 			<Twikoo
