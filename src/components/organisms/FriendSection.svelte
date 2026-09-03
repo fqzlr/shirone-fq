@@ -87,7 +87,9 @@ onMount(() => {
 });
 </script>
 
-<Card color="var(--card-bg)" radius="l" class="friend-section px-8 py-6">
+<!-- 内边距用 Tailwind 响应式类：自定义 class 写在 Card（子组件）上，scoped 规则会被 Svelte unused-CSS 剥离（pitfalls.md §1.6）；
+     mb-4 = --m3e-space-4，与下方友链信息模块保持主题卡片间距 -->
+<Card color="var(--card-bg)" radius="l" class="friend-section px-3 py-4 sm:px-8 sm:py-6 mb-4">
 	<PageHeader
 		icon="material-symbols:handshake-outline-rounded"
 		title={i18n(I18nKey.friends)}
@@ -223,13 +225,11 @@ onMount(() => {
 
 	&__list
 		display: grid
-		grid-template-columns: 1fr
-		gap: 1rem
+		/* 15rem 门槛保证窄视口（~1024px）下也能稳定排出三列，280px 会压线掉回两列 */
+		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr))
+		gap: 0.875rem
 		padding-top: 1.5rem
 		animation: friend-fade-in var(--m3e-duration-medium) var(--m3e-easing-standard)
-
-		@media (min-width: bp-md)
-			grid-template-columns: repeat(2, 1fr)
 
 	&__empty
 		display: flex
@@ -245,8 +245,6 @@ onMount(() => {
 			height: 2.5rem
 
 	@media (max-width: bp-sm - 1px)
-		padding: 1rem 0.75rem
-
 		&__list
 			padding-top: 1.25rem
 

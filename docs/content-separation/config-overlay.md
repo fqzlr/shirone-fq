@@ -50,6 +50,7 @@ themeColor:
 | `fab.yaml` | `fabConfig` 浮动操作按钮 | `image-bloom.yaml` | `imageBloomConfig` 图片光晕特效 |
 | `footer.yaml` | `footerConfig` 页脚基本信息 | `expressive-code.yaml` | `expressiveCodeConfig` 代码高亮设置 |
 | `llms.yaml` | `llmsConfig` 大模型索引与全文输出 | `umami.yaml` | `umamiConfig` Umami 网站统计 |
+| `friend-page.yaml` | `friendPageConfig` 友链页信息模块（本站信息 / 申请友链 / 注意事项） | | |
 
 各配置领域的可用字段、默认值与逐项注释均以代码仓中的 `src/config/<domain>Config.ts` 为准。系统同样支持 `.yml` 后缀；空文件与纯注释文件视作不覆盖。
 

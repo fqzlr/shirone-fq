@@ -38,6 +38,12 @@ export {
 } from "./fontConfig";
 export { footerConfig } from "./footerConfig";
 export {
+	friendPageConfig,
+	resolveFriendNotes,
+	resolveFriendSiteInfo,
+	resolveFriendTemplate,
+} from "./friendPageConfig";
+export {
 	imageBloomConfig,
 	resolveImageBloomOptions,
 } from "./imageBloomConfig";

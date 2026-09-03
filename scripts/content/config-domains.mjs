@@ -147,6 +147,12 @@ export const CONFIG_DOMAINS = Object.freeze([
 		module: "@/types/fontConfig",
 	},
 	{
+		key: "friendPage",
+		file: "friend-page",
+		type: "FriendPageConfig",
+		module: "@/types/friendPageConfig",
+	},
+	{
 		key: "llms",
 		file: "llms",
 		type: "LlmsConfig",
