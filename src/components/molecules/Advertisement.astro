@@ -1,0 +1,321 @@
+---
+/**
+ * 广告位侧栏组件：内容由 widget.ad 载荷驱动（图片 / 文案 / 链接按钮）。
+ * 零额外负担：ad 缺省或已过 expireDate（构建期判定）时零 DOM、零请求；
+ * 关闭记忆与展示次数上限走 localStorage（沿 Announcement 的运行时契约）。
+ * 组件 ID 由载荷内容派生（稳定哈希），重建部署后访客计数不丢。
+ */
+import { Icon } from "astro-icon/components";
+import type {
+	AdvertisementPayload,
+	AdvertisementWidget,
+} from "@/types/sidebarConfig";
+import I18nKey from "../../i18n/i18nKey";
+import { i18n } from "../../i18n/translation";
+import { url } from "../../utils/url-utils";
+import WidgetLayout from "./WidgetLayout.astro";
+
+interface Props {
+	class?: string;
+	style?: string;
+	widget?: AdvertisementWidget;
+}
+const className = Astro.props.class;
+const style = Astro.props.style;
+
+const ad = Astro.props.widget?.ad;
+
+// 构建期过期判定：过期或未配置载荷时完全不渲染
+const isExpired = ad?.expireDate
+	? Number.isNaN(Date.parse(ad.expireDate))
+		? false
+		: Date.now() > Date.parse(ad.expireDate)
+	: false;
+
+/**
+ * 载荷稳定 ID：同类内容跨部署计数连续，避免随机 ID 重置访客展示次数。
+ * 未配置载荷时不调用，返回值不参与渲染。
+ */
+function computeAdId(payload: AdvertisementPayload): string {
+	const basis = JSON.stringify([
+		payload.image?.src ?? "",
+		payload.content ?? "",
+		payload.link?.url ?? "",
+	]);
+	let hash = 0;
+	for (let i = 0; i < basis.length; i++) {
+		hash = (hash * 31 + basis.charCodeAt(i)) | 0;
+	}
+	return `ad-${(hash >>> 0).toString(36)}`;
+}
+
+const widgetId = ad && !isExpired ? computeAdId(ad) : "";
+
+const hasAd = Boolean(ad && !isExpired);
+const image = ad?.image;
+const contentText = ad?.content;
+const link = ad?.link;
+const hasLink = link?.text && link.url;
+const linkHref =
+	hasLink && link.url.startsWith("/") ? url(link.url) : link?.url;
+const linkExternal =
+	hasLink &&
+	(link.external === true ||
+		(/^https?:\/\//i.test(link.url) && link.external !== false));
+const imageHref = image?.link?.startsWith("/") ? url(image.link) : image?.link;
+const imageExternal =
+	image?.link &&
+	(image.external === true ||
+		(/^https?:\/\//i.test(image.link) && image.external !== false));
+const imageSrc =
+	image && (image.src.startsWith("/") ? url(image.src) : image.src);
+const imageAlt = image?.alt || i18n(I18nKey.advertisement);
+const title = ad?.title || i18n(I18nKey.advertisement);
+const bodyPadding = ad?.padding ? `padding: ${ad.padding}` : undefined;
+const displayCount = ad?.displayCount ?? -1;
+const closeDuration = ad?.closeDuration ?? 86400;
+---
+
+{
+	hasAd && (
+		<WidgetLayout name={title} id={widgetId} class={className} style={style}>
+			<div
+				class="advertisement-wrapper"
+				data-ad-id={widgetId}
+				data-display-count={String(displayCount)}
+				data-close-duration={String(closeDuration)}
+			>
+				{ad?.closable && (
+					<button
+						type="button"
+						class="advertisement-close"
+						data-ad-close={widgetId}
+						aria-label={i18n(I18nKey.advertisementClose)}
+						title={i18n(I18nKey.advertisementClose)}
+					>
+						<Icon name="material-symbols:close-rounded" class="text-base" />
+					</button>
+				)}
+				<div class="advertisement-body" style={bodyPadding}>
+					{image && imageSrc && (
+						<div class:list={["advertisement-image", { "mb-3": contentText || hasLink }]}>
+							{imageHref ? (
+								<a
+									href={imageHref}
+									target={imageExternal ? "_blank" : "_self"}
+									rel={imageExternal ? "noopener noreferrer" : undefined}
+								>
+									<img src={imageSrc} alt={imageAlt} loading="lazy" />
+								</a>
+							) : (
+								<img src={imageSrc} alt={imageAlt} loading="lazy" />
+							)}
+						</div>
+					)}
+					{contentText && (
+						<p class="advertisement-content">{contentText}</p>
+					)}
+					{hasLink && (
+						<div class="advertisement-link-row">
+							<a
+								href={linkHref}
+								target={linkExternal ? "_blank" : "_self"}
+								rel={linkExternal ? "noopener noreferrer" : undefined}
+								class="advertisement-btn"
+							>
+								<span>{link?.text}</span>
+								{linkExternal && (
+									<Icon
+										name="material-symbols:arrow-outward-rounded"
+										class="text-sm opacity-80"
+									/>
+								)}
+							</a>
+						</div>
+					)}
+				</div>
+			</div>
+		</WidgetLayout>
+	)
+}
+
+<style lang="stylus">
+.advertisement-wrapper
+	position: relative
+
+.advertisement-close
+	position: absolute
+	top: -0.25rem
+	right: -0.25rem
+	z-index: 1
+	display: flex
+	align-items: center
+	justify-content: center
+	width: 1.75rem
+	height: 1.75rem
+	border-radius: var(--shape-corner-m)
+	color: var(--on-surface-variant)
+	background: unquote("color-mix(in oklab, var(--surface-container) 85%, transparent)")
+	opacity: 0.6
+	cursor: pointer
+	transition: opacity var(--m3e-duration-short) var(--m3e-easing-standard), color var(--m3e-duration-short) var(--m3e-easing-standard), background-color var(--m3e-duration-short) var(--m3e-easing-standard)
+	&:hover
+		opacity: 1
+		color: var(--error)
+		background: unquote("color-mix(in oklab, var(--error-container) 35%, transparent)")
+
+.advertisement-body
+	text-align: center
+
+.advertisement-image
+	img
+		display: block
+		width: 100%
+		height: auto
+		border-radius: var(--shape-corner-m)
+
+.advertisement-content
+	margin: 0 0 0.75rem
+	color: var(--on-surface-variant)
+	font: var(--m3e-type-body-small)
+	line-height: 1.5
+	text-align: center
+	word-break: break-word
+
+.advertisement-link-row
+	text-align: center
+
+.advertisement-btn
+	display: inline-flex
+	align-items: center
+	gap: 0.25rem
+	padding: 0.375rem 0.75rem
+	border-radius: var(--shape-corner-m)
+	background: var(--btn-regular-bg)
+	color: var(--primary)
+	font-size: 0.75rem
+	font-weight: 500
+	text-decoration: none
+	transition: background-color var(--m3e-duration-short) var(--m3e-easing-standard), transform var(--m3e-duration-short) var(--m3e-easing-standard)
+	&:hover
+		background: var(--btn-regular-bg-hover)
+	&:active
+		background: var(--btn-regular-bg-active)
+		transform: scale(0.95)
+
+/* 访客关闭：淡出退场，reduced-motion 瞬切 */
+.advertisement-wrapper.is-closing
+	opacity: 0
+	transform: translateY(0.25rem)
+
+.advertisement-wrapper
+	transition: opacity var(--m3e-duration-medium) var(--m3e-easing-standard), transform var(--m3e-duration-medium) var(--m3e-easing-standard)
+
+@media (prefers-reduced-motion: reduce)
+	.advertisement-wrapper
+		transition: none
+</style>
+
+<script>
+	// 广告位运行时契约（沿 Announcement 模式）：
+	// - 展示次数上限：localStorage 计数（按载荷稳定 ID），swup 导航同样计数；
+	// - 关闭记忆：关闭后 closeDuration 秒内不再展示，到期自动恢复。
+	function advertisementCountKey(id: string): string {
+		return `advertisementCount:${id}`;
+	}
+
+	function advertisementClosedAtKey(id: string): string {
+		return `advertisementClosedAt:${id}`;
+	}
+
+	function hideAdvertisement(wrapper: HTMLElement): void {
+		const container = wrapper.closest<HTMLElement>(".sidebar-widget") || wrapper;
+		container.style.display = "none";
+	}
+
+	function showAdvertisement(wrapper: HTMLElement): void {
+		const container = wrapper.closest<HTMLElement>(".sidebar-widget") || wrapper;
+		container.style.display = "";
+	}
+
+	function closeAdvertisement(id: string): void {
+		localStorage.setItem(advertisementClosedAtKey(id), Date.now().toString());
+		document.querySelectorAll<HTMLElement>(".advertisement-wrapper").forEach(
+			(wrapper) => {
+				if (wrapper.dataset.adId !== id) return;
+				wrapper.classList.add("is-closing");
+				const reduced = window.matchMedia(
+					"(prefers-reduced-motion: reduce)",
+				).matches;
+				window.setTimeout(
+					() => hideAdvertisement(wrapper),
+					reduced ? 0 : 200,
+				);
+			},
+		);
+	}
+
+	function checkAdvertisementState(): void {
+		document.querySelectorAll<HTMLElement>(".advertisement-wrapper").forEach(
+			(wrapper) => {
+				const id = wrapper.dataset.adId;
+				if (!id) return;
+
+				// 展示次数：>0 时按页计数，达到上限后不再展示
+				const displayCount = Number.parseInt(
+					wrapper.dataset.displayCount ?? "-1",
+					10,
+				);
+				if (displayCount > 0) {
+					const seen = Number.parseInt(
+						localStorage.getItem(advertisementCountKey(id)) || "0",
+						10,
+					);
+					if (seen >= displayCount) {
+						hideAdvertisement(wrapper);
+						return;
+					}
+					localStorage.setItem(
+						advertisementCountKey(id),
+						String(seen + 1),
+					);
+				}
+
+				// 关闭记忆：closeDuration 秒内隐藏，到期清除记忆并恢复
+				const closedAt = Number.parseInt(
+					localStorage.getItem(advertisementClosedAtKey(id)) || "",
+					10,
+				);
+				if (!Number.isNaN(closedAt)) {
+					const duration = Number.parseFloat(
+						wrapper.dataset.closeDuration ?? "0",
+					);
+					const elapsed = (Date.now() - closedAt) / 1000;
+					if (duration > 0 && elapsed < duration) {
+						hideAdvertisement(wrapper);
+						return;
+					}
+					localStorage.removeItem(advertisementClosedAtKey(id));
+				}
+
+				wrapper.classList.remove("is-closing");
+				showAdvertisement(wrapper);
+			},
+		);
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", checkAdvertisementState);
+	} else {
+		checkAdvertisementState();
+	}
+
+	document.addEventListener("swup:content:replace", checkAdvertisementState);
+
+	document.addEventListener("click", (event) => {
+		const target = event.target as HTMLElement | null;
+		const button = target?.closest<HTMLElement>("[data-ad-close]");
+		const id = button?.dataset.adClose;
+		if (id) closeAdvertisement(id);
+	});
+</script>

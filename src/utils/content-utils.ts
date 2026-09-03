@@ -1,4 +1,4 @@
-﻿import { type CollectionEntry, getCollection } from "astro:content";
+import { type CollectionEntry, getCollection } from "astro:content";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import {
@@ -196,6 +196,67 @@ export async function getSortedMoments(): Promise<MomentItem[]> {
 				tags: entry.data.tags,
 				images: entry.data.images.map(withMomentThumbnails),
 			} satisfies MomentItem;
+		}),
+	);
+}
+
+/** 侧栏「最新动态」条目：构建期直出的精简摘要（无 HTML，供纯 SSR widget 使用） */
+export type RecentMomentItem = {
+	id: string;
+	/** ISO 字符串（Date 无法跨岛序列化） */
+	published: string;
+	/** 纯文本摘要（HTML 剥离 + 实体解码 + 空白折叠） */
+	excerpt: string;
+	pinned: boolean;
+	/** 是否携带图片（列表中仅以图标徽标提示） */
+	hasImage: boolean;
+};
+
+/** 渲染后的动态 HTML → 单行纯文本摘要：去注释/style/script → 去标签 → 解码基础实体 → 折叠空白 */
+function htmlToExcerpt(html: string): string {
+	return html
+		.replace(/<!--[\s\S]*?-->/g, " ")
+		.replace(/<(style|script)\b[\s\S]*?<\/\1>/gi, " ")
+		.replace(/<[^>]+>/g, " ")
+		.replace(/&nbsp;/gi, " ")
+		.replace(/&amp;/gi, "&")
+		.replace(/&lt;/gi, "<")
+		.replace(/&gt;/gi, ">")
+		.replace(/&quot;/gi, '"')
+		.replace(/&#39;/gi, "'")
+		.replace(/\s+/g, " ")
+		.trim();
+}
+
+/**
+ * 最新 N 条动态（侧栏 widget 专用）：排序后先截取再渲染 markdown，
+ * 只为最近几条付出渲染开销；返回纯文本摘要，组件保持纯 SSR、零客户端请求。
+ */
+export async function getRecentMomentItems(
+	limit: number,
+): Promise<RecentMomentItem[]> {
+	const count = Math.max(1, Math.floor(limit));
+	const entries = await getCollection("moments", ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true;
+	});
+	const recent = entries.sort(comparePublicationEntries).slice(0, count);
+	if (recent.length === 0) return [];
+
+	momentsRendererPromise ??= siteMarkdownProcessor.createRenderer({});
+	const renderer = await momentsRendererPromise;
+
+	return Promise.all(
+		recent.map(async (entry) => {
+			const { code } = await renderer.render(entry.body ?? "", {
+				frontmatter: entry.data as unknown as Record<string, unknown>,
+			});
+			return {
+				id: entry.id,
+				published: new Date(entry.data.published).toISOString(),
+				excerpt: htmlToExcerpt(code),
+				pinned: entry.data.pinned,
+				hasImage: entry.data.images.length > 0,
+			} satisfies RecentMomentItem;
 		}),
 	);
 }

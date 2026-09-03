@@ -1,0 +1,170 @@
+---
+/**
+ * 最新动态侧栏组件（构建期 SSR 直出，零客户端请求、零外部网络请求）。
+ * 取数走 content-utils 的 getRecentMomentItems：排序后截取前 N 条再渲染
+ * markdown，输出纯文本摘要 + 日期 + 图片/置顶徽标，条目链接到瞬间页对应锚点。
+ * 瞬间页关闭（siteConfig.pages.moments = false）或暂无动态时整体不渲染。
+ */
+import { Icon } from "astro-icon/components";
+import type { MomentsWidget } from "@/types/sidebarConfig";
+import { isPageAvailable } from "@/utils/page-availability";
+import I18nKey from "../../i18n/i18nKey";
+import { i18n } from "../../i18n/translation";
+import { getRecentMomentItems } from "../../utils/content-utils";
+import { formatDateToYYYYMMDD } from "../../utils/date-utils";
+import { url } from "../../utils/url-utils";
+import WidgetLayout from "./WidgetLayout.astro";
+
+interface Props {
+	class?: string;
+	style?: string;
+	widget?: MomentsWidget;
+}
+const className = Astro.props.class;
+const style = Astro.props.style;
+
+const limit = Math.max(1, Astro.props.widget?.limit ?? 3);
+const moments = isPageAvailable("moments")
+	? await getRecentMomentItems(limit)
+	: [];
+---
+
+{
+	moments.length > 0 && (
+		<WidgetLayout
+			name={i18n(I18nKey.moments)}
+			id="latest-moments"
+			class={className}
+			style={style}
+		>
+			<ul class="latest-moments" role="list">
+				{moments.map((moment) => (
+					<li>
+						<a
+							href={url(`/moments/#moment-${moment.id}`)}
+							aria-label={`${i18n(I18nKey.moments)}: ${moment.excerpt}`}
+						>
+							<div class="latest-moments__meta">
+								<Icon
+									name="material-symbols:schedule-rounded"
+									class="latest-moments__meta-icon"
+									aria-hidden="true"
+								/>
+								<time datetime={moment.published}>
+									{formatDateToYYYYMMDD(new Date(moment.published))}
+								</time>
+								{(moment.hasImage || moment.pinned) && (
+									<span class="latest-moments__badges">
+										{moment.hasImage && (
+											<Icon
+												name="material-symbols:image-outline-rounded"
+												class="latest-moments__badge"
+												aria-hidden="true"
+											/>
+										)}
+										{moment.pinned && (
+											<Icon
+												name="material-symbols:keep-rounded"
+												class="latest-moments__badge latest-moments__badge--pinned"
+												aria-hidden="true"
+											/>
+										)}
+									</span>
+								)}
+							</div>
+							<p class="latest-moments__excerpt">{moment.excerpt}</p>
+						</a>
+					</li>
+				))}
+			</ul>
+			<div slot="footer" class="widget-index-link">
+				<a href={url("/moments/")}>
+					{i18n(I18nKey.moreMoments)}
+					<Icon name="material-symbols:chevron-right-rounded" />
+				</a>
+			</div>
+		</WidgetLayout>
+	)
+}
+
+<style lang="stylus">
+.latest-moments
+	display: flex
+	flex-direction: column
+	margin: 0
+	padding: 0
+	list-style: none
+
+	li + li
+		border-top: 1px solid var(--outline-variant)
+
+	> li > a
+		display: block
+		padding: 0.625rem 0.5rem
+		border-radius: var(--shape-corner-m)
+		text-decoration: none
+		transition: background-color var(--m3e-duration-short) var(--m3e-easing-standard)
+		&:hover
+			background: unquote("color-mix(in oklab, var(--primary) 8%, transparent)")
+		&:hover .latest-moments__excerpt
+			color: var(--primary)
+
+.latest-moments__meta
+	display: flex
+	align-items: center
+	gap: 0.25rem
+	margin-bottom: 0.25rem
+	color: var(--primary)
+	font: var(--m3e-type-label-small)
+
+	:global(svg.latest-moments__meta-icon)
+		width: 0.875rem
+		height: 0.875rem
+
+.latest-moments__badges
+	display: inline-flex
+	align-items: center
+	gap: 0.25rem
+	margin-left: auto
+	color: var(--on-surface-variant)
+
+	:global(svg.latest-moments__badge)
+		width: 0.875rem
+		height: 0.875rem
+
+	:global(svg.latest-moments__badge--pinned)
+		color: var(--primary)
+
+.latest-moments__excerpt
+	display: -webkit-box
+	-webkit-box-orient: vertical
+	-webkit-line-clamp: 3
+	overflow: hidden
+	margin: 0
+	color: var(--on-surface-variant)
+	font: var(--m3e-type-body-small)
+	line-height: 1.35rem
+	transition: color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+.widget-index-link
+	padding: 0.625rem 1rem 0
+	> a
+		display: flex
+		align-items: center
+		justify-content: center
+		gap: 0.25rem
+		width: 100%
+		min-height: 2.25rem
+		padding: 0 0.5rem
+		border-radius: var(--shape-corner-m)
+		color: var(--primary)
+		font: var(--m3e-type-label-medium)
+		font-weight: 600
+		text-decoration: none
+		transition: background-color var(--m3e-duration-short) var(--m3e-easing-standard)
+		&:hover
+			background: unquote("color-mix(in oklab, var(--primary) 8%, transparent)")
+		> :global(svg)
+			width: 1.125rem
+			height: 1.125rem
+</style>

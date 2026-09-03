@@ -78,6 +78,8 @@
 | `SiteStats` | 站点统计侧栏 widget（规格表行：MetaIcon 徽标 + 点线引导 + 表格数字；数据源 `utils/site-stats` 备忘化汇总） |
 | `Calendar` | 月度文章历侧栏 widget（SSR 直出日期聚合 + CalendarView 水合岛：单月视图、切月 reveal、点击有文日 collapse 展开当日文章） |
 | `SidebarTOC` | 文章目录侧栏 widget（WidgetLayout 外壳 + 内嵌 `<table-of-contents>` 自定义元素及 `TocList` 原子） |
+| `LatestMoments` | 最新动态侧栏 widget（构建期直出最近 N 条动态纯文本摘要，链接瞬间页锚点；数据源 `utils/content-utils` 的 `getRecentMomentItems`） |
+| `Advertisement` | 广告位侧栏 widget（图片/文案/链接按钮；`ad` 载荷驱动，缺省零 DOM；关闭与展示次数走 localStorage） |
 | `FloatingActionButton` | 右下角浮动操作按钮包装器（响应式设备类受控 + 页面范围过滤属性） |
 | `FloatingTOCPanel` | 移动端/平板浮动大纲目录卡片分子（M3 Surface Container High 风格、平滑滚动定位与隐藏滚动条） |
 

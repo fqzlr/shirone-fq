@@ -22,6 +22,8 @@ SideBar 通过 `src/config/sidebarConfig.ts` 中的 `components` 数组动态编
 | `calendar` | `Calendar` | sticky | 月度文章历（SSR 直出 + 水合岛） |
 | `music` | `MusicSidebar` | top | 持久音乐播放器（全局配置 + widget 双开关，默认关闭） |
 | `toc` | `SidebarTOC` | sticky | 当前文章目录（通常只在文章页显示） |
+| `moments` | `LatestMoments` | top | 最新动态摘要列表（构建期 SSR 直出，零客户端请求） |
+| `advertisement` | `Advertisement` | sticky | 广告位（图片/文案/链接按钮，可关闭与次数记忆） |
 
 ### 1.1 通用字段
 
@@ -119,7 +121,51 @@ interface SidebarWidgetBase {
 
 ---
 
-## 11. 新增 widget 的设计约束
+## 11. LatestMoments — 最新动态
+
+- **数据源**：`src/utils/content-utils.ts` 的 `getRecentMomentItems(limit)` —— 排序后先截取前 N 条再渲染 markdown，输出纯文本摘要（HTML 剥离 + 实体解码 + 空白折叠）；构建期直出，零客户端请求；
+- **渲染**：`WidgetLayout` 外壳 + 摘要列表（日期 + 图片/置顶徽标 + 三行截断摘要），条目链接到瞬间页对应锚点 `#moment-<id>`，底部「查看更多动态」入口（`moreMoments` i18n key）；
+- **可用性联动**：瞬间页关闭（`siteConfig.pages.moments = false`，经 `isPageAvailable("moments")` 判定）或暂无动态时整体不渲染；
+- **页面范围**：全页面通用，推荐副栏 `slot: "top"`（与参考编排一致）；`limit` 默认 3（最小 1）。
+
+```yaml
+# 内容仓 config/sidebar.yaml 示例
+- type: moments
+  enable: true
+  slot: top
+  column: secondary
+  limit: 3
+```
+
+---
+
+## 12. Advertisement — 广告位
+
+- **数据源**：widget 自带的 `ad` 载荷（`AdvertisementPayload`：标题 / 图片 / 文案 / 链接按钮 / 关闭与次数策略），构建期 `expireDate` 过期判定；
+- **渲染**：`WidgetLayout` 外壳（标题可由 `ad.title` 覆盖，缺省用 i18n「广告」）+ 图片（可带链接与外链标识）+ 文案 + 链接按钮；
+- **零额外负担**：`enable: false` 或 `ad` 缺省或已过期时零 DOM、零请求；组件 ID 由载荷内容派生（稳定哈希），重建部署后访客计数不丢；
+- **访客记忆**（沿 Announcement 的运行时契约）：`closable` 关闭按钮 + `closeDuration`（秒）关闭记忆；`displayCount` 展示次数上限（`<=0` 不限），均走 localStorage；
+- **页面范围**：全页面通用，推荐 `slot: "sticky"`。
+
+```yaml
+# 内容仓 config/sidebar.yaml 示例（注释块见默认配置）
+- type: advertisement
+  enable: true
+  slot: sticky
+  ad:
+    title: 支持博主
+    content: 如果觉得本站内容有帮助，欢迎支持创作！
+    link:
+      text: 支持一下
+      url: /about/
+    closable: true
+    closeDuration: 86400
+    displayCount: -1
+```
+
+---
+
+## 13. 新增 widget 的设计约束
 
 1. **外观语言**：优先复用既有原子——`MetaIcon`（单图标徽标）、`Chip` / `Button` / `Card`、`WidgetLayout`（标题外壳）、`AccentBar`；不要自创新的徽标/容器风格；
 2. **外壳取舍**：短消息类（如公告）不用 `WidgetLayout`；有明确"分组 + 列表"语义的（分类/标签/统计），以及音乐等需要统一侧栏标题的有机体使用；

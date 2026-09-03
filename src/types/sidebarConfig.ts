@@ -131,6 +131,72 @@ export interface MusicWidget {
 	pages?: SidebarPage[];
 }
 
+/** 最新动态（构建期从 moments 集合直出最新 N 条，链接到瞬间页锚点；零客户端请求） */
+export interface MomentsWidget {
+	type: "moments";
+	enable: boolean;
+	slot: SidebarWidgetSlot;
+	column?: SidebarColumn;
+	/** 限定显示的页面，省略或空数组表示所有页面 */
+	pages?: SidebarPage[];
+	/** 展示的最新动态条数，默认 3（最小 1） */
+	limit?: number;
+}
+
+/** 广告位图片 */
+export interface AdvertisementImage {
+	/** 图片地址（站内路径以 / 开头，站外为完整 URL） */
+	src: string;
+	/** 替代文本，省略时回退为通用"广告"描述 */
+	alt?: string;
+	/** 点击图片跳转的链接，省略则不可点击 */
+	link?: string;
+	/** 链接是否在新标签页打开 */
+	external?: boolean;
+}
+
+/** 广告位链接按钮 */
+export interface AdvertisementLink {
+	/** 按钮文案 */
+	text: string;
+	/** 跳转地址 */
+	url: string;
+	/** 是否在新标签页打开（默认按 url 是否为 http(s) 判断） */
+	external?: boolean;
+}
+
+/** 广告位内容载荷：缺省时不渲染任何 DOM（零额外负担） */
+export interface AdvertisementPayload {
+	/** 自定义标题，省略时使用 i18n 通用"广告"标题 */
+	title?: string;
+	image?: AdvertisementImage;
+	/** 图片下方的补充文案 */
+	content?: string;
+	link?: AdvertisementLink;
+	/** 是否显示关闭按钮（访客关闭状态按 closeDuration 记忆） */
+	closable?: boolean;
+	/** 关闭记忆时长（秒），默认 86400（一天） */
+	closeDuration?: number;
+	/** 展示次数上限：访客关闭后按 localStorage 计数，超过即不再展示；<=0 表示不限 */
+	displayCount?: number;
+	/** 过期时间（ISO 字符串），构建期判定，过期后完全不渲染 */
+	expireDate?: string;
+	/** 内容区内边距（CSS 值，如 "0" 或 "0.5rem"），省略时用默认 1rem 语义 */
+	padding?: string;
+}
+
+/** 广告位（内容由 ad 载荷驱动；ad 缺省或已过期时零 DOM） */
+export interface AdvertisementWidget {
+	type: "advertisement";
+	enable: boolean;
+	slot: SidebarWidgetSlot;
+	column?: SidebarColumn;
+	/** 限定显示的页面，省略或空数组表示所有页面 */
+	pages?: SidebarPage[];
+	/** 广告内容载荷，缺省时不渲染 */
+	ad?: AdvertisementPayload;
+}
+
 export type SidebarWidget =
 	| ProfileWidget
 	| CategoriesWidget
@@ -139,7 +205,9 @@ export type SidebarWidget =
 	| StatsWidget
 	| CalendarWidget
 	| TocWidget
-	| MusicWidget;
+	| MusicWidget
+	| MomentsWidget
+	| AdvertisementWidget;
 
 /**
  * 侧栏整体配置。components 渲染顺序 = 数组顺序，top 恒排在 sticky 之前。

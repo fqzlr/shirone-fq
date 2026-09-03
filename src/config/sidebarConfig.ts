@@ -83,6 +83,14 @@ export const sidebarConfig: SidebarConfig = withUserConfig("sidebar", {
 			column: "secondary",
 			pages: ["home", "archive", "categories", "tags"],
 		},
+		// 最新动态：构建期直出最新 N 条动态摘要，链接到瞬间页锚点（零客户端请求）
+		{
+			type: "moments",
+			enable: true,
+			slot: "top",
+			column: "secondary",
+			limit: 3,
+		},
 		{ type: "calendar", enable: true, slot: "top", column: "secondary" },
 		{
 			type: "toc",
@@ -91,5 +99,7 @@ export const sidebarConfig: SidebarConfig = withUserConfig("sidebar", {
 			column: "secondary",
 			pages: ["post"],
 		},
+		// 广告位：内容由 ad 载荷驱动，缺省时零 DOM（零额外负担）
+		{ type: "advertisement", enable: false, slot: "sticky" },
 	],
 });

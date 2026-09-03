@@ -184,6 +184,8 @@ export const sidebarConfig: SidebarConfig = {
 | `calendar` | `Calendar` | `getCalendarData` | `WidgetLayout` | `startOfWeek?`（默认 `"mon"`） |
 | `music` | `MusicSidebar`（organisms） | `musicConfig` | `WidgetLayout` | —（内容与初始状态来自全局配置） |
 | `toc` | `SidebarTOC` | 当前文章 headings | `WidgetLayout` | —（通常限定 `pages: ["post"]`） |
+| `moments` | `LatestMoments` | `getRecentMomentItems` | `WidgetLayout` | `limit?`（默认 3，最小 1） |
+| `advertisement` | `Advertisement` | widget 自带 `ad` 载荷 | `WidgetLayout` | `ad?`（图片/文案/链接/关闭与次数策略，缺省零 DOM） |
 
 逐个文档见 `sidebar-widgets.md`。
 

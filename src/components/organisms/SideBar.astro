@@ -1,4 +1,5 @@
 ---
+import Advertisement from "@components/molecules/Advertisement.astro";
 /**
  * 侧边栏（数据驱动）：遍历 sidebarConfig.components 渲染 widget。
  * componentMap 是唯一的 widget 注册表——新增 widget 时在
@@ -13,6 +14,7 @@
 import Announcement from "@components/molecules/Announcement.astro";
 import Calendar from "@components/molecules/Calendar.astro";
 import Categories from "@components/molecules/Categories.astro";
+import LatestMoments from "@components/molecules/LatestMoments.astro";
 import SidebarTOC from "@components/molecules/SidebarTOC.astro";
 import SiteStats from "@components/molecules/SiteStats.astro";
 import Tags from "@components/molecules/Tags.astro";
@@ -75,6 +77,8 @@ const componentMap = {
 	calendar: Calendar,
 	toc: SidebarTOC,
 	music: MusicSidebar,
+	moments: LatestMoments,
+	advertisement: Advertisement,
 } satisfies Record<SidebarWidget["type"], unknown>;
 
 type WidgetRenderer = (props: Record<string, unknown>) => unknown;
