@@ -1,4 +1,35 @@
 const scriptCache = new Map<string, Promise<void>>();
+const moduleCache = new Map<string, Promise<unknown>>();
+
+/**
+ * 确保指定 URL 的 ESM 模块只被动态导入一次。
+ * 返回模块命名空间 Promise，重复调用复用同一个 Promise。
+ */
+export function loadModuleOnce<T = Record<string, unknown>>(
+	url: string,
+): Promise<T> {
+	const normalizedUrl = url.trim();
+	if (!normalizedUrl) {
+		return Promise.reject(new Error("Empty module URL provided"));
+	}
+
+	const cached = moduleCache.get(normalizedUrl);
+	if (cached) {
+		return cached as Promise<T>;
+	}
+
+	// 动态 import 的模块由浏览器模块注册表按 URL 去重；
+	// 此处缓存 Promise 以同时去重"加载中"状态并统一失败重试语义
+	const promise = import(/* @vite-ignore */ normalizedUrl)
+		.then((mod) => mod as T)
+		.catch((error) => {
+			moduleCache.delete(normalizedUrl);
+			throw error;
+		});
+
+	moduleCache.set(normalizedUrl, promise);
+	return promise;
+}
 
 /**
  * 确保指定 URL 的外部脚本在页面中只被加载一次。

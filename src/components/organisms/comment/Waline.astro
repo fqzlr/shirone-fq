@@ -1,0 +1,426 @@
+---
+import LoadingIndicator from "@components/atoms/feedback/LoadingIndicator.svelte";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import stylus from "stylus";
+import type { CommentContext, WalineConfig } from "@/types/commentConfig";
+
+interface Props {
+	context: CommentContext;
+	config: WalineConfig;
+	lazy?: boolean;
+}
+
+const { context, config, lazy = true } = Astro.props;
+const resolvedLang = config.lang === "auto" ? context.language : config.lang;
+
+const walineStylus = `/* ==========================================================================
+	   Waline 最小化补丁（Minimal Patch）
+	   令牌规范：100% 消费 Shirone M3E 语义令牌，天然支持明暗模式自适应
+	   ========================================================================== */
+
+	.shirone-waline-wrapper
+		/* 1. 基础变量映射到 M3E 令牌 */
+		--waline-theme-color: var(--primary)
+		--waline-active-color: var(--primary)
+		--waline-color: var(--on-surface)
+		--waline-border-color: var(--outline-variant)
+		--waline-bgcolor: var(--surface-container-low)
+		--waline-bgcolor-hover: var(--surface-container)
+		--waline-disable-bgcolor: var(--surface-container)
+		--waline-disable-color: var(--on-surface-variant)
+		--waline-badge-bg: var(--primary)
+		--waline-badge-color: var(--on-primary)
+		--waline-info-bgcolor: var(--surface-container)
+		--waline-info-color: var(--on-surface-variant)
+		--waline-bq-color: var(--on-surface-variant)
+		--waline-border-width: 1px
+		--waline-avatar-size: 2.5rem
+		--waline-avatar-radius: var(--shape-corner-full)
+		font-size: 0.875rem
+		line-height: 1.625
+
+		.waline-skeleton.hidden
+			display: none !important
+
+	/* 2. 编辑区 */
+	.shirone-waline-wrapper .wl-editor
+		width: 100%
+		min-height: 7rem
+		padding: 0.875rem 1rem
+		resize: vertical
+		border: 1px solid var(--outline-variant) !important
+		border-radius: var(--shape-corner-m) !important
+		background: var(--surface-container-low) !important
+		color: var(--on-surface) !important
+		font-family: inherit
+		font-size: 0.875rem
+		line-height: 1.5
+		transition: border-color var(--m3e-duration-short) var(--m3e-easing-standard),
+		            box-shadow var(--m3e-duration-short) var(--m3e-easing-standard)
+
+		&:focus
+			border-color: var(--primary) !important
+			box-shadow: 0 0 0 2px var(--primary-container) !important
+			outline: none !important
+
+		&::placeholder
+			color: var(--on-surface-variant) !important
+			opacity: 0.7
+
+	.shirone-waline-wrapper .wl-header
+		display: grid !important
+		grid-template-columns: repeat(3, minmax(0, 1fr))
+		gap: var(--m3e-space-3, 0.75rem)
+		align-items: stretch
+
+		@media (max-width: 767px)
+			grid-template-columns: minmax(0, 1fr)
+
+		.wl-header-item
+			display: grid !important
+			grid-template-columns: max-content minmax(0, 1fr)
+			align-items: center
+			border: 1px solid var(--outline-variant)
+			border-radius: var(--shape-corner-m)
+			background: var(--surface-container-low)
+			transition: border-color var(--m3e-duration-short) var(--m3e-easing-standard),
+			            box-shadow var(--m3e-duration-short) var(--m3e-easing-standard)
+
+			&:focus-within
+				border-color: var(--primary)
+				box-shadow: 0 0 0 2px var(--primary-container)
+
+			&:has(input:invalid)
+				border-color: var(--error)
+
+			label
+				display: flex
+				align-items: center
+				height: 100%
+				padding: 0 var(--m3e-space-3, 0.75rem)
+				border-right: 1px solid var(--outline-variant)
+				background: var(--surface-container)
+				color: var(--on-surface-variant)
+				font: var(--m3e-type-label-medium)
+				white-space: nowrap
+
+			input
+				width: 100%
+				height: 3rem
+				padding: 0 var(--m3e-space-3, 0.75rem)
+				border: none !important
+				background: transparent !important
+				box-shadow: none !important
+				color: var(--on-surface) !important
+				font-family: inherit
+				font-size: 0.875rem
+
+				&:focus
+					outline: none !important
+
+				&::placeholder
+					color: var(--on-surface-variant)
+					opacity: 0.7
+
+	/* 3. 操作按钮 */
+	.shirone-waline-wrapper .wl-btn
+		border: none !important
+		border-radius: var(--shape-corner-m) !important
+		padding: 0 1rem !important
+		height: 2.75rem !important
+		min-width: 4rem
+		background: var(--surface-container-high) !important
+		color: var(--btn-content) !important
+		font-weight: 500 !important
+		font-size: 0.875rem !important
+		cursor: pointer
+		transition: opacity var(--m3e-duration-short) var(--m3e-easing-standard),
+		            background-color var(--m3e-duration-short) var(--m3e-easing-standard),
+		            color var(--m3e-duration-short) var(--m3e-easing-standard),
+		            transform var(--m3e-duration-short) var(--m3e-easing-emphasized-decelerate)
+
+		&:hover
+			opacity: 0.9
+
+		&:disabled
+			background: var(--surface-container) !important
+			color: var(--on-surface-variant) !important
+			opacity: 0.38 !important
+			cursor: not-allowed
+
+	.shirone-waline-wrapper .wl-btn.primary
+		background: var(--primary) !important
+		color: var(--on-primary) !important
+
+	/* 4. 评论面板与计数 */
+	.shirone-waline-wrapper .wl-panel
+		margin: var(--m3e-space-3, 0.75rem) 0
+		border: 1px solid var(--outline-variant)
+		border-radius: var(--shape-corner-l)
+		background: var(--surface-container-low)
+		box-shadow: var(--m3e-elevation-1)
+
+	.shirone-waline-wrapper .wl-count
+		color: var(--on-surface)
+
+		.wl-num
+			color: var(--primary)
+
+	.shirone-waline-wrapper .wl-empty
+		min-height: 5rem
+		display: flex
+		align-items: center
+		justify-content: center
+		color: var(--on-surface-variant)
+
+	/* 5. 单条评论卡片与嵌套回复 */
+	.shirone-waline-wrapper .wl-item
+		border: 1px solid var(--outline-variant)
+		border-radius: var(--shape-corner-l)
+		padding: 1rem
+		margin-bottom: 0.75rem
+		background: transparent
+		transition: box-shadow var(--m3e-duration-short) var(--m3e-easing-standard)
+
+		&:hover
+			box-shadow: var(--m3e-elevation-1)
+
+	.shirone-waline-wrapper .wl-item.wl-root-level .wl-item
+		background: var(--page-bg)
+		border-radius: var(--shape-corner-m)
+		padding: 0.75rem
+
+	.shirone-waline-wrapper .wl-head .wl-nick
+		color: var(--on-surface) !important
+		font-weight: bold
+
+		&:hover
+			color: var(--primary) !important
+
+	.shirone-waline-wrapper .wl-badge
+		border: none !important
+		border-radius: var(--shape-corner-s) !important
+		background: var(--btn-regular-bg) !important
+		color: var(--btn-content) !important
+
+	.shirone-waline-wrapper .wl-time
+		color: var(--on-surface-variant) !important
+		font-size: 0.75rem
+
+	.shirone-waline-wrapper .wl-content
+		color: var(--on-surface)
+
+		a
+			text-decoration: underline
+			text-underline-offset: 3px
+			color: var(--primary) !important
+			font-weight: 500
+
+		:not(pre) > code
+			background: var(--inline-code-bg) !important
+			border-radius: var(--shape-corner-xs) !important
+			color: var(--inline-code-color) !important
+			padding: 0.125rem 0.375rem !important
+			font-weight: 600
+			font-size: 0.85em
+
+	/* 6. 评论操作与表情选择器 */
+	.shirone-waline-wrapper .wl-actions
+		cursor: pointer
+		color: var(--on-surface-variant)
+		transition: color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+		&:hover
+			color: var(--primary)
+
+	.shirone-waline-wrapper .wl-power
+		color: var(--on-surface-variant)
+
+		a
+			color: var(--primary)
+
+	/* 7. 交互稳定性 */
+	.shirone-waline-wrapper .wl-content .wl-like,
+	.shirone-waline-wrapper .wl-quote,
+	.shirone-waline-wrapper .wl-reply,
+	.shirone-waline-wrapper .wl-edit,
+	.shirone-waline-wrapper .wl-delete
+		cursor: pointer
+		transition: color var(--m3e-duration-short) var(--m3e-easing-standard),
+		            background-color var(--m3e-duration-short) var(--m3e-easing-standard)`;
+
+const walineStyles = await new Promise<string>((resolve, reject) => {
+	stylus.render(walineStylus, (error, css) => {
+		if (error) reject(error);
+		else resolve(css);
+	});
+});
+---
+
+<div
+	class="shirone-waline-wrapper relative min-h-[160px] w-full"
+	data-waline-server-url={config.serverURL}
+	data-waline-script-url={config.scriptUrl}
+	data-waline-css-url={config.cssUrl}
+	data-waline-path={context.path}
+	data-waline-lang={resolvedLang}
+	data-waline-lazy={lazy ? "true" : "false"}
+	data-waline-pageview={config.pageview ? "true" : "false"}
+	data-waline-emoji={config.emoji ? JSON.stringify(config.emoji) : undefined}
+	data-waline-word-limit={config.wordLimit ? JSON.stringify(config.wordLimit) : undefined}
+	data-waline-placeholder={config.placeholder || undefined}
+>
+	<!-- 初始加载与 Waline 运行时加载共用同一个 M3E 指示器 -->
+	<div class="waline-skeleton flex min-h-40 w-full flex-col items-center justify-center gap-3 py-6 text-sm text-[var(--on-surface-variant)]" role="status">
+		<span aria-hidden="true">
+			<LoadingIndicator client:visible />
+		</span>
+		<span>{i18n(I18nKey.commentsLoading)}</span>
+	</div>
+
+	<!-- Waline 实际挂载 DOM -->
+	<div class="waline-container hidden"></div>
+
+	<!-- 错误提示容器 -->
+	<div class="waline-error hidden p-4 rounded-[var(--shape-corner-m)] bg-[var(--error-container)] text-[var(--on-error-container)] text-sm text-center">
+		{i18n(I18nKey.commentsLoadFailed)}
+	</div>
+
+	<!-- 无 JavaScript 降级提示 -->
+	<noscript>
+		<div class="p-4 rounded-[var(--shape-corner-m)] bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] text-sm text-center">
+			{i18n(I18nKey.commentsRequiresJavaScript)}
+		</div>
+	</noscript>
+</div>
+
+<script>
+	import { loadModuleOnce } from "@utils/script-loader";
+
+	interface WalineInitOptions {
+		el: HTMLElement | string;
+		serverURL: string;
+		path?: string;
+		lang?: string;
+		dark?: string;
+		pageview?: boolean;
+		emoji?: string[];
+		wordLimit?: [number, number];
+		locale?: Record<string, string>;
+	}
+
+	interface WalineSdk {
+		init: (options: WalineInitOptions) => Promise<unknown>;
+	}
+
+	// 样式表去重：跨实例与 Swup 页面代际只注入一次
+	const injectedStylesheets = new Set<string>();
+
+	function ensureStylesheet(cssUrl: string) {
+		if (injectedStylesheets.has(cssUrl)) return;
+		if (document.querySelector(`link[rel="stylesheet"][href="${cssUrl}"]`)) {
+			injectedStylesheets.add(cssUrl);
+			return;
+		}
+		const link = document.createElement("link");
+		link.rel = "stylesheet";
+		link.href = cssUrl;
+		document.head.appendChild(link);
+		injectedStylesheets.add(cssUrl);
+	}
+
+	function parseJsonDataset<T>(raw: string | undefined): T | undefined {
+		if (!raw) return undefined;
+		try {
+			return JSON.parse(raw) as T;
+		} catch {
+			return undefined;
+		}
+	}
+
+	function initWalineInstance(wrapper: HTMLElement) {
+		if (wrapper.dataset.walineMounted === "true") return;
+
+		const serverURL = wrapper.dataset.walineServerUrl;
+		const scriptUrl = wrapper.dataset.walineScriptUrl;
+		const cssUrl = wrapper.dataset.walineCssUrl;
+		const path = wrapper.dataset.walinePath;
+		const lang = wrapper.dataset.walineLang;
+		const isLazy = wrapper.dataset.walineLazy === "true";
+		const pageview = wrapper.dataset.walinePageview === "true";
+		const emoji = parseJsonDataset<string[]>(wrapper.dataset.walineEmoji);
+		const wordLimit = parseJsonDataset<[number, number]>(
+			wrapper.dataset.walineWordLimit,
+		);
+		const placeholder = wrapper.dataset.walinePlaceholder;
+
+		const skeleton = wrapper.querySelector<HTMLElement>(".waline-skeleton");
+		const container = wrapper.querySelector<HTMLElement>(".waline-container");
+		const errorBox = wrapper.querySelector<HTMLElement>(".waline-error");
+
+		if (!serverURL || !scriptUrl || !cssUrl || !container) return;
+
+		const doInit = async () => {
+			try {
+				ensureStylesheet(cssUrl);
+				const waline = await loadModuleOnce<WalineSdk>(scriptUrl);
+				if (typeof waline?.init !== "function") {
+					throw new Error("Waline SDK init not found in module");
+				}
+
+				wrapper.dataset.walineMounted = "true";
+				container.classList.remove("hidden");
+
+				await waline.init({
+					el: container,
+					serverURL,
+					path: path || window.location.pathname,
+					lang: lang || "zh-CN",
+					dark: "html.dark",
+					pageview,
+					...(emoji && emoji.length > 0 ? { emoji } : {}),
+					...(wordLimit ? { wordLimit } : {}),
+					...(placeholder ? { locale: { placeholder } } : {}),
+				});
+
+				skeleton?.classList.add("hidden");
+			} catch (err) {
+				console.error("[Shirone Comments] Waline initialization failed:", err);
+				skeleton?.classList.add("hidden");
+				errorBox?.classList.remove("hidden");
+			}
+		};
+
+		if (isLazy && "IntersectionObserver" in window) {
+			const observer = new IntersectionObserver(
+				(entries, obs) => {
+					if (entries[0].isIntersecting) {
+						obs.disconnect();
+						doInit();
+					}
+				},
+				{ rootMargin: "200px" },
+			);
+			observer.observe(wrapper);
+		} else {
+			doInit();
+		}
+	}
+
+	function setupAllWaline() {
+		const wrappers = document.querySelectorAll<HTMLElement>(
+			".shirone-waline-wrapper",
+		);
+		wrappers.forEach(initWalineInstance);
+	}
+
+	// 首次页面直达加载
+	setupAllWaline();
+
+	// 响应 Swup 页面替换生命周期
+	document.addEventListener("swup:content:replace", setupAllWaline);
+	document.addEventListener("swup:page:view", setupAllWaline);
+</script>
+
+<style is:inline set:html={walineStyles}></style>

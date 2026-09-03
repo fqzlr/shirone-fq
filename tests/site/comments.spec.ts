@@ -113,6 +113,12 @@ test.describe("Comment System - Configuration & Architecture", () => {
 					"https://cdn.jsdelivr.net/npm/twikoo@1.6.41/dist/twikoo.all.min.js",
 				lang: "auto",
 			},
+			waline: {
+				serverURL: "",
+				scriptUrl: "https://unpkg.com/@waline/client@v3/dist/waline.js",
+				cssUrl: "https://unpkg.com/@waline/client@v3/dist/waline.css",
+				lang: "auto",
+			},
 		};
 		expect(resolveCommentOptions(disabledConfig)).toBeNull();
 
@@ -126,6 +132,12 @@ test.describe("Comment System - Configuration & Architecture", () => {
 					"https://cdn.jsdelivr.net/npm/twikoo@1.6.41/dist/twikoo.all.min.js",
 				lang: "auto",
 			},
+			waline: {
+				serverURL: "",
+				scriptUrl: "https://unpkg.com/@waline/client@v3/dist/waline.js",
+				cssUrl: "https://unpkg.com/@waline/client@v3/dist/waline.css",
+				lang: "auto",
+			},
 		};
 		expect(resolveCommentOptions(noneProviderConfig)).toBeNull();
 
@@ -137,6 +149,12 @@ test.describe("Comment System - Configuration & Architecture", () => {
 				envId: "",
 				scriptUrl:
 					"https://cdn.jsdelivr.net/npm/twikoo@1.6.41/dist/twikoo.all.min.js",
+				lang: "auto",
+			},
+			waline: {
+				serverURL: "",
+				scriptUrl: "https://unpkg.com/@waline/client@v3/dist/waline.js",
+				cssUrl: "https://unpkg.com/@waline/client@v3/dist/waline.css",
 				lang: "auto",
 			},
 		};
@@ -155,6 +173,12 @@ test.describe("Comment System - Configuration & Architecture", () => {
 				lang: "auto",
 				placeholder: "Comment guidance",
 			},
+			waline: {
+				serverURL: "",
+				scriptUrl: "https://unpkg.com/@waline/client@v3/dist/waline.js",
+				cssUrl: "https://unpkg.com/@waline/client@v3/dist/waline.css",
+				lang: "auto",
+			},
 		};
 
 		const resolved = resolveCommentOptions(validConfig);
@@ -163,6 +187,56 @@ test.describe("Comment System - Configuration & Architecture", () => {
 		expect(resolved?.lazy).toBe(true);
 		expect(resolved?.twikoo.envId).toBe("https://twikoo.mysqil.com");
 		expect(resolved?.twikoo.placeholder).toBe("Comment guidance");
+	});
+
+	test("resolveCommentOptions validates waline provider", () => {
+		const missingServerURLConfig: CommentConfig = {
+			enable: true,
+			provider: "waline",
+			lazy: false,
+			twikoo: {
+				envId: "",
+				scriptUrl: "",
+				lang: "auto",
+			},
+			waline: {
+				serverURL: "",
+				scriptUrl: "https://unpkg.com/@waline/client@v3/dist/waline.js",
+				cssUrl: "https://unpkg.com/@waline/client@v3/dist/waline.css",
+				lang: "auto",
+			},
+		};
+		expect(resolveCommentOptions(missingServerURLConfig)).toBeNull();
+
+		const validConfig: CommentConfig = {
+			enable: true,
+			provider: "waline",
+			lazy: false,
+			twikoo: {
+				envId: "",
+				scriptUrl: "",
+				lang: "auto",
+			},
+			waline: {
+				serverURL: "https://waline.example.com",
+				scriptUrl: "https://unpkg.com/@waline/client@v3/dist/waline.js",
+				cssUrl: "https://unpkg.com/@waline/client@v3/dist/waline.css",
+				lang: "auto",
+				pageview: true,
+				wordLimit: [2, 300],
+			},
+		};
+
+		const resolved = resolveCommentOptions(validConfig);
+		expect(resolved).not.toBeNull();
+		expect(resolved?.provider).toBe("waline");
+		expect(resolved?.lazy).toBe(false);
+		expect(resolved?.provider === "waline" && resolved.waline.serverURL).toBe(
+			"https://waline.example.com",
+		);
+		expect(
+			resolved?.provider === "waline" && resolved.waline.wordLimit,
+		).toEqual([2, 300]);
 	});
 
 	// 评论 UI 测试依赖真实渲染的评论区；默认模板关闭评论时跳过，本机开启后自动运行

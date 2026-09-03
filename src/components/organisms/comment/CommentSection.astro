@@ -23,6 +23,10 @@ const Twikoo =
 	options.provider === "twikoo"
 		? (await import("@components/organisms/comment/Twikoo.astro")).default
 		: null;
+const Waline =
+	options.provider === "waline"
+		? (await import("@components/organisms/comment/Waline.astro")).default
+		: null;
 ---
 
 <section
@@ -43,6 +47,14 @@ const Twikoo =
 			<Twikoo
 				context={context}
 				config={options.twikoo}
+				lazy={options.lazy}
+			/>
+		)}
+
+		{options.provider === "waline" && Waline && (
+			<Waline
+				context={context}
+				config={options.waline}
 				lazy={options.lazy}
 			/>
 		)}
