@@ -1,9 +1,13 @@
 export type { PermalinkConfig } from "./permalinkConfig.ts";
 
 import type { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
+import type { SakuraConfig } from "./effectsConfig";
 import type { TextureConfig } from "./textureConfig";
 
-export type WallpaperMode = "banner" | "none";
+export type WallpaperMode = "banner" | "fullscreen" | "overlay" | "none";
+
+/** 全屏壁纸模式的内容布局："classic" 内容紧随导航栏，"hero" 首页首屏整屏展示壁纸 */
+export type FullscreenWallpaperLayout = "classic" | "hero";
 
 /**
  * 统一页面开关：`false` 时该页路由跳转 `/404/`，顶栏与移动抽屉的导航入口
@@ -54,6 +58,8 @@ export type DisplaySettingsConfig = {
 	reduceMotion?: boolean;
 	/** 是否在显示设置面板展示背景纹理选择器（默认 true，且受 texture.enable 控制） */
 	texture?: boolean;
+	/** 是否在显示设置面板展示樱花特效开关（默认 true，且受 effects.sakura 提供默认值） */
+	effects?: boolean;
 };
 
 export type SiteConfig = {
@@ -95,9 +101,26 @@ export type SiteConfig = {
 	};
 	wallpaperMode: {
 		defaultMode: WallpaperMode;
+		/** 全屏壁纸模式默认布局（访客可在设置面板中切换并保存到浏览器） */
+		fullscreen?: {
+			layout?: FullscreenWallpaperLayout;
+		};
+		/** 覆盖透明模式默认参数（访客可在设置面板中调节并保存到浏览器） */
+		overlay?: {
+			/** 壁纸整体不透明度 0-1（默认 0.8） */
+			opacity?: number;
+			/** 壁纸模糊半径 px 0-20（默认 10） */
+			blur?: number;
+			/** 半透明卡片不透明度 0-1（默认 0.6） */
+			cardOpacity?: number;
+		};
 	};
 	/** 页面背景纹理系统配置，支持布尔值直接开关或详细配置对象 */
 	texture?: boolean | TextureConfig;
+	/** 页面特效配置（樱花飘落等画布特效），enable: false 时零负担 */
+	effects?: {
+		sakura?: SakuraConfig;
+	};
 	banner: {
 		src: {
 			desktop: string[];

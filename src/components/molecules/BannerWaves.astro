@@ -158,4 +158,8 @@ const waveB = buildWavePath({
 @media (prefers-reduced-motion: reduce)
 	.banner-waves__layer
 		animation: none
+
+/* 访客关闭水波纹动画：CSS 直接隐藏（渐变过渡由自身开关独立控制） */
+:global(html[data-banner-waves-enabled="false"]) .banner-waves
+	display: none !important
 </style>

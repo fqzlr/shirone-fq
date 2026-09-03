@@ -171,6 +171,16 @@ define({
   --card-bg: var(--surface-container-high)
   --float-panel-bg: var(--surface-container)
 
+/* 半透明卡片底色：覆盖透明 / 全屏 hero 壁纸模式下由 html[data-card-transparent="true"]
+   将 --card-bg 切换为本令牌；透明度由 --card-transparent-opacity（访客可调）驱动。
+   注意：不能引用 --card-bg——data-card-transparent=true 时 --card-bg 又引用本令牌，
+   会形成循环引用导致两者同时失效（卡片背景丢失、透明度滑块无效），
+   因此这里直接使用具体表面令牌，并按明暗分别取 --card-bg 的对应来源 */
+:root
+  --card-bg-transparent: unquote("color-mix(in srgb, var(--surface-container-lowest) calc(var(--card-transparent-opacity, 0.6) * 100%), transparent)")
+:root.dark
+  --card-bg-transparent: unquote("color-mix(in srgb, var(--surface-container-high) calc(var(--card-transparent-opacity, 0.6) * 100%), transparent)")
+
 /* ============================================================
    M3E 响应式 / 间距 / 密度令牌
    断点对齐 Tailwind 默认（sm 640 / md 768 / lg 1024 / xl 1280 / 2xl 1536）。

@@ -202,6 +202,7 @@ const initialMobileBanner = page === "home";
 		</div>
 	</div>
 	{siteConfig.banner.waves.enable && <BannerWaves />}
+	<div class="banner-stage__gradient" aria-hidden="true"></div>
 </section>
 
 <script>
@@ -217,7 +218,14 @@ const initialMobileBanner = page === "home";
 		prefersReducedMotion,
 	} from "@utils/motion";
 	import { getStoredWallpaperMode } from "@utils/setting-utils";
-	import { WALLPAPER_MODE_CHANGE_EVENT } from "@constants/constants";
+	import {
+		BANNER_CAROUSEL_CHANGE_EVENT,
+		BANNER_GRADIENT_CHANGE_EVENT,
+		BANNER_TITLE_CHANGE_EVENT,
+		BANNER_WAVES_CHANGE_EVENT,
+		WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT,
+		WALLPAPER_MODE_CHANGE_EVENT,
+	} from "@constants/constants";
 	import type { SidebarPage } from "@/types/sidebarConfig";
 
 	interface BannerRuntime {
@@ -303,6 +311,13 @@ const initialMobileBanner = page === "home";
 		return document.getElementById("swup-container")?.dataset.currentPage as
 			| SidebarPage
 			| undefined;
+	}
+
+	/** 轮播开关：访客偏好（html data-*）优先，未设置时回退站点配置默认值 */
+	function isCarouselEnabled(): boolean {
+		const attr = document.documentElement.dataset.bannerCarouselEnabled;
+		if (attr !== undefined) return attr === "true";
+		return stage?.dataset.carouselEnabled === "true";
 	}
 
 	function currentViewport(): BannerViewport {
@@ -749,7 +764,7 @@ const initialMobileBanner = page === "home";
 			page,
 			viewport,
 			imageCount: images.length,
-			carouselEnabled: stage.dataset.carouselEnabled === "true",
+			carouselEnabled: isCarouselEnabled(),
 			reducedMotion: prefersReducedMotion(),
 		});
 
@@ -796,20 +811,84 @@ const initialMobileBanner = page === "home";
 		runtime.navigationSyncFrame = window.requestAnimationFrame(() => {
 			runtime.navigationSyncFrame = null;
 			syncBanner();
+			updateHeroTitleParallax();
 			if (animateIn) animateContextIn();
 		});
 	}
 
+	// ---------------------------------------------------------------------
+	// 全屏壁纸 hero 布局：首页标题随滚动平滑上移并淡出（壁纸保持 fixed，
+	// 标题以滚动速度上移、滚动半个视口后完全透明，与参考站一致）。
+	// 其余模式 / 非首页 / 过渡期一律复位，交还 CSS 控制。
+	// ---------------------------------------------------------------------
+	const HERO_TITLE_FADE_RATIO = 0.5;
+	let heroParallaxTicking = false;
+	let lastHeroTransform = "";
+	let lastHeroOpacity = "";
+
+	function isHeroTitleParallaxActive(): boolean {
+		const html = document.documentElement;
+		return (
+			html.dataset.wallpaperMode === "fullscreen" &&
+			html.dataset.fullscreenLayout === "hero" &&
+			currentPage() === "home"
+		);
+	}
+
+	/** 记忆化写入：值未变化时跳过合成层属性的逐帧更新 */
+	function applyHeroTitleParallax(transform: string, opacity: string) {
+		if (transform === lastHeroTransform && opacity === lastHeroOpacity) return;
+		lastHeroTransform = transform;
+		lastHeroOpacity = opacity;
+		const copy = stage?.querySelector<HTMLElement>("[data-banner-home-copy]");
+		if (!copy) return;
+		copy.style.transform = transform;
+		copy.style.opacity = opacity;
+	}
+
+	function updateHeroTitleParallax() {
+		heroParallaxTicking = false;
+		if (!isHeroTitleParallaxActive()) {
+			applyHeroTitleParallax("", "");
+			return;
+		}
+		const scrollY = window.scrollY;
+		// Math.max 防零视口（极端环境 innerHeight=0 时避免 0/0=NaN 写入非法透明度）
+		const fadeScroll = Math.max(window.innerHeight * HERO_TITLE_FADE_RATIO, 1);
+		const ratio = Math.min(scrollY / fadeScroll, 1);
+		applyHeroTitleParallax(`translateY(${-scrollY}px)`, String(1 - ratio));
+	}
+
+	function requestHeroTitleParallax() {
+		if (heroParallaxTicking) return;
+		heroParallaxTicking = true;
+		window.requestAnimationFrame(updateHeroTitleParallax);
+	}
+
 	if (stage) {
 		syncBanner();
+		updateHeroTitleParallax();
 		if (!window.__shironeBannerBound) {
 			window.__shironeBannerBound = true;
 			window.addEventListener(WALLPAPER_MODE_CHANGE_EVENT, () => syncBanner());
+			window.addEventListener(WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, () => syncBanner());
+			window.addEventListener(BANNER_CAROUSEL_CHANGE_EVENT, () => syncBanner());
+			window.addEventListener(BANNER_TITLE_CHANGE_EVENT, () => syncBanner());
+			window.addEventListener(BANNER_WAVES_CHANGE_EVENT, () => syncBanner());
+			window.addEventListener(BANNER_GRADIENT_CHANGE_EVENT, () => syncBanner());
+			window.addEventListener(
+				"scroll",
+				() => requestHeroTitleParallax(),
+				{ passive: true },
+			);
 			window.addEventListener("resize", () => {
+				requestHeroTitleParallax();
 				if (currentViewport() === "desktop" && stage?.hidden === false) {
 					scheduleContextTitleFit();
 				}
 			});
+			window.addEventListener(WALLPAPER_MODE_CHANGE_EVENT, () => requestHeroTitleParallax());
+			window.addEventListener(WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, () => requestHeroTitleParallax());
 			window.matchMedia("(min-width: 1024px)").addEventListener("change", () => syncBanner());
 				window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", () => {
 					if (prefersReducedMotion()) {
@@ -984,12 +1063,79 @@ const initialMobileBanner = page === "home";
 		.banner-stage[data-copy-mode="context"] .banner-stage__copy--context
 			display: flex
 
+		/* 渐变过渡：壁纸底部到背景色的平滑过渡，由渐变开关独立控制 */
+		.banner-stage__gradient
+			position: absolute
+			z-index: 3
+			inset: auto 0 0
+			height: clamp(4rem, 12vh, 10rem)
+			background: linear-gradient(to bottom, transparent, var(--page-bg))
+			pointer-events: none
+
+		:global(html[data-banner-gradient-enabled="false"]) .banner-stage__gradient
+			display: none !important
+
+		/* 访客关闭首页壁纸标题 */
+		:global(html[data-banner-title-enabled="false"]) .banner-stage__copy--home
+			display: none !important
+
+		/* 覆盖透明模式：壁纸固定铺满视口作背景，透明度 / 模糊由显示设置驱动 */
+		:global(html[data-wallpaper-mode="overlay"]) .banner-stage
+			position: fixed
+			inset: 0
+			height: 100vh
+			height: 100lvh
+			z-index: -1
+			pointer-events: none
+			opacity: var(--overlay-opacity, 0.8)
+			transition: opacity var(--m3e-duration-long) var(--m3e-easing-standard)
+
+		:global(html[data-wallpaper-mode="overlay"]) .banner-stage__image
+			filter: blur(var(--overlay-blur, 0px))
+			transform: scale(1.05)
+
+		/* 全屏壁纸 hero 布局：壁纸固定整屏，内容滚动其上；非首页按覆盖透明参数虚化 */
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"]) .banner-stage
+			position: fixed
+			inset: 0
+			height: 100vh
+			height: 100lvh
+			z-index: -1
+			pointer-events: none
+
+		:global(html[data-wallpaper-mode="fullscreen"]) .banner-stage__image
+			transform: scale(1.05)
+
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"] body:not([data-current-page="home"])) .banner-stage__image
+			filter: blur(var(--overlay-blur, 0px))
+
+		/* 全屏壁纸 classic 布局：复刻文档流全屏——壁纸随页滚动，
+		   首页整屏（内容首屏之下），非首页与横幅模式一致（桌面横幅高度，不虚化） */
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"]) .banner-stage
+			position: absolute
+			pointer-events: none
+
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body[data-current-page="home"]) .banner-stage
+			height: 100vh
+			height: 100lvh
+
+		@media (max-width: 1023.98px)
+			:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body:not([data-current-page="home"])) .banner-stage
+				display: none
+
+		/* 水波纹 / 渐变过渡是横幅底部的过渡装饰：覆盖透明与全屏 hero 下无意义，
+		   classic 壁纸随页滚动，与横幅模式一致保留 */
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"] .banner-waves),
+		:global(html[data-wallpaper-mode="overlay"] .banner-waves),
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"] .banner-stage__gradient),
+		:global(html[data-wallpaper-mode="overlay"] .banner-stage__gradient)
+			display: none !important
 
 	:global(html[data-wallpaper-mode="none"]) .banner-stage
 		display: none
 
 	@media (max-width: 1023.98px)
-		:global(body:not([data-current-page="home"])) .banner-stage
+		:global(html[data-wallpaper-mode="banner"] body:not([data-current-page="home"])) .banner-stage
 			display: none
 
 		.banner-stage

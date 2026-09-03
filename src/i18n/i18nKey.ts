@@ -15,6 +15,21 @@ enum I18nKey {
 	friendsBanner = "friendsBanner",
 	friendsCount = "friendsCount",
 	friendsCounts = "friendsCounts",
+	/** 友链页信息模块：申请友链 / 注意事项（见 src/config/friendPageConfig.ts） */
+	friendGuideApply = "friendGuideApply",
+	friendGuideNotes = "friendGuideNotes",
+	friendFieldSiteName = "friendFieldSiteName",
+	friendFieldSiteDesc = "friendFieldSiteDesc",
+	friendFieldSiteUrl = "friendFieldSiteUrl",
+	friendFieldAvatar = "friendFieldAvatar",
+	friendStep1Title = "friendStep1Title",
+	friendStep1Desc = "friendStep1Desc",
+	friendStep2Title = "friendStep2Title",
+	friendStep2Desc = "friendStep2Desc",
+	friendStep3Title = "friendStep3Title",
+	friendStep3Desc = "friendStep3Desc",
+	friendCopyField = "friendCopyField",
+	friendCopyTemplate = "friendCopyTemplate",
 
 	guestbook = "guestbook",
 	guestbookBanner = "guestbookBanner",
@@ -26,6 +41,8 @@ enum I18nKey {
 	momentsCounts = "momentsCounts",
 	pinned = "pinned",
 	loadMore = "loadMore",
+	/** 侧栏「最新动态」widget 的查看更多链接 */
+	moreMoments = "moreMoments",
 
 	anime = "anime",
 	animeBanner = "animeBanner",
@@ -141,6 +158,10 @@ enum I18nKey {
 	codeTreeCollapse = "codeTreeCollapse",
 	announcement = "announcement",
 	announcementClose = "announcementClose",
+	/** 侧栏广告位 widget 的默认标题 */
+	advertisement = "advertisement",
+	/** 侧栏广告位关闭按钮的无障碍名称 */
+	advertisementClose = "advertisementClose",
 
 	comments = "comments",
 	commentsLoading = "commentsLoading",
@@ -236,6 +257,34 @@ enum I18nKey {
 	wallpaperMode = "wallpaperMode",
 	wallpaperModeBanner = "wallpaperModeBanner",
 	wallpaperModeNone = "wallpaperModeNone",
+	wallpaperModeFullscreen = "wallpaperModeFullscreen",
+	wallpaperModeOverlay = "wallpaperModeOverlay",
+
+	// 显示设置面板标签页
+	settingsTabAppearance = "settingsTabAppearance",
+	settingsTabWallpaper = "settingsTabWallpaper",
+	settingsTabEffects = "settingsTabEffects",
+
+	// 全屏壁纸布局
+	fullscreenLayout = "fullscreenLayout",
+	fullscreenLayoutClassic = "fullscreenLayoutClassic",
+	fullscreenLayoutHero = "fullscreenLayoutHero",
+
+	// 覆盖透明参数
+	overlaySettings = "overlaySettings",
+	overlayOpacity = "overlayOpacity",
+	overlayBlur = "overlayBlur",
+	overlayCardOpacity = "overlayCardOpacity",
+
+	// 横幅壁纸设置
+	wallpaperSettings = "wallpaperSettings",
+	wallpaperTitle = "wallpaperTitle",
+	wallpaperCarousel = "wallpaperCarousel",
+	wavesAnimation = "wavesAnimation",
+	gradientTransition = "gradientTransition",
+
+	// 特效
+	sakuraEffect = "sakuraEffect",
 
 	texturePreset = "texturePreset",
 	texturePresetNone = "texturePresetNone",

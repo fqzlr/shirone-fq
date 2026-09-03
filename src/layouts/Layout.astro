@@ -59,6 +59,23 @@ const lightTheme =
 	expressiveCodeConfig.lightTheme ?? expressiveCodeConfig.theme;
 const darkTheme = expressiveCodeConfig.darkTheme ?? expressiveCodeConfig.theme;
 const defaultWallpaperMode = siteConfig.wallpaperMode.defaultMode;
+const defaultFullscreenLayout =
+	siteConfig.wallpaperMode.fullscreen?.layout === "hero" ? "hero" : "classic";
+const defaultOverlayOpacity = Math.min(
+	Math.max(siteConfig.wallpaperMode.overlay?.opacity ?? 0.8, 0),
+	1,
+);
+const defaultOverlayBlur = Math.min(
+	Math.max(siteConfig.wallpaperMode.overlay?.blur ?? 10, 0),
+	20,
+);
+const defaultOverlayCardOpacity = Math.min(
+	Math.max(siteConfig.wallpaperMode.overlay?.cardOpacity ?? 0.6, 0),
+	1,
+);
+const defaultBannerTitleEnabled = siteConfig.banner.homeText.enable;
+const defaultBannerCarouselEnabled = siteConfig.banner.carousel.enable;
+const defaultBannerWavesEnabled = siteConfig.banner.waves.enable;
 const textureOptions = resolveTextureOptions();
 const defaultTexturePreset = textureOptions.defaultPreset;
 const defaultTextureOpacity = textureOptions.defaultOpacity;
@@ -136,7 +153,7 @@ const hasMonoFont =
 			/>
 		))}
 
-		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, lightTheme, darkTheme, defaultWallpaperMode, defaultTexturePreset, defaultTextureOpacity, textureEnabled}}>
+		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, lightTheme, darkTheme, defaultWallpaperMode, defaultFullscreenLayout, defaultOverlayOpacity, defaultOverlayBlur, defaultOverlayCardOpacity, defaultBannerTitleEnabled, defaultBannerCarouselEnabled, defaultBannerWavesEnabled, defaultTexturePreset, defaultTextureOpacity, textureEnabled}}>
 			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
 			let isDark = false;
 			switch (theme) {
@@ -163,10 +180,47 @@ const hasMonoFont =
 				document.documentElement.classList.add('motion-reduced');
 			}
 			const storedWallpaperMode = localStorage.getItem('wallpaper-mode');
-			const wallpaperMode = storedWallpaperMode === 'banner' || storedWallpaperMode === 'none'
+			const wallpaperMode = ['banner', 'none', 'fullscreen', 'overlay'].includes(storedWallpaperMode)
 				? storedWallpaperMode
 				: defaultWallpaperMode;
 			document.documentElement.dataset.wallpaperMode = wallpaperMode;
+			// 全屏壁纸布局（classic / hero）与半透明卡片开关：首帧前同步，避免闪烁
+			const storedFullscreenLayout = localStorage.getItem('wallpaper-fullscreen-layout');
+			const fullscreenLayout = storedFullscreenLayout === 'hero' || storedFullscreenLayout === 'classic'
+				? storedFullscreenLayout
+				: defaultFullscreenLayout;
+			document.documentElement.dataset.fullscreenLayout = fullscreenLayout;
+			document.documentElement.dataset.cardTransparent = String(
+				wallpaperMode === 'overlay' || (wallpaperMode === 'fullscreen' && fullscreenLayout === 'hero'),
+			);
+			// 覆盖透明参数首帧前落位（壁纸透明度 / 模糊 / 半透明卡片不透明度）
+			// 横幅运行时开关（首页标题 / 轮播 / 水波纹 / 渐变过渡）：首帧前落位，CSS 直接消费
+			const storedToggle = (key, fallback) => {
+				const value = localStorage.getItem(key);
+				return value === null ? fallback : value === 'true';
+			};
+			document.documentElement.dataset.bannerTitleEnabled = String(storedToggle('wallpaper-banner-title', defaultBannerTitleEnabled));
+			document.documentElement.dataset.bannerCarouselEnabled = String(storedToggle('wallpaper-banner-carousel', defaultBannerCarouselEnabled));
+			document.documentElement.dataset.bannerWavesEnabled = String(storedToggle('wallpaper-banner-waves', defaultBannerWavesEnabled));
+			document.documentElement.dataset.bannerGradientEnabled = String(storedToggle('wallpaper-banner-gradient', true));
+			const storedOverlayOpacity = parseFloat(localStorage.getItem('wallpaper-overlay-opacity') || '');
+			if (!isNaN(storedOverlayOpacity)) {
+				document.documentElement.style.setProperty('--overlay-opacity', String(Math.min(1, Math.max(0, storedOverlayOpacity))));
+			} else {
+				document.documentElement.style.setProperty('--overlay-opacity', String(defaultOverlayOpacity));
+			}
+			const storedOverlayBlur = parseFloat(localStorage.getItem('wallpaper-overlay-blur') || '');
+			if (!isNaN(storedOverlayBlur)) {
+				document.documentElement.style.setProperty('--overlay-blur', `${Math.min(20, Math.max(0, storedOverlayBlur))}px`);
+			} else {
+				document.documentElement.style.setProperty('--overlay-blur', `${defaultOverlayBlur}px`);
+			}
+			const storedCardOpacity = parseFloat(localStorage.getItem('wallpaper-overlay-card-opacity') || '');
+			if (!isNaN(storedCardOpacity)) {
+				document.documentElement.style.setProperty('--card-transparent-opacity', String(Math.min(1, Math.max(0, storedCardOpacity))));
+			} else {
+				document.documentElement.style.setProperty('--card-transparent-opacity', String(defaultOverlayCardOpacity));
+			}
 
 			if (textureEnabled) {
 				const storedTexturePreset = localStorage.getItem('texture-preset');
@@ -221,6 +275,14 @@ const hasMonoFont =
 
 <style lang="stylus" is:global>
 @import "../styles/variables.styl"
+
+/* 覆盖透明 / 全屏 hero 模式：卡片底色切换为半透明令牌。
+   必须与 --card-bg 的 :root 定义同处未分层样式——若放进 @layer components，
+   级联层规则（未分层 > 分层，特异性不参与比较）会让覆盖永远失效，卡片透明度滑块不动。
+   放在 variables 之后并提高特异性（:root[attr] = 0,2,0 > :root 的 0,1,0；
+   与 :root.dark 的 0,2,0 同级但源顺序在后），明暗两套下都稳定取胜 */
+:root[data-card-transparent="true"]
+	--card-bg: var(--card-bg-transparent)
 </style>
 
 <style is:global define:vars={{
@@ -240,6 +302,22 @@ const hasMonoFont =
 		}
 		body[data-banner-layout="banner"] #main-layout { top: var(--banner-content-top); }
 		body[data-banner-layout="banner"] #top-row { height: calc(var(--banner-stage-height) - 4.5rem); }
+		/* 卡片半透明切换规则在上方未分层样式中（级联层优先于特异性，分层会失效） */
+		/* 全屏壁纸 hero 布局：首页内容推到首屏之下，壁纸固定整屏作为开场画面 */
+		html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"] body[data-current-page="home"] #main-layout {
+			top: 100vh;
+			top: 100lvh;
+		}
+		/* 全屏壁纸 classic 布局：壁纸随页滚动，首页内容首屏之下；非首页桌面与横幅模式一致 */
+		html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body[data-current-page="home"] #main-layout {
+			top: 100vh;
+			top: 100lvh;
+		}
+		@media (min-width: 1024px) {
+			html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body:not([data-current-page="home"]) #main-layout {
+				top: var(--banner-content-top);
+			}
+		}
 		.navbar-hidden { opacity: 0; transform: translateY(-4rem); }
 	}
 	@media (min-width: 1024px) {
@@ -261,8 +339,24 @@ const hasMonoFont =
 <script>
 import { initLastUpdatedNotices } from "../utils/last-updated-notice";
 import {getHue, getStoredTheme, setHue, setTheme} from "../utils/setting-utils";
-import { WALLPAPER_MODE_CHANGE_EVENT, BANNER_HEIGHT, BANNER_HEIGHT_EXTEND } from "../constants/constants";
+import { WALLPAPER_MODE_CHANGE_EVENT, BANNER_HEIGHT, BANNER_HEIGHT_EXTEND, SAKURA_TOGGLE_EVENT } from "../constants/constants";
 import { copyPageLink } from "../utils/copy-page-link";
+import { getSakuraEnabled } from "../utils/sakura-utils";
+
+// 樱花特效：开启时才动态加载画布管理器（关闭状态零请求、零打包负担）；
+// 加载器常驻监听设置面板开关，首次开启时再拉取管理器代码。
+// 注意：必须显式调用 setupSakura()（模块 import 本身没有副作用，只拉代码不启动特效）
+let sakuraSetupPromise: Promise<unknown> | null = null;
+function ensureSakuraSetup() {
+	sakuraSetupPromise ??= import("../utils/sakura-manager").then((m) =>
+		m.setupSakura(),
+	);
+	return sakuraSetupPromise;
+}
+if (getSakuraEnabled()) void ensureSakuraSetup();
+window.addEventListener(SAKURA_TOGGLE_EVENT, (e) => {
+	if ((e as CustomEvent<{ enabled: boolean }>).detail?.enabled) void ensureSakuraSetup();
+});
 
 function setClickOutsideToClose(panel: string, ignores: string[]) {
 	document.addEventListener('click', event => {

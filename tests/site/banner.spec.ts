@@ -467,7 +467,9 @@ test.describe("banner wallpaper", () => {
 		await page.goto("/", { waitUntil: "domcontentloaded" });
 		await waitForBannerState(page, true);
 		await page.locator("#display-settings-switch").click();
-		await page.getByText("Solid", { exact: true }).click();
+		// 壁纸模式选项位于「壁纸」标签页，先切换标签再点击模式
+		await page.getByRole("tab", { name: /Wallpaper|壁纸/ }).click();
+		await page.getByText(/Solid|纯色/).click();
 		await waitForBannerState(page, false);
 		expect(
 			await page.evaluate(() => localStorage.getItem("wallpaper-mode")),
@@ -477,7 +479,8 @@ test.describe("banner wallpaper", () => {
 		await page.reload({ waitUntil: "domcontentloaded" });
 		await waitForBannerState(page, false);
 		await page.locator("#display-settings-switch").click();
-		await page.getByText("Banner", { exact: true }).click();
+		await page.getByRole("tab", { name: /Wallpaper|壁纸/ }).click();
+		await page.getByText(/Banner|横幅/).click();
 		await waitForBannerState(page, true);
 	});
 

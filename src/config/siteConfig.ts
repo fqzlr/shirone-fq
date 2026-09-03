@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	displaySettings: {
 		colorStyle: true, // 是否展示配色风格 9 宫格
 		colorSpec: true, // 是否展示 Color Spec 调色规范切换
-		wallpaperMode: true, // 是否展示页面背景（纯色/横幅）切换
+		wallpaperMode: true, // 是否展示页面背景模式（横幅/全屏/覆盖透明/纯色）切换
 		layoutMode: true, // 是否展示文章列表布局（列表/网格）切换
 		reduceMotion: true, // 是否展示减少动效切换
 		texture: true, // 是否展示背景纹理选择
@@ -58,10 +58,21 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		// 差异仅在调色板派生（库的 colorSpec 静态为 2025 委托）
 		spec: "2025",
 	},
-	// 默认页面背景模式："banner" 使用壁纸横幅，"none" 使用主题纯色。
+	// 默认页面背景模式："banner" 横幅壁纸，"fullscreen" 全屏壁纸，
+	// "overlay" 覆盖透明（壁纸固定铺满视口 + 半透明卡片），"none" 纯色背景。
 	// 访客在“显示设置”中的选择会保存在浏览器中，并覆盖这里的默认值。
 	wallpaperMode: {
 		defaultMode: "banner",
+		// 全屏壁纸模式默认布局："classic" 内容紧随导航栏；"hero" 首页首屏整屏展示壁纸
+		fullscreen: {
+			layout: "classic",
+		},
+		// 覆盖透明模式默认参数（透明度 / 模糊半径 / 半透明卡片不透明度）
+		overlay: {
+			opacity: 0.8,
+			blur: 10,
+			cardOpacity: 0.6,
+		},
 	},
 	// 页面背景纹理系统配置（5 大精美预设 + 零开销 HCT 动态取色）
 	texture: {
@@ -69,6 +80,25 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		defaultPreset: "starlight", // 默认纹理预设："none" | "starlight" | "cyber-dots" | "topography" | "geometric" | "sakura"
 		defaultOpacity: 0.12, // 默认纹理浓度 (0.05 ~ 0.25)
 		allowMotion: true, // 是否允许背景微动效（开启 reduced-motion 时自动静止）
+	},
+	// 页面特效配置：樱花飘落（画布绘制，OffscreenCanvas + Worker 优先）。
+	// enable 仅为站点默认值，访客可在「显示设置 → 特效」中开关并保存到浏览器；
+	// 关闭（默认）时零网络请求、零 DOM、零打包负担。
+	effects: {
+		sakura: {
+			enable: false,
+			sakuraNum: 21,
+			limitTimes: -1,
+			size: { min: 0.5, max: 1.1 },
+			opacity: { min: 0.3, max: 0.9 },
+			speed: {
+				horizontal: { min: -1.7, max: -1.2 },
+				vertical: { min: 1.5, max: 2.2 },
+				rotation: 0.03,
+				fadeSpeed: 0.03,
+			},
+			zIndex: 100,
+		},
 	},
 	banner: {
 		// 推荐将图片放入 src/assets，并填写相对 src 的路径，以启用构建期 AVIF/WebP 响应式优化。

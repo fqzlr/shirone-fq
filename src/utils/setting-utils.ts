@@ -1,5 +1,13 @@
 import {
 	AUTO_MODE,
+	BANNER_CAROUSEL_CHANGE_EVENT,
+	BANNER_CAROUSEL_ENABLED_KEY,
+	BANNER_GRADIENT_CHANGE_EVENT,
+	BANNER_GRADIENT_ENABLED_KEY,
+	BANNER_TITLE_CHANGE_EVENT,
+	BANNER_TITLE_ENABLED_KEY,
+	BANNER_WAVES_CHANGE_EVENT,
+	BANNER_WAVES_ENABLED_KEY,
 	DARK_MODE,
 	DEFAULT_THEME,
 	LIGHT_MODE,
@@ -7,12 +15,21 @@ import {
 	TEXTURE_OPACITY_KEY,
 	TEXTURE_PRESET_KEY,
 	TEXTURE_PRESETS,
+	WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT,
+	WALLPAPER_FULLSCREEN_LAYOUT_KEY,
 	WALLPAPER_MODE_CHANGE_EVENT,
 	WALLPAPER_MODE_KEY,
+	WALLPAPER_OVERLAY_BLUR_KEY,
+	WALLPAPER_OVERLAY_CARD_OPACITY_KEY,
+	WALLPAPER_OVERLAY_OPACITY_KEY,
 } from "@constants/constants.ts";
 import { applyCurrentScheme } from "@utils/theme-utils";
 import { expressiveCodeConfig, siteConfig } from "@/config";
-import type { LIGHT_DARK_MODE, WallpaperMode } from "@/types/config";
+import type {
+	FullscreenWallpaperLayout,
+	LIGHT_DARK_MODE,
+	WallpaperMode,
+} from "@/types/config";
 import type { TexturePreset } from "@/types/textureConfig";
 
 export function isTexturePreset(value: unknown): value is TexturePreset {
@@ -87,7 +104,12 @@ export function setTextureOpacity(opacity: number): void {
 }
 
 export function isWallpaperMode(value: unknown): value is WallpaperMode {
-	return value === "banner" || value === "none";
+	return (
+		value === "banner" ||
+		value === "none" ||
+		value === "fullscreen" ||
+		value === "overlay"
+	);
 }
 
 export function getDefaultWallpaperMode(): WallpaperMode {
@@ -101,11 +123,267 @@ export function getStoredWallpaperMode(): WallpaperMode {
 	return isWallpaperMode(value) ? value : getDefaultWallpaperMode();
 }
 
-export function setWallpaperMode(mode: WallpaperMode): void {
-	localStorage.setItem(WALLPAPER_MODE_KEY, mode);
+/** 当前模式是否使用半透明卡片（overlay 全模式；fullscreen 仅 hero 布局） */
+function isTransparentCardMode(mode: WallpaperMode): boolean {
+	return (
+		mode === "overlay" ||
+		(mode === "fullscreen" &&
+			document.documentElement.dataset.fullscreenLayout === "hero")
+	);
+}
+
+/** 按当前模式与 fullscreen 布局同步 <html> 的半透明卡片开关（CSS 据此切换卡片底色） */
+function syncWallpaperTransparentClass(mode: WallpaperMode): void {
+	document.documentElement.dataset.cardTransparent = String(
+		isTransparentCardMode(mode),
+	);
+}
+
+export function applyWallpaperModeToDocument(mode: WallpaperMode): void {
 	document.documentElement.dataset.wallpaperMode = mode;
+	syncWallpaperTransparentClass(mode);
 	window.dispatchEvent(
 		new CustomEvent(WALLPAPER_MODE_CHANGE_EVENT, { detail: { mode } }),
+	);
+}
+
+export function setWallpaperMode(mode: WallpaperMode): void {
+	localStorage.setItem(WALLPAPER_MODE_KEY, mode);
+	applyWallpaperModeToDocument(mode);
+}
+
+// 全屏壁纸布局（classic / hero）
+
+export function getDefaultFullscreenLayout(): FullscreenWallpaperLayout {
+	return siteConfig.wallpaperMode.fullscreen?.layout === "hero"
+		? "hero"
+		: "classic";
+}
+
+export function getStoredFullscreenLayout(): FullscreenWallpaperLayout {
+	const value = localStorage.getItem(WALLPAPER_FULLSCREEN_LAYOUT_KEY);
+	return value === "hero" || value === "classic"
+		? value
+		: getDefaultFullscreenLayout();
+}
+
+export function applyFullscreenLayoutToDocument(
+	layout: FullscreenWallpaperLayout,
+): void {
+	const safeLayout = layout === "hero" ? "hero" : "classic";
+	document.documentElement.dataset.fullscreenLayout = safeLayout;
+	// hero 布局在 fullscreen 模式下使用半透明卡片，需重新同步 body 类
+	syncWallpaperTransparentClass(getStoredWallpaperMode());
+	window.dispatchEvent(
+		new CustomEvent(WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, {
+			detail: { layout: safeLayout },
+		}),
+	);
+}
+
+export function setFullscreenLayout(layout: FullscreenWallpaperLayout): void {
+	localStorage.setItem(
+		WALLPAPER_FULLSCREEN_LAYOUT_KEY,
+		layout === "hero" ? "hero" : "classic",
+	);
+	applyFullscreenLayoutToDocument(layout);
+}
+
+// 覆盖透明模式参数（壁纸透明度 / 背景模糊度 / 卡片透明度）
+
+function clampNumber(value: number, min: number, max: number): number {
+	return Math.min(max, Math.max(min, value));
+}
+
+function readStoredNumber(
+	key: string,
+	min: number,
+	max: number,
+): number | null {
+	const value = localStorage.getItem(key);
+	if (value === null) return null;
+	const parsed = Number.parseFloat(value);
+	return Number.isNaN(parsed) ? null : clampNumber(parsed, min, max);
+}
+
+export function getDefaultOverlayOpacity(): number {
+	return clampNumber(siteConfig.wallpaperMode.overlay?.opacity ?? 0.8, 0, 1);
+}
+
+export function getDefaultOverlayBlur(): number {
+	return clampNumber(siteConfig.wallpaperMode.overlay?.blur ?? 10, 0, 20);
+}
+
+export function getDefaultOverlayCardOpacity(): number {
+	return clampNumber(
+		siteConfig.wallpaperMode.overlay?.cardOpacity ?? 0.6,
+		0,
+		1,
+	);
+}
+
+export function getStoredOverlayOpacity(): number {
+	return (
+		readStoredNumber(WALLPAPER_OVERLAY_OPACITY_KEY, 0, 1) ??
+		getDefaultOverlayOpacity()
+	);
+}
+
+export function getStoredOverlayBlur(): number {
+	return (
+		readStoredNumber(WALLPAPER_OVERLAY_BLUR_KEY, 0, 20) ??
+		getDefaultOverlayBlur()
+	);
+}
+
+export function getStoredOverlayCardOpacity(): number {
+	return (
+		readStoredNumber(WALLPAPER_OVERLAY_CARD_OPACITY_KEY, 0, 1) ??
+		getDefaultOverlayCardOpacity()
+	);
+}
+
+/** 壁纸透明度作用于壁纸容器；模糊作用于壁纸图片；卡片透明度作用于全局半透明卡片色 */
+export function applyOverlayOpacityToDocument(opacity: number): void {
+	document.documentElement.style.setProperty(
+		"--overlay-opacity",
+		String(clampNumber(opacity, 0, 1)),
+	);
+}
+
+export function applyOverlayBlurToDocument(blur: number): void {
+	document.documentElement.style.setProperty(
+		"--overlay-blur",
+		`${clampNumber(blur, 0, 20)}px`,
+	);
+}
+
+export function applyOverlayCardOpacityToDocument(cardOpacity: number): void {
+	document.documentElement.style.setProperty(
+		"--card-transparent-opacity",
+		String(clampNumber(cardOpacity, 0, 1)),
+	);
+}
+
+export function applyStoredOverlaySettingsToDocument(): void {
+	applyOverlayOpacityToDocument(getStoredOverlayOpacity());
+	applyOverlayBlurToDocument(getStoredOverlayBlur());
+	applyOverlayCardOpacityToDocument(getStoredOverlayCardOpacity());
+}
+
+export function setOverlayOpacity(opacity: number): void {
+	const safe = clampNumber(opacity, 0, 1);
+	localStorage.setItem(WALLPAPER_OVERLAY_OPACITY_KEY, String(safe));
+	applyOverlayOpacityToDocument(safe);
+}
+
+export function setOverlayBlur(blur: number): void {
+	const safe = clampNumber(blur, 0, 20);
+	localStorage.setItem(WALLPAPER_OVERLAY_BLUR_KEY, String(safe));
+	applyOverlayBlurToDocument(safe);
+}
+
+export function setOverlayCardOpacity(cardOpacity: number): void {
+	const safe = clampNumber(cardOpacity, 0, 1);
+	localStorage.setItem(WALLPAPER_OVERLAY_CARD_OPACITY_KEY, String(safe));
+	applyOverlayCardOpacityToDocument(safe);
+}
+
+// 横幅壁纸运行时开关（首页标题 / 轮播 / 水波纹 / 渐变过渡）
+// 统一写入 <html> 的 data-* 属性：CSS 与 BannerStage 运行时直接读取，切换即生效。
+
+function applyBannerToggleToDocument(
+	attr: string,
+	key: string,
+	enabled: boolean,
+	event: string,
+): void {
+	localStorage.setItem(key, String(enabled));
+	document.documentElement.dataset[attr] = String(enabled);
+	window.dispatchEvent(new CustomEvent(event, { detail: { enabled } }));
+}
+
+function readStoredToggle(key: string): boolean | null {
+	const value = localStorage.getItem(key);
+	return value === null ? null : value === "true";
+}
+
+export function getDefaultBannerTitleEnabled(): boolean {
+	return siteConfig.banner.homeText.enable;
+}
+
+export function getStoredBannerTitleEnabled(): boolean {
+	return (
+		readStoredToggle(BANNER_TITLE_ENABLED_KEY) ?? getDefaultBannerTitleEnabled()
+	);
+}
+
+export function setBannerTitleEnabled(enabled: boolean): void {
+	applyBannerToggleToDocument(
+		"bannerTitleEnabled",
+		BANNER_TITLE_ENABLED_KEY,
+		enabled,
+		BANNER_TITLE_CHANGE_EVENT,
+	);
+}
+
+export function getDefaultBannerCarouselEnabled(): boolean {
+	return siteConfig.banner.carousel.enable;
+}
+
+export function getStoredBannerCarouselEnabled(): boolean {
+	return (
+		readStoredToggle(BANNER_CAROUSEL_ENABLED_KEY) ??
+		getDefaultBannerCarouselEnabled()
+	);
+}
+
+export function setBannerCarouselEnabled(enabled: boolean): void {
+	applyBannerToggleToDocument(
+		"bannerCarouselEnabled",
+		BANNER_CAROUSEL_ENABLED_KEY,
+		enabled,
+		BANNER_CAROUSEL_CHANGE_EVENT,
+	);
+}
+
+export function getDefaultBannerWavesEnabled(): boolean {
+	return siteConfig.banner.waves.enable;
+}
+
+export function getStoredBannerWavesEnabled(): boolean {
+	return (
+		readStoredToggle(BANNER_WAVES_ENABLED_KEY) ?? getDefaultBannerWavesEnabled()
+	);
+}
+
+export function setBannerWavesEnabled(enabled: boolean): void {
+	applyBannerToggleToDocument(
+		"bannerWavesEnabled",
+		BANNER_WAVES_ENABLED_KEY,
+		enabled,
+		BANNER_WAVES_CHANGE_EVENT,
+	);
+}
+
+/** 渐变过渡默认开启；与水波纹相互独立，由各自开关独立控制 */
+export function getDefaultBannerGradientEnabled(): boolean {
+	return true;
+}
+
+export function getStoredBannerGradientEnabled(): boolean {
+	return (
+		readStoredToggle(BANNER_GRADIENT_ENABLED_KEY) ??
+		getDefaultBannerGradientEnabled()
+	);
+}
+
+export function setBannerGradientEnabled(enabled: boolean): void {
+	applyBannerToggleToDocument(
+		"bannerGradientEnabled",
+		BANNER_GRADIENT_ENABLED_KEY,
+		enabled,
+		BANNER_GRADIENT_CHANGE_EVENT,
 	);
 }
 
