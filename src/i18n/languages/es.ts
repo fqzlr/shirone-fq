@@ -38,6 +38,16 @@ export const es: Translation = {
 	[Key.guestbook]: "Libro de visitas",
 	[Key.guestbookBanner]: "Deja un mensaje y saluda.",
 
+	[Key.sponsor]: "Donar",
+	[Key.sponsorBanner]: "Apoya este blog",
+	[Key.sponsorDescription]:
+		"Si mi contenido te ha sido útil, apóyame mediante los métodos siguientes. ¡Tu apoyo impulsa mi creación!",
+	[Key.sponsorUsage]:
+		"Tu donación se destinará al mantenimiento del servidor, la creación de contenido y el desarrollo de funciones.",
+	[Key.sponsorScan]: "Escanea con {name} para donar",
+	[Key.sponsorLinkBy]: "Dona a través de {name}",
+	[Key.sponsorVisit]: "Donar",
+
 	[Key.moments]: "Momentos",
 	[Key.momentsNoResults]: "No hay momentos que coincidan con los filtros",
 	[Key.momentsBanner]: "Notas cortas — vida, trabajo y pequeñas alegrías.",
@@ -209,6 +219,17 @@ export const es: Translation = {
 	[Key.calendarPrevMonth]: "Mes anterior",
 	[Key.calendarNextMonth]: "Mes siguiente",
 
+	[Key.siteInfo]: "Información del sitio",
+	[Key.siteInfoPlatform]: "Plataforma",
+	[Key.siteInfoVersion]: "Versión",
+	[Key.siteInfoLicense]: "Licencia",
+	[Key.siteInfoDomain]: "Dominio",
+	[Key.siteInfoAstro]: "Astro",
+	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoBuiltAt]: "Fecha de compilación",
+	[Key.siteInfoMore]: "Más detalles",
+	[Key.siteInfoLess]: "Menos detalles",
+
 	[Key.mermaidControls]: "Controles del diagrama",
 	[Key.mermaidZoomIn]: "Acercar",
 	[Key.mermaidZoomOut]: "Alejar",
@@ -325,6 +346,7 @@ export const es: Translation = {
 	[Key.wavesAnimation]: "Animación de olas",
 	[Key.gradientTransition]: "Transición de degradado",
 	[Key.sakuraEffect]: "Efecto de sakura",
+	[Key.backgroundVideo]: "Vídeo de fondo",
 	[Key.texturePreset]: "Textura de fondo",
 	[Key.texturePresetNone]: "Ninguno",
 	[Key.texturePresetStarlight]: "Luz estelar",

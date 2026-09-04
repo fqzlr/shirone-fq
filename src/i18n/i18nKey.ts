@@ -34,6 +34,19 @@ enum I18nKey {
 	guestbook = "guestbook",
 	guestbookBanner = "guestbookBanner",
 
+	// 打赏页 /sponsor/（见 src/config/sponsorConfig.ts）
+	sponsor = "sponsor",
+	sponsorBanner = "sponsorBanner",
+	/** 页面默认描述（config.description 缺省时的回退文案） */
+	sponsorDescription = "sponsorDescription",
+	/** 提示条默认文案（config.usage 缺省时的回退文案；空字符串隐藏提示条） */
+	sponsorUsage = "sponsorUsage",
+	/** 扫码卡片默认描述，{name} 为打赏方式名称 */
+	sponsorScan = "sponsorScan",
+	/** 外链卡片默认描述，{name} 为打赏方式名称 */
+	sponsorLinkBy = "sponsorLinkBy",
+	sponsorVisit = "sponsorVisit",
+
 	moments = "moments",
 	momentsNoResults = "momentsNoResults",
 	momentsBanner = "momentsBanner",
@@ -198,6 +211,18 @@ enum I18nKey {
 	calendarPrevMonth = "calendarPrevMonth",
 	calendarNextMonth = "calendarNextMonth",
 
+	// 站点信息 widget（SiteInfo.astro）：规格行与可折叠详情
+	siteInfo = "siteInfo",
+	siteInfoPlatform = "siteInfoPlatform",
+	siteInfoVersion = "siteInfoVersion",
+	siteInfoLicense = "siteInfoLicense",
+	siteInfoDomain = "siteInfoDomain",
+	siteInfoAstro = "siteInfoAstro",
+	siteInfoNode = "siteInfoNode",
+	siteInfoBuiltAt = "siteInfoBuiltAt",
+	siteInfoMore = "siteInfoMore",
+	siteInfoLess = "siteInfoLess",
+
 	mermaidControls = "mermaidControls",
 	mermaidZoomIn = "mermaidZoomIn",
 	mermaidZoomOut = "mermaidZoomOut",
@@ -285,6 +310,9 @@ enum I18nKey {
 
 	// 特效
 	sakuraEffect = "sakuraEffect",
+
+	// 横幅背景视频 FAB（FloatingControls.astro）
+	backgroundVideo = "backgroundVideo",
 
 	texturePreset = "texturePreset",
 	texturePresetNone = "texturePresetNone",

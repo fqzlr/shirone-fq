@@ -38,6 +38,16 @@ export const en: Translation = {
 	[Key.guestbook]: "Guestbook",
 	[Key.guestbookBanner]: "Leave a message and say hello.",
 
+	[Key.sponsor]: "Sponsor",
+	[Key.sponsorBanner]: "Support This Blog",
+	[Key.sponsorDescription]:
+		"If my content helped you, feel free to support me through the methods below — it keeps me creating!",
+	[Key.sponsorUsage]:
+		"Your support goes toward server maintenance, content creation and feature development.",
+	[Key.sponsorScan]: "Scan with {name} to support",
+	[Key.sponsorLinkBy]: "Support via {name}",
+	[Key.sponsorVisit]: "Donate",
+
 	[Key.moments]: "Moments",
 	[Key.momentsNoResults]: "No moments matched your filters",
 	[Key.momentsBanner]:
@@ -208,6 +218,17 @@ export const en: Translation = {
 	[Key.calendarPrevMonth]: "Previous month",
 	[Key.calendarNextMonth]: "Next month",
 
+	[Key.siteInfo]: "Site Info",
+	[Key.siteInfoPlatform]: "Platform",
+	[Key.siteInfoVersion]: "Version",
+	[Key.siteInfoLicense]: "License",
+	[Key.siteInfoDomain]: "Domain",
+	[Key.siteInfoAstro]: "Astro",
+	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoBuiltAt]: "Built",
+	[Key.siteInfoMore]: "More details",
+	[Key.siteInfoLess]: "Fewer details",
+
 	[Key.mermaidControls]: "Diagram controls",
 	[Key.mermaidZoomIn]: "Zoom in",
 	[Key.mermaidZoomOut]: "Zoom out",
@@ -323,6 +344,7 @@ export const en: Translation = {
 	[Key.wavesAnimation]: "Waves Animation",
 	[Key.gradientTransition]: "Gradient Transition",
 	[Key.sakuraEffect]: "Sakura Effect",
+	[Key.backgroundVideo]: "Background video",
 	[Key.texturePreset]: "Background Texture",
 	[Key.texturePresetNone]: "None",
 	[Key.texturePresetStarlight]: "Starlight",

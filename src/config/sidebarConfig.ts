@@ -92,6 +92,8 @@ export const sidebarConfig: SidebarConfig = withUserConfig("sidebar", {
 			limit: 3,
 		},
 		{ type: "calendar", enable: true, slot: "top", column: "secondary" },
+		// 站点信息：构建平台 / 博客版本 / 文章许可 + 可展开的构建详情（全部构建期取值）
+		{ type: "siteInfo", enable: true, slot: "top", column: "secondary" },
 		{
 			type: "toc",
 			enable: true,

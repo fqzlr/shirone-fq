@@ -35,6 +35,16 @@ export const zh_TW: Translation = {
 	[Key.friendCopyField]: "複製{name}",
 	[Key.friendCopyTemplate]: "複製申請範本",
 
+	[Key.sponsor]: "打賞",
+	[Key.sponsorBanner]: "打賞支持",
+	[Key.sponsorDescription]:
+		"如果我的內容對你有幫助，歡迎透過以下方式打賞我，你的支持是我持續創作的動力！",
+	[Key.sponsorUsage]:
+		"你的打賞將用於伺服器維護、內容創作和功能開發，幫助我持續提供優質內容。",
+	[Key.sponsorScan]: "使用 {name} 掃碼打賞",
+	[Key.sponsorLinkBy]: "透過 {name} 打賞",
+	[Key.sponsorVisit]: "前往打賞",
+
 	[Key.moments]: "動態",
 	[Key.momentsNoResults]: "沒有符合條件的動態",
 	[Key.momentsBanner]: "隨手記錄的碎碎念 —— 生活、折騰與一切小確幸。",
@@ -198,6 +208,17 @@ export const zh_TW: Translation = {
 	[Key.calendarPrevMonth]: "上一月",
 	[Key.calendarNextMonth]: "下一月",
 
+	[Key.siteInfo]: "站點資訊",
+	[Key.siteInfoPlatform]: "建置平台",
+	[Key.siteInfoVersion]: "部落格版本",
+	[Key.siteInfoLicense]: "文章授權",
+	[Key.siteInfoDomain]: "網域",
+	[Key.siteInfoAstro]: "Astro 版本",
+	[Key.siteInfoNode]: "Node 版本",
+	[Key.siteInfoBuiltAt]: "建置時間",
+	[Key.siteInfoMore]: "展開更多資訊",
+	[Key.siteInfoLess]: "收起更多資訊",
+
 	[Key.mermaidControls]: "圖表控制項",
 	[Key.mermaidZoomIn]: "放大",
 	[Key.mermaidZoomOut]: "縮小",
@@ -312,6 +333,7 @@ export const zh_TW: Translation = {
 	[Key.wavesAnimation]: "水波紋動畫",
 	[Key.gradientTransition]: "漸變過渡",
 	[Key.sakuraEffect]: "櫻花特效",
+	[Key.backgroundVideo]: "背景影片",
 	[Key.texturePreset]: "背景紋理",
 	[Key.texturePresetNone]: "無紋理",
 	[Key.texturePresetStarlight]: "星芒光斑",

@@ -12,7 +12,7 @@ test.describe("FAB Navigation System", () => {
 		page,
 	}) => {
 		await page.setViewportSize({ width: 1440, height: 900 });
-		await page.goto("/posts/guide/", { waitUntil: "networkidle" });
+		await page.goto("/posts/tech/git-guide/", { waitUntil: "networkidle" });
 
 		// 桌面端悬浮 TOC 必须处于隐藏状态 (lg:hidden)
 		const tocBtn = page.locator("#fab-toc-btn");
@@ -42,7 +42,7 @@ test.describe("FAB Navigation System", () => {
 		page,
 	}) => {
 		await page.setViewportSize({ width: 375, height: 667 });
-		await page.goto("/posts/guide/", { waitUntil: "networkidle" });
+		await page.goto("/posts/tech/git-guide/", { waitUntil: "networkidle" });
 
 		const tocBtn = page.locator("#fab-toc-btn");
 		await expect(tocBtn).toBeVisible();
@@ -66,9 +66,11 @@ test.describe("FAB Navigation System", () => {
 		await expect(firstHeadingLink).toBeVisible();
 		await firstHeadingLink.click();
 
-		// 点击后自动收起
+		// 点击后自动收起（slug 为 CJK，URL 中可能被百分号编码）
 		await expect(panel).not.toHaveClass(/is-open/);
-		await expect(page).toHaveURL(/#front-matter-of-posts/);
+		await expect(page).toHaveURL(
+			/#(安装与首次配置|%E5%AE%89%E8%A3%85%E4%B8%8E%E9%A6%96%E6%AC%A1%E9%85%8D%E7%BD%AE)/,
+		);
 	});
 
 	test("Mobile: Home action stays hidden on the home page", async ({
@@ -84,7 +86,7 @@ test.describe("FAB Navigation System", () => {
 	}) => {
 		await page.setViewportSize({ width: 375, height: 667 });
 		await page.addInitScript(() => localStorage.setItem("theme", "dark"));
-		await page.goto("/posts/guide/", { waitUntil: "networkidle" });
+		await page.goto("/posts/tech/git-guide/", { waitUntil: "networkidle" });
 		await expect(page.locator("html")).toHaveClass(/dark/);
 
 		const colors = await page
@@ -109,7 +111,7 @@ test.describe("FAB Navigation System", () => {
 		page,
 	}) => {
 		await page.setViewportSize({ width: 820, height: 1180 });
-		await page.goto("/posts/guide/", { waitUntil: "networkidle" });
+		await page.goto("/posts/tech/git-guide/", { waitUntil: "networkidle" });
 
 		const tocBtn = page.locator("#fab-toc-btn");
 		await expect(tocBtn).toBeVisible();
@@ -119,18 +121,20 @@ test.describe("FAB Navigation System", () => {
 		page,
 	}) => {
 		await page.setViewportSize({ width: 375, height: 667 });
-		await page.goto("/posts/guide/", { waitUntil: "networkidle" });
+		await page.goto("/posts/tech/git-guide/", { waitUntil: "networkidle" });
 		await page.waitForFunction(() => Boolean(window.swup?.hooks));
 
-		await page.evaluate(() => window.swup?.navigate("/posts/expressive-code/"));
-		await page.waitForURL("**/posts/expressive-code/");
+		await page.evaluate(() =>
+			window.swup?.navigate("/posts/tech/shirone-usage/"),
+		);
+		await page.waitForURL("**/posts/tech/shirone-usage/");
 		await expect(page.locator("#swup-container")).toHaveAttribute(
 			"data-current-page",
 			"post",
 		);
 		await expect(page.locator("#floating-toc-tree a").first()).toHaveAttribute(
 			"href",
-			"#expressive-code",
+			"#写一篇文章",
 		);
 	});
 });

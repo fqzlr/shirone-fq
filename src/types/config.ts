@@ -9,6 +9,20 @@ export type WallpaperMode = "banner" | "fullscreen" | "overlay" | "none";
 /** 全屏壁纸模式的内容布局："classic" 内容紧随导航栏，"hero" 首页首屏整屏展示壁纸 */
 export type FullscreenWallpaperLayout = "classic" | "hero";
 
+/** 首页横幅快捷入口按钮：text + icon 渲染文字胶囊，仅 icon 渲染圆形图标按钮 */
+export interface BannerHomeLink {
+	/** 按钮文案；省略时渲染为圆形图标按钮 */
+	text?: string;
+	/** astro-icon 图标名（如 "material-symbols:send-outline-rounded"） */
+	icon: string;
+	/** 跳转地址 */
+	url: string;
+	/** 无文字按钮的访问名称（aria-label），纯图标按钮建议提供 */
+	ariaLabel?: string;
+	/** 是否在新标签页打开（默认按 url 是否为 http(s) 判断） */
+	external?: boolean;
+}
+
 /**
  * 统一页面开关：`false` 时该页路由跳转 `/404/`，顶栏与移动抽屉的导航入口
  * 自动隐藏（navBarConfig 输出统一过滤，无需改 nav-bar.yaml）。
@@ -19,6 +33,8 @@ export type PageToggles = {
 	friends: boolean;
 	/** 留言板页 /guestbook/ */
 	guestbook: boolean;
+	/** 打赏页 /sponsor/，与 sponsorConfig.enable 取 AND */
+	sponsor: boolean;
 	/** 动态页 /moments/ */
 	moments: boolean;
 	/** 番剧页 /anime/，与 animeConfig.enable 取 AND */
@@ -136,6 +152,8 @@ export type SiteConfig = {
 			title: string;
 			/** 首页副标题文本，支持单条字符串或多条交替循环的字符串数组 */
 			subtitle: string | string[];
+			/** 标题下方的快捷入口按钮；省略或空数组时零 DOM（零额外负担） */
+			links?: BannerHomeLink[];
 			typewriter: {
 				enable: boolean;
 				/** 打字速度（每个字符间隔，毫秒，默认 120） */
@@ -147,6 +165,14 @@ export type SiteConfig = {
 				/** 完成后是否循环播放（默认 true） */
 				loop: boolean;
 			};
+		};
+		/** 横幅背景视频：enable: false（默认）时不输出 video 元素与播放控件（零额外负担） */
+		video?: {
+			enable: boolean;
+			/** 视频源列表（public 路径或远程 URL），至少一项时播放控件才可用 */
+			src: string[];
+			/** 多视频播放顺序："order" 按数组顺序（默认）| "random" 随机 */
+			mode?: "order" | "random";
 		};
 		carousel: {
 			enable: boolean;

@@ -33,6 +33,10 @@ export const BANNER_GRADIENT_CHANGE_EVENT = "wallpaper-banner-gradient:change";
 export const SAKURA_ENABLED_KEY = "sakura-enabled";
 export const SAKURA_TOGGLE_EVENT = "sakura:toggle";
 
+// 横幅背景视频：FAB ↔ 横幅舞台的播放控制与状态同步事件
+export const BANNER_VIDEO_TOGGLE_EVENT = "banner-video:toggle";
+export const BANNER_VIDEO_STATE_CHANGE_EVENT = "banner-video:state-change";
+
 export const TEXTURE_PRESET_KEY = "texture-preset";
 export const TEXTURE_OPACITY_KEY = "texture-opacity";
 export const TEXTURE_CHANGE_EVENT = "texture:change";

@@ -35,6 +35,16 @@ export const zh_CN: Translation = {
 	[Key.friendCopyField]: "复制{name}",
 	[Key.friendCopyTemplate]: "复制申请模板",
 
+	[Key.sponsor]: "打赏",
+	[Key.sponsorBanner]: "打赏支持",
+	[Key.sponsorDescription]:
+		"如果我的内容对你有帮助，欢迎通过以下方式打赏我，你的支持是我持续创作的动力！",
+	[Key.sponsorUsage]:
+		"你的打赏将用于服务器维护、内容创作和功能开发，帮助我持续提供优质内容。",
+	[Key.sponsorScan]: "使用 {name} 扫码打赏",
+	[Key.sponsorLinkBy]: "通过 {name} 打赏",
+	[Key.sponsorVisit]: "前往打赏",
+
 	[Key.moments]: "动态",
 	[Key.momentsNoResults]: "没有符合条件的动态",
 	[Key.momentsBanner]: "随手记录的碎碎念 —— 生活、折腾与一切小确幸。",
@@ -198,6 +208,17 @@ export const zh_CN: Translation = {
 	[Key.calendarPrevMonth]: "上一月",
 	[Key.calendarNextMonth]: "下一月",
 
+	[Key.siteInfo]: "站点信息",
+	[Key.siteInfoPlatform]: "构建平台",
+	[Key.siteInfoVersion]: "博客版本",
+	[Key.siteInfoLicense]: "文章许可",
+	[Key.siteInfoDomain]: "域名",
+	[Key.siteInfoAstro]: "Astro 版本",
+	[Key.siteInfoNode]: "Node 版本",
+	[Key.siteInfoBuiltAt]: "构建时间",
+	[Key.siteInfoMore]: "展开更多信息",
+	[Key.siteInfoLess]: "收起更多信息",
+
 	[Key.mermaidControls]: "图表控件",
 	[Key.mermaidZoomIn]: "放大",
 	[Key.mermaidZoomOut]: "缩小",
@@ -312,6 +333,7 @@ export const zh_CN: Translation = {
 	[Key.wavesAnimation]: "水波纹动画",
 	[Key.gradientTransition]: "渐变过渡",
 	[Key.sakuraEffect]: "樱花特效",
+	[Key.backgroundVideo]: "背景视频",
 	[Key.texturePreset]: "背景纹理",
 	[Key.texturePresetNone]: "无纹理",
 	[Key.texturePresetStarlight]: "星芒光斑",

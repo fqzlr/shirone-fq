@@ -37,6 +37,16 @@ export const ja: Translation = {
 	[Key.guestbook]: "ゲストブック",
 	[Key.guestbookBanner]: "気軽にメッセージを残してください。",
 
+	[Key.sponsor]: "支援",
+	[Key.sponsorBanner]: "このブログを支援する",
+	[Key.sponsorDescription]:
+		"もし私のコンテンツがお役に立てたなら、以下の方法でご支援いただけると嬉しいです。あなたの支えが創作の原動力になります！",
+	[Key.sponsorUsage]:
+		"いただいたご支援は、サーバー維持・コンテンツ制作・機能開発に使わせていただきます。",
+	[Key.sponsorScan]: "{name} でスキャンして支援",
+	[Key.sponsorLinkBy]: "{name} で支援",
+	[Key.sponsorVisit]: "支援する",
+
 	[Key.moments]: "モーメンツ",
 	[Key.momentsNoResults]: "条件に一致するモーメンツはありません",
 	[Key.momentsBanner]:
@@ -206,6 +216,17 @@ export const ja: Translation = {
 	[Key.calendarPrevMonth]: "前の月",
 	[Key.calendarNextMonth]: "次の月",
 
+	[Key.siteInfo]: "サイト情報",
+	[Key.siteInfoPlatform]: "プラットフォーム",
+	[Key.siteInfoVersion]: "バージョン",
+	[Key.siteInfoLicense]: "ライセンス",
+	[Key.siteInfoDomain]: "ドメイン",
+	[Key.siteInfoAstro]: "Astro",
+	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoBuiltAt]: "ビルド日",
+	[Key.siteInfoMore]: "詳細を表示",
+	[Key.siteInfoLess]: "詳細を隠す",
+
 	[Key.mermaidControls]: "図のコントロール",
 	[Key.mermaidZoomIn]: "拡大",
 	[Key.mermaidZoomOut]: "縮小",
@@ -323,6 +344,7 @@ export const ja: Translation = {
 	[Key.wavesAnimation]: "波アニメーション",
 	[Key.gradientTransition]: "グラデーション遷移",
 	[Key.sakuraEffect]: "桜エフェクト",
+	[Key.backgroundVideo]: "背景動画",
 	[Key.texturePreset]: "背景テクスチャ",
 	[Key.texturePresetNone]: "なし",
 	[Key.texturePresetStarlight]: "星空・キラキラ",

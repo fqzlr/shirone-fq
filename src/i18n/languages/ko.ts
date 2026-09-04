@@ -37,6 +37,16 @@ export const ko: Translation = {
 	[Key.guestbook]: "방명록",
 	[Key.guestbookBanner]: "자유롭게 인사와 메시지를 남겨 주세요.",
 
+	[Key.sponsor]: "후원",
+	[Key.sponsorBanner]: "이 블로그 후원하기",
+	[Key.sponsorDescription]:
+		"제 콘텐츠가 도움이 되었다면 아래 방법으로 후원해 주세요. 여러분의 응원이 창작의 원동력이 됩니다!",
+	[Key.sponsorUsage]:
+		"후원금은 서버 유지, 콘텐츠 제작, 기능 개발에 사용됩니다.",
+	[Key.sponsorScan]: "{name}으로 스캔하여 후원",
+	[Key.sponsorLinkBy]: "{name}으로 후원",
+	[Key.sponsorVisit]: "후원하기",
+
 	[Key.moments]: "모먼트",
 	[Key.momentsNoResults]: "조건에 맞는 모먼트가 없습니다",
 	[Key.momentsBanner]: "일상과 작업, 그리고 사소한 행복을 짧게 기록합니다.",
@@ -205,6 +215,17 @@ export const ko: Translation = {
 	[Key.calendarPrevMonth]: "이전 달",
 	[Key.calendarNextMonth]: "다음 달",
 
+	[Key.siteInfo]: "사이트 정보",
+	[Key.siteInfoPlatform]: "플랫폼",
+	[Key.siteInfoVersion]: "버전",
+	[Key.siteInfoLicense]: "라이선스",
+	[Key.siteInfoDomain]: "도메인",
+	[Key.siteInfoAstro]: "Astro",
+	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoBuiltAt]: "빌드 날짜",
+	[Key.siteInfoMore]: "더 보기",
+	[Key.siteInfoLess]: "접기",
+
 	[Key.mermaidControls]: "다이어그램 컨트롤",
 	[Key.mermaidZoomIn]: "확대",
 	[Key.mermaidZoomOut]: "축소",
@@ -321,6 +342,7 @@ export const ko: Translation = {
 	[Key.wavesAnimation]: "파도 애니메이션",
 	[Key.gradientTransition]: "그라디언트 전환",
 	[Key.sakuraEffect]: "벚꽃 효과",
+	[Key.backgroundVideo]: "배경 영상",
 	[Key.texturePreset]: "배경 텍스처",
 	[Key.texturePresetNone]: "없음",
 	[Key.texturePresetStarlight]: "별빛・빛무리",

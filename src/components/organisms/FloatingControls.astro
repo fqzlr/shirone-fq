@@ -12,8 +12,16 @@ import { Icon } from "astro-icon/components";
  * 右下角悬浮控制流有机体：统领全站 FAB 导航项、响应式设备适配与 Swup 生命周期。
  * 严格遵循【零额外负担】原则：评论系统未启用或当前文章禁用评论时，不输出评论按钮。
  */
-import { commentConfig, fabConfig, resolveCommentOptions } from "@/config";
-import { BANNER_HEIGHT } from "@/constants/constants";
+import {
+	commentConfig,
+	fabConfig,
+	resolveCommentOptions,
+	siteConfig,
+} from "@/config";
+import {
+	BANNER_HEIGHT,
+	BANNER_VIDEO_TOGGLE_EVENT,
+} from "@/constants/constants";
 import type { SidebarPage } from "@/types/sidebarConfig";
 
 interface Props {
@@ -27,6 +35,12 @@ const { headings = [], page, hasComments } = Astro.props;
 if (!fabConfig.enable) {
 	return null;
 }
+
+// 零额外负担：未开启横幅背景视频（或未提供视频源）时不渲染播放控件
+const isBannerVideoEnabled = Boolean(
+	siteConfig.banner.video?.enable &&
+		(siteConfig.banner.video.src?.length ?? 0) > 0,
+);
 
 const enabledItems = fabConfig.items.filter((item) => item.enable);
 const tocItem = enabledItems.find((i) => i.type === "toc");
@@ -53,6 +67,21 @@ const isHomeItemVisible = homeItem
 	data-banner-height={BANNER_HEIGHT}
 	style={`--fab-bottom: ${fabConfig.offset?.bottom ?? "var(--m3e-space-8)"}; --fab-inline-offset: ${fabConfig.offset?.right ?? "var(--m3e-space-6)"}`}
 >
+	<!-- 0. 背景视频播放/暂停：仅当站点开启横幅背景视频时渲染 -->
+	{isBannerVideoEnabled && (
+		<FloatingActionButton
+			id="fab-video-btn"
+			type="video"
+			ariaLabel={i18n(I18nKey.backgroundVideo)}
+			size={fabConfig.size}
+			data-playing="false"
+			onclick={`window.dispatchEvent(new CustomEvent('${BANNER_VIDEO_TOGGLE_EVENT}'))`}
+		>
+			<Icon name="material-symbols:play-arrow-rounded" class="fab-video-icon fab-video-icon--play text-2xl" />
+			<Icon name="material-symbols:pause-rounded" class="fab-video-icon fab-video-icon--pause text-2xl" />
+		</FloatingActionButton>
+	)}
+
 	<!-- 1. TOC 悬浮目录项与弹窗 -->
 	{tocItem && (
 		<div
@@ -150,12 +179,58 @@ const isHomeItemVisible = homeItem
 		right: auto
 		left: var(--fab-inline-offset)
 </style>
+<style is:global>
+	#fab-video-btn[data-playing="false"] .fab-video-icon--pause,
+	#fab-video-btn[data-playing="true"] .fab-video-icon--play {
+		display: none;
+	}
+	#fab-video-btn[data-banner-hidden="true"] {
+		opacity: 0;
+		transform: translateY(0.75rem) scale(0.85);
+		pointer-events: none;
+		visibility: hidden;
+	}
+	#fab-video-btn {
+		transition:
+			transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+			opacity var(--m3e-duration-short) var(--m3e-easing-standard);
+	}
+</style>
 
 <script>
 	import { initFabController } from "@utils/fab-controller";
+	import {
+		BANNER_VIDEO_STATE_CHANGE_EVENT,
+		WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT,
+		WALLPAPER_MODE_CHANGE_EVENT,
+	} from "@constants/constants";
 
 	// 初始化 FAB 运行时状态机，支持直接加载与 Swup 导航
 	if (typeof window !== "undefined") {
 		initFabController();
+	}
+
+	// 背景视频 FAB：同步播放状态图标；横幅舞台隐藏（纯色模式等）时隐藏按钮
+	const videoFab = document.getElementById("fab-video-btn");
+	if (videoFab) {
+		const syncVideoFabVisibility = () => {
+			// syncBanner 由 BannerStage 的同名事件监听器先行执行，延迟一拍读取最新状态
+			window.setTimeout(() => {
+				const stage = document.getElementById("banner-wrapper");
+				videoFab.setAttribute(
+					"data-banner-hidden",
+					stage?.hidden ? "true" : "false",
+				);
+			}, 0);
+		};
+		window.addEventListener(BANNER_VIDEO_STATE_CHANGE_EVENT, (event) => {
+			const playing = (event as CustomEvent<{ playing?: boolean }>).detail?.playing;
+			videoFab.setAttribute("data-playing", playing ? "true" : "false");
+		});
+		window.addEventListener(WALLPAPER_MODE_CHANGE_EVENT, syncVideoFabVisibility);
+		window.addEventListener(WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, syncVideoFabVisibility);
+		window.addEventListener("resize", syncVideoFabVisibility, { passive: true });
+		document.addEventListener("swup:page:view", syncVideoFabVisibility);
+		syncVideoFabVisibility();
 	}
 </script>

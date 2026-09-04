@@ -69,6 +69,7 @@ export {
 	siteConfig,
 } from "./siteConfig";
 export { skillsConfig } from "./skillsConfig";
+export { resolveSponsorMethods, sponsorConfig } from "./sponsorConfig";
 export { timelineConfig } from "./timelineConfig";
 export {
 	type ResolvedUmamiOptions,

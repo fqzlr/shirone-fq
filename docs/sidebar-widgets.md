@@ -19,6 +19,7 @@ SideBar 通过 `src/config/sidebarConfig.ts` 中的 `components` 数组动态编
 | `tags` | `Tags` | sticky | 标签列表（按文章数降序，支持 `collapseAfter`） |
 | `announcement` | `Announcement` | top | 独立公告卡片（由 `announcementConfig.ts` 驱动） |
 | `stats` | `SiteStats` | top | 站点统计规格表 |
+| `siteInfo` | `SiteInfo` | top | 站点信息规格表（构建平台/博客版本/文章许可 + 可展开详情） |
 | `calendar` | `Calendar` | sticky | 月度文章历（SSR 直出 + 水合岛） |
 | `music` | `MusicSidebar` | top | 持久音乐播放器（全局配置 + widget 双开关，默认关闭） |
 | `toc` | `SidebarTOC` | sticky | 当前文章目录（通常只在文章页显示） |
@@ -95,7 +96,7 @@ interface SidebarWidgetBase {
 
 ---
 
-## 8. MusicSidebar — 侧栏音乐播放器
+## 9. MusicSidebar — 侧栏音乐播放器
 
 - **数据源**：本地 `src/data/music.ts` / 自定义 `tracks` / Meting API 云端歌单；
 - **渲染**：M3 卡片风格播放器（专辑封面、歌曲信息、进度条、播放/上一首/下一首/音量控制）；
@@ -139,7 +140,7 @@ interface SidebarWidgetBase {
 
 ---
 
-## 12. Advertisement — 广告位
+## 13. Advertisement — 广告位
 
 - **数据源**：widget 自带的 `ad` 载荷（`AdvertisementPayload`：标题 / 图片 / 文案 / 链接按钮 / 关闭与次数策略），构建期 `expireDate` 过期判定；
 - **渲染**：`WidgetLayout` 外壳（标题可由 `ad.title` 覆盖，缺省用 i18n「广告」）+ 图片（可带链接与外链标识）+ 文案 + 链接按钮；

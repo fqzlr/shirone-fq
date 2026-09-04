@@ -38,6 +38,16 @@ export const vi: Translation = {
 	[Key.guestbook]: "Sổ lưu bút",
 	[Key.guestbookBanner]: "Hãy để lại lời nhắn và lời chào.",
 
+	[Key.sponsor]: "Ủng hộ",
+	[Key.sponsorBanner]: "Ủng hộ blog này",
+	[Key.sponsorDescription]:
+		"Nếu nội dung của mình giúp ích cho bạn, hãy ủng hộ mình qua các cách bên dưới. Sự ủng hộ của bạn là động lực sáng tạo!",
+	[Key.sponsorUsage]:
+		"Khoản ủng hộ sẽ dùng cho việc duy trì máy chủ, sáng tạo nội dung và phát triển tính năng.",
+	[Key.sponsorScan]: "Quét mã bằng {name} để ủng hộ",
+	[Key.sponsorLinkBy]: "Ủng hộ qua {name}",
+	[Key.sponsorVisit]: "Ủng hộ",
+
 	[Key.moments]: "Khoảnh khắc",
 	[Key.momentsNoResults]: "Không có khoảnh khắc nào khớp bộ lọc",
 	[Key.momentsBanner]:
@@ -209,6 +219,17 @@ export const vi: Translation = {
 	[Key.calendarPrevMonth]: "Tháng trước",
 	[Key.calendarNextMonth]: "Tháng sau",
 
+	[Key.siteInfo]: "Thông tin trang web",
+	[Key.siteInfoPlatform]: "Nền tảng",
+	[Key.siteInfoVersion]: "Phiên bản",
+	[Key.siteInfoLicense]: "Giấy phép",
+	[Key.siteInfoDomain]: "Tên miền",
+	[Key.siteInfoAstro]: "Astro",
+	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoBuiltAt]: "Ngày dựng",
+	[Key.siteInfoMore]: "Xem thêm",
+	[Key.siteInfoLess]: "Thu gọn",
+
 	[Key.mermaidControls]: "Điều khiển sơ đồ",
 	[Key.mermaidZoomIn]: "Phóng to",
 	[Key.mermaidZoomOut]: "Thu nhỏ",
@@ -325,6 +346,7 @@ export const vi: Translation = {
 	[Key.wavesAnimation]: "Hoạt ảnh sóng nước",
 	[Key.gradientTransition]: "Chuyển đổi gradient",
 	[Key.sakuraEffect]: "Hiệu ứng hoa anh đào",
+	[Key.backgroundVideo]: "Video nền",
 	[Key.texturePreset]: "Họa tiết nền",
 	[Key.texturePresetNone]: "Không có",
 	[Key.texturePresetStarlight]: "Ánh sao",

@@ -47,6 +47,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		icon: "material-symbols:forum-outline-rounded",
 		pageKey: "guestbook",
 	},
+	Sponsor: {
+		name: i18n(I18nKey.sponsor),
+		url: "/sponsor/",
+		icon: "material-symbols:favorite-outline-rounded",
+		pageKey: "sponsor",
+	},
 	Moments: {
 		name: i18n(I18nKey.moments),
 		url: "/moments/",
@@ -142,6 +148,7 @@ const defaultNavBarConfig: NavBarConfig = {
 				LinkPresets.Devices,
 				LinkPresets.Skills,
 				LinkPresets.Guestbook,
+				LinkPresets.Sponsor,
 				// 分类/标签入口不进导航菜单（避免菜单项过多），预设已登记指向独立页面，
 				// 需要时取消注释即可
 				// LinkPresets.Categories,

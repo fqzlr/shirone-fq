@@ -181,6 +181,7 @@ export const sidebarConfig: SidebarConfig = {
 | `tags` | `Tags` | `getTagList` | `WidgetLayout` | `collapseAfter?`（默认 20） |
 | `announcement` | `Announcement` | `announcementConfig` | 无（Banner round） | — |
 | `stats` | `SiteStats` | `getSiteStats` | `WidgetLayout` | — |
+| `siteInfo` | `SiteInfo` | 构建期环境识别 + `package.json` + `licenseConfig` | `WidgetLayout` | —（全部取值构建期确定，零客户端脚本） |
 | `calendar` | `Calendar` | `getCalendarData` | `WidgetLayout` | `startOfWeek?`（默认 `"mon"`） |
 | `music` | `MusicSidebar`（organisms） | `musicConfig` | `WidgetLayout` | —（内容与初始状态来自全局配置） |
 | `toc` | `SidebarTOC` | 当前文章 headings | `WidgetLayout` | —（通常限定 `pages: ["post"]`） |

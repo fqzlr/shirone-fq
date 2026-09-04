@@ -38,6 +38,16 @@ export const id: Translation = {
 	[Key.guestbook]: "Buku tamu",
 	[Key.guestbookBanner]: "Tinggalkan pesan dan sapa.",
 
+	[Key.sponsor]: "Dukung",
+	[Key.sponsorBanner]: "Dukung Blog Ini",
+	[Key.sponsorDescription]:
+		"Jika konten saya membantumu, silakan dukung saya lewat cara di bawah ini. Dukunganmu adalah bahan bakar kreativitasku!",
+	[Key.sponsorUsage]:
+		"Donasi akan digunakan untuk pemeliharaan server, pembuatan konten, dan pengembangan fitur.",
+	[Key.sponsorScan]: "Pindai dengan {name} untuk mendukung",
+	[Key.sponsorLinkBy]: "Dukung lewat {name}",
+	[Key.sponsorVisit]: "Donasi",
+
 	[Key.moments]: "Momen",
 	[Key.momentsNoResults]: "Tidak ada momen yang cocok dengan filter",
 	[Key.momentsBanner]:
@@ -210,6 +220,17 @@ export const id: Translation = {
 	[Key.calendarPrevMonth]: "Bulan sebelumnya",
 	[Key.calendarNextMonth]: "Bulan berikutnya",
 
+	[Key.siteInfo]: "Info Situs",
+	[Key.siteInfoPlatform]: "Platform",
+	[Key.siteInfoVersion]: "Versi",
+	[Key.siteInfoLicense]: "Lisensi",
+	[Key.siteInfoDomain]: "Domain",
+	[Key.siteInfoAstro]: "Astro",
+	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoBuiltAt]: "Tanggal build",
+	[Key.siteInfoMore]: "Detail lainnya",
+	[Key.siteInfoLess]: "Sembunyikan detail",
+
 	[Key.mermaidControls]: "Kontrol diagram",
 	[Key.mermaidZoomIn]: "Perbesar",
 	[Key.mermaidZoomOut]: "Perkecil",
@@ -330,6 +351,7 @@ export const id: Translation = {
 	[Key.layoutMode]: "Tata letak",
 	[Key.layoutList]: "Daftar",
 	[Key.layoutGrid]: "Kisi",
+	[Key.backgroundVideo]: "Video latar",
 	[Key.texturePreset]: "Tekstur latar belakang",
 	[Key.texturePresetNone]: "Tanpa tekstur",
 	[Key.texturePresetStarlight]: "Cahaya bintang",

@@ -1,0 +1,227 @@
+---
+import { createRequire } from "node:module";
+/**
+ * 站点信息侧栏 widget（规格表风格 + 可展开详情）。
+ * 主行 = 构建平台 / 博客版本 / 文章许可；`<details>` 原生折叠展示更多信息
+ * （域名 / Astro / Node / 构建时间），全部构建期取值、零客户端脚本。
+ * 数据来源：环境变量识别（utils/build-platform）、package.json 版本、licenseConfig。
+ */
+import MetaIcon from "@components/atoms/display/MetaIcon.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { detectBuildPlatform } from "@utils/build-platform";
+import { url } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
+import { licenseConfig, siteConfig } from "@/config";
+import type { SiteInfoWidget } from "@/types/sidebarConfig";
+import pkg from "../../../package.json";
+import WidgetLayout from "./WidgetLayout.astro";
+
+interface Props {
+	class?: string;
+	style?: string;
+	widget?: SiteInfoWidget;
+}
+
+const className = Astro.props.class;
+const style = Astro.props.style;
+
+// Astro 版本：构建期从依赖清单读取；导出不可达时静默省略该行
+let astroVersion = "";
+try {
+	const require = createRequire(import.meta.url);
+	astroVersion =
+		(require("astro/package.json") as { version?: string }).version ?? "";
+} catch {
+	astroVersion = "";
+}
+
+const domain = (() => {
+	try {
+		return new URL(siteConfig.site).hostname;
+	} catch {
+		return "";
+	}
+})();
+
+const builtAt = new Date().toISOString().slice(0, 10);
+
+const mainRows = [
+	{
+		icon: "material-symbols:cloud-outline-rounded",
+		label: i18n(I18nKey.siteInfoPlatform),
+		value: detectBuildPlatform(),
+	},
+	{
+		icon: "material-symbols:rocket-launch-outline-rounded",
+		label: i18n(I18nKey.siteInfoVersion),
+		value: `v${pkg.version}`,
+	},
+	...(licenseConfig.enable
+		? [
+				{
+					icon: "material-symbols:copyright-outline-rounded",
+					label: i18n(I18nKey.siteInfoLicense),
+					value: licenseConfig.name,
+					href: licenseConfig.url,
+				},
+			]
+		: []),
+];
+
+const moreRows = [
+	...(domain
+		? [
+				{
+					icon: "material-symbols:language-rounded",
+					label: i18n(I18nKey.siteInfoDomain),
+					value: domain,
+				},
+			]
+		: []),
+	...(astroVersion
+		? [
+				{
+					icon: "material-symbols:auto-awesome-outline-rounded",
+					label: i18n(I18nKey.siteInfoAstro),
+					value: `v${astroVersion}`,
+				},
+			]
+		: []),
+	{
+		icon: "material-symbols:terminal-rounded",
+		label: i18n(I18nKey.siteInfoNode),
+		value: process.version,
+	},
+	{
+		icon: "material-symbols:schedule-rounded",
+		label: i18n(I18nKey.siteInfoBuiltAt),
+		value: builtAt,
+	},
+];
+---
+
+<WidgetLayout name={i18n(I18nKey.siteInfo)} id="site-info" class={className} style={style}>
+	<ul class="site-info">
+		{mainRows.map((row) => (
+			<li class="site-info__row">
+				<MetaIcon icon={row.icon} />
+				<span class="site-info__label">{row.label}</span>
+				<span class="site-info__rule" aria-hidden="true"></span>
+				{"href" in row && row.href
+					? (
+						<a class="site-info__value site-info__value--link" href={url(row.href)} rel="noreferrer noopener" target="_blank">
+							{row.value}
+						</a>
+					)
+					: <span class="site-info__value">{row.value}</span>}
+			</li>
+		))}
+	</ul>
+	<details class="site-info__more">
+		<summary class="site-info__summary">
+			<span class="site-info__summary-text site-info__summary-text--open-label">{i18n(I18nKey.siteInfoMore)}</span>
+			<span class="site-info__summary-text site-info__summary-text--close-label">{i18n(I18nKey.siteInfoLess)}</span>
+			<Icon name="material-symbols:keyboard-arrow-down-rounded" class="site-info__chevron" aria-hidden="true" />
+		</summary>
+		<ul class="site-info">
+			{moreRows.map((row) => (
+				<li class="site-info__row">
+					<MetaIcon icon={row.icon} />
+					<span class="site-info__label">{row.label}</span>
+					<span class="site-info__rule" aria-hidden="true"></span>
+					<span class="site-info__value">{row.value}</span>
+				</li>
+			))}
+		</ul>
+	</details>
+</WidgetLayout>
+
+<style lang="stylus">
+.site-info
+	display: flex
+	flex-direction: column
+	gap: var(--m3e-space-2)
+	margin: 0
+	padding: 0
+	list-style: none
+
+	&__row
+		display: flex
+		align-items: center
+		gap: 0.625rem
+
+	&__label
+		font: var(--m3e-type-body-medium)
+		font-weight: 500
+		color: var(--on-surface-variant)
+		white-space: nowrap
+
+	/* 点线引导：与 SiteStats 同语言 */
+	&__rule
+		flex: 1
+		align-self: flex-end
+		margin-bottom: 0.35em
+		min-width: 0.75rem
+		border-bottom: 2px dotted var(--outline-variant)
+
+	&__value
+		font: var(--m3e-type-title-small)
+		font-weight: 600
+		font-variant-numeric: tabular-nums
+		color: var(--on-surface)
+		white-space: nowrap
+
+		&--link
+			color: var(--primary)
+
+			&:hover
+				text-decoration: underline
+
+	&__more
+		margin-top: var(--m3e-space-2)
+
+		&[open] > .site-info
+			padding-top: var(--m3e-space-2)
+
+	&__summary
+		display: flex
+		align-items: center
+		justify-content: center
+		gap: 0.25rem
+		padding: 0.375rem 0.75rem
+		border-radius: var(--shape-corner-full)
+		font: var(--m3e-type-label-large)
+		color: var(--primary)
+		cursor: pointer
+		user-select: none
+		transition: background-color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+		&:hover
+			background: var(--btn-plain-bg-hover)
+
+		&::-webkit-details-marker
+			display: none
+
+	&__summary-text
+		&--close-label
+			display: none
+
+		&--open-label
+			display: inline
+
+	&__more[open] &__summary-text
+		&--open-label
+			display: none
+
+		&--close-label
+			display: inline
+
+	&__chevron
+		width: 1.125rem
+		height: 1.125rem
+		transition: transform var(--m3e-duration-medium) var(--m3e-easing-standard)
+
+	&__more[open] &__chevron
+		transform: rotate(180deg)
+</style>

@@ -40,6 +40,7 @@ export type SidebarPage =
 	| "timeline" // 时间线
 	| "albums" // 相册
 	| "about" // 关于
+	| "sponsor" // 打赏支持
 	| "categories" // 分类索引
 	| "tags" // 标签索引
 	| "rss" // RSS 订阅指南
@@ -131,6 +132,16 @@ export interface MusicWidget {
 	pages?: SidebarPage[];
 }
 
+/** 站点信息（构建平台 / 博客版本 / 文章许可，`<details>` 展开域名、Astro、Node、构建时间） */
+export interface SiteInfoWidget {
+	type: "siteInfo";
+	enable: boolean;
+	slot: SidebarWidgetSlot;
+	column?: SidebarColumn;
+	/** 限定显示的页面，省略或空数组表示所有页面 */
+	pages?: SidebarPage[];
+}
+
 /** 最新动态（构建期从 moments 集合直出最新 N 条，链接到瞬间页锚点；零客户端请求） */
 export interface MomentsWidget {
 	type: "moments";
@@ -206,6 +217,7 @@ export type SidebarWidget =
 	| CalendarWidget
 	| TocWidget
 	| MusicWidget
+	| SiteInfoWidget
 	| MomentsWidget
 	| AdvertisementWidget;
 

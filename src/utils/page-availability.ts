@@ -15,6 +15,7 @@ import { devicesConfig } from "../config/devicesConfig.ts";
 import { projectsConfig } from "../config/projectsConfig.ts";
 import { siteConfig } from "../config/siteConfig.ts";
 import { skillsConfig } from "../config/skillsConfig.ts";
+import { sponsorConfig } from "../config/sponsorConfig.ts";
 import { timelineConfig } from "../config/timelineConfig.ts";
 import type { PageToggles } from "../types/config.ts";
 
@@ -25,6 +26,7 @@ const DOMAIN_ENABLES: Partial<Record<keyof PageToggles, boolean>> = {
 	projects: projectsConfig.enable,
 	devices: devicesConfig.enable,
 	timeline: timelineConfig.enable,
+	sponsor: sponsorConfig.enable,
 };
 
 /**

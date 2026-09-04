@@ -34,6 +34,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	pages: {
 		friends: true, // 友链页 /friends/
 		guestbook: true, // 留言板页 /guestbook/
+		sponsor: true, // 打赏页 /sponsor/（与 sponsorConfig.enable 取 AND）
 		moments: true, // 动态页 /moments/
 		anime: true, // 番剧页 /anime/（与 animeConfig.enable 取 AND）
 		compass: true, // 罗盘页 /compass/
@@ -120,6 +121,14 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 			// 仅在首页 Banner 中显示，标题与副标题会上下居中排列。
 			enable: true,
 			title: "Shirone",
+			// 标题下方的快捷入口按钮：text + icon 渲染文字胶囊，仅 icon 渲染圆形图标按钮。
+			// 省略或空数组时不输出任何 DOM（零额外负担）。
+			links: [
+				// { text: "GitHub", icon: "fa6-brands:github", url: "https://github.com/LyraVoid/Shirone" },
+				// { icon: "material-symbols:mail-outline-rounded", url: "/about/" },
+				// { icon: "material-symbols:favorite-outline-rounded", url: "/sponsor/" },
+				// { icon: "material-symbols:rss-feed-rounded", url: "/rss.xml" },
+			],
 			subtitle: [
 				"特別なことはないけど、君がいると十分です",
 				"今でもあなたは私の光",
@@ -149,6 +158,15 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 			fadeDuration: 1200,
 			// 运镜呼吸动画模式："ken-burns"（默认，循环运镜）| "zoom-in"（推进）| "zoom-out"（拉远）| "pan-left"（左移）| "pan-right"（右移）| "none"（无运镜）。
 			animation: "ken-burns",
+		},
+		// 横幅背景视频：enable: false（默认）时不输出 video 元素与播放控件（零额外负担）。
+		// 开启后悬浮控制流出现播放/暂停按钮，点击才开始加载与播放（静音、循环，多源按 mode 切换）。
+		video: {
+			enable: false,
+			// 视频源：public 路径（如 "/videos/bg.mp4"）或远程 URL；提供至少一项后播放控件才可用。
+			src: [],
+			// 多视频播放顺序："order" 按数组顺序（默认）| "random" 随机。
+			mode: "order",
 		},
 		waves: {
 			// 在 Banner 底部渲染页面背景色水波纹；关闭后不输出波浪 DOM。

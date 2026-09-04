@@ -38,6 +38,16 @@ export const tr: Translation = {
 	[Key.guestbook]: "Ziyaretçi Defteri",
 	[Key.guestbookBanner]: "Bir mesaj bırakın ve selam verin.",
 
+	[Key.sponsor]: "Bağış",
+	[Key.sponsorBanner]: "Bu blogu destekle",
+	[Key.sponsorDescription]:
+		"İçeriğim işinize yaradıysa aşağıdaki yöntemlerle destek olabilirsiniz. Desteğiniz üretmeye devam etmem için motivasyon!",
+	[Key.sponsorUsage]:
+		"Bağışlarınız sunucu bakımı, içerik üretimi ve özellik geliştirme için kullanılır.",
+	[Key.sponsorScan]: "{name} ile tarayıp destek ol",
+	[Key.sponsorLinkBy]: "{name} üzerinden destek ol",
+	[Key.sponsorVisit]: "Bağış yap",
+
 	[Key.moments]: "Anlar",
 	[Key.momentsNoResults]: "Filtrelerle eşleşen an yok",
 	[Key.momentsBanner]: "Kısa notlar — hayat, iş ve küçük mutluluklar.",
@@ -209,6 +219,17 @@ export const tr: Translation = {
 	[Key.calendarPrevMonth]: "Önceki ay",
 	[Key.calendarNextMonth]: "Sonraki ay",
 
+	[Key.siteInfo]: "Site Bilgisi",
+	[Key.siteInfoPlatform]: "Platform",
+	[Key.siteInfoVersion]: "Sürüm",
+	[Key.siteInfoLicense]: "Lisans",
+	[Key.siteInfoDomain]: "Alan adı",
+	[Key.siteInfoAstro]: "Astro",
+	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoBuiltAt]: "Derleme tarihi",
+	[Key.siteInfoMore]: "Daha fazla göster",
+	[Key.siteInfoLess]: "Daha az göster",
+
 	[Key.mermaidControls]: "Diyagram denetimleri",
 	[Key.mermaidZoomIn]: "Yakınlaştır",
 	[Key.mermaidZoomOut]: "Uzaklaştır",
@@ -326,6 +347,7 @@ export const tr: Translation = {
 	[Key.wavesAnimation]: "Dalga animasyonu",
 	[Key.gradientTransition]: "Gradyan geçişi",
 	[Key.sakuraEffect]: "Sakura efekti",
+	[Key.backgroundVideo]: "Arka plan videosu",
 	[Key.texturePreset]: "Arka Plan Dokusu",
 	[Key.texturePresetNone]: "Yok",
 	[Key.texturePresetStarlight]: "Yıldız Işığı",

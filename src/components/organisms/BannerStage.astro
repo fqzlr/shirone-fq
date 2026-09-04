@@ -110,6 +110,20 @@ const initialDesktopImage = desktopResponsiveImages[0];
 const initialMobileImage = mobileResponsiveImages[0];
 const initialImage = initialDesktopImage ?? initialMobileImage;
 const initialMobileBanner = page === "home";
+const homeLinks = (siteConfig.banner.homeText.links ?? []).filter(
+	(link) => link.icon && link.url,
+);
+const videoEnabled = Boolean(
+	siteConfig.banner.video?.enable &&
+		(siteConfig.banner.video.src?.length ?? 0) > 0,
+);
+const videoSrcs = videoEnabled
+	? siteConfig.banner.video?.src.map((src) =>
+			src.startsWith("/") ? url(src) : src,
+		)
+	: [];
+const videoMode =
+	siteConfig.banner.video?.mode === "random" ? "random" : "order";
 ---
 
 <section
@@ -133,6 +147,9 @@ const initialMobileBanner = page === "home";
 	data-subtitle-typewriter-speed={String(Math.max(typewriter.speed, 1))}
 	data-subtitle-typewriter-delete-speed={String(Math.max(typewriter.deleteSpeed ?? 50, 1))}
 	data-subtitle-typewriter-pause-time={String(Math.max(typewriter.pauseTime ?? 2000, 0))}
+	data-video-enabled={String(videoEnabled)}
+	data-video-srcs={JSON.stringify(videoSrcs)}
+	data-video-mode={videoMode}
 >
 	<div class="banner-stage__media" aria-hidden="true">
 		<picture>
@@ -167,21 +184,53 @@ const initialMobileBanner = page === "home";
 			/>
 		</picture>
 		<img class="banner-stage__image banner-stage__image--back" alt="" />
-	</div>
-	{siteConfig.banner.dim.enable && (
-		<div class="banner-stage__scrim" style={`--banner-dim-opacity: ${dimOpacity}`}></div>
-	)}
-	{siteConfig.banner.homeText.enable && (
-		<div class="banner-stage__copy banner-stage__copy--home" data-banner-home-copy>
-			<h1>{siteConfig.banner.homeText.title}</h1>
-			<p
-				aria-label={defaultInitialSubtitle}
-				data-subtitle-state="complete"
-			>
-				{defaultInitialSubtitle}
-			</p>
 		</div>
-	)}
+		{videoEnabled && (
+			<video
+				class="banner-stage__video"
+				data-banner-video
+				muted
+				playsinline
+				preload="none"
+				aria-hidden="true"
+				style={`object-position: ${siteConfig.banner.position ?? "center"};`}
+			></video>
+		)}
+		{siteConfig.banner.dim.enable && (
+			<div class="banner-stage__scrim" style={`--banner-dim-opacity: ${dimOpacity}`}></div>
+		)}
+		{siteConfig.banner.homeText.enable && (
+			<div class="banner-stage__copy banner-stage__copy--home" data-banner-home-copy>
+				<h1>{siteConfig.banner.homeText.title}</h1>
+				<p
+					aria-label={defaultInitialSubtitle}
+					data-subtitle-state="complete"
+				>
+					{defaultInitialSubtitle}
+				</p>
+				{homeLinks.length > 0 && (
+					<nav class="banner-stage__links" aria-label={siteConfig.banner.homeText.title}>
+						{homeLinks.map((link) => {
+							const href = link.url.startsWith("/") ? url(link.url) : link.url;
+							const external = link.external ?? /^https?:\/\//.test(link.url);
+							const label = link.ariaLabel ?? link.text;
+						const linkClass = `banner-stage__link${link.text ? "" : " banner-stage__link--icon"}`;
+						return external ? (
+							<a class={linkClass} href={href} target="_blank" rel="noreferrer noopener" aria-label={label} title={link.text ?? label}>
+								<Icon name={link.icon} aria-hidden="true" />
+								{link.text && <span>{link.text}</span>}
+							</a>
+						) : (
+							<a class={linkClass} href={href} aria-label={label} title={link.text ?? label}>
+								<Icon name={link.icon} aria-hidden="true" />
+								{link.text && <span>{link.text}</span>}
+							</a>
+						);
+						})}
+					</nav>
+				)}
+			</div>
+		)}
 	<div class="banner-stage__copy banner-stage__copy--context" data-banner-context>
 		<div class="banner-stage__context-title" data-banner-context-title>
 			{normalizedTitle}
@@ -222,6 +271,8 @@ const initialMobileBanner = page === "home";
 		BANNER_CAROUSEL_CHANGE_EVENT,
 		BANNER_GRADIENT_CHANGE_EVENT,
 		BANNER_TITLE_CHANGE_EVENT,
+		BANNER_VIDEO_STATE_CHANGE_EVENT,
+		BANNER_VIDEO_TOGGLE_EVENT,
 		BANNER_WAVES_CHANGE_EVENT,
 		WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT,
 		WALLPAPER_MODE_CHANGE_EVENT,
@@ -759,6 +810,7 @@ const initialMobileBanner = page === "home";
 		const viewport = currentViewport();
 		const images = runtime.images[viewport];
 		const page = pageOverride ?? currentPage();
+		const context = contextOverride ?? readContext();
 		const state = resolveBannerState({
 			mode: getStoredWallpaperMode(),
 			page,
@@ -766,6 +818,7 @@ const initialMobileBanner = page === "home";
 			imageCount: images.length,
 			carouselEnabled: isCarouselEnabled(),
 			reducedMotion: prefersReducedMotion(),
+			contextTitle: context.title,
 		});
 
 		document.body.dataset.currentPage = page || "";
@@ -773,8 +826,9 @@ const initialMobileBanner = page === "home";
 		document.body.dataset.bannerLayout = state.contentLayout;
 		document.body.dataset.bannerTopAppBar = String(state.transparentTopAppBar);
 		stage.hidden = !state.visible;
+		if (stage.hidden) pauseBannerVideo();
 		const hasContext =
-			state.copyMode === "context" && syncContext(contextOverride ?? readContext());
+			state.copyMode === "context" && syncContext(context);
 		const copyMode = state.copyMode === "home" ? "home" : hasContext ? "context" : "none";
 		stage.dataset.copyMode = copyMode;
 		stage.setAttribute(
@@ -814,6 +868,87 @@ const initialMobileBanner = page === "home";
 			updateHeroTitleParallax();
 			if (animateIn) animateContextIn();
 		});
+	}
+
+	// ---------------------------------------------------------------------
+	// 横幅背景视频：悬浮控制流（FAB）↔ 舞台视频元素。
+	// preload="none"——首次点击播放才发起视频请求；播放期间挂起图片轮播，
+	// 暂停后恢复；多源按 order/random 自动接续；舞台隐藏（纯色模式等）即暂停。
+	// ---------------------------------------------------------------------
+	const video = stage?.querySelector<HTMLVideoElement>("[data-banner-video]");
+	const videoSrcs = parseImages(stage?.dataset.videoSrcs);
+	const videoMode = stage?.dataset.videoMode === "random" ? "random" : "order";
+	let videoIndex = 0;
+
+	function dispatchVideoState(playing: boolean) {
+		window.dispatchEvent(
+			new CustomEvent(BANNER_VIDEO_STATE_CHANGE_EVENT, {
+				detail: { playing },
+			}),
+		);
+	}
+
+	function pauseBannerVideo() {
+		if (video && !video.paused) video.pause();
+	}
+
+	function advanceVideoSource(offset: number) {
+		if (!video || videoSrcs.length === 0) return;
+		if (videoSrcs.length === 1) {
+			videoIndex = 0;
+		} else if (videoMode === "random") {
+			// 随机接续时避免与当前源重复
+			let next = videoIndex;
+			while (next === videoIndex) {
+				next = Math.floor(Math.random() * videoSrcs.length);
+			}
+			videoIndex = next;
+		} else {
+			videoIndex = (videoIndex + offset + videoSrcs.length) % videoSrcs.length;
+		}
+		video.src = videoSrcs[videoIndex];
+	}
+
+	async function playBannerVideo() {
+		if (!video || stage?.hidden) return;
+		if (!video.src) advanceVideoSource(0);
+		try {
+			await video.play();
+		} catch {
+			// 自动播放策略拒绝（理论上静音可播）或源不可用：回退到暂停态
+			dispatchVideoState(false);
+		}
+	}
+
+	function toggleBannerVideo() {
+		if (!video) return;
+		if (video.paused) void playBannerVideo();
+		else video.pause();
+	}
+
+	if (video) {
+		// 单源循环播放；多源由 ended 事件按模式接续
+		video.loop = videoSrcs.length === 1;
+		video.addEventListener("play", () => {
+			video.classList.add("banner-stage__video--active");
+			// 视频成为视觉主体：挂起图片轮播与运镜
+			stopRotation();
+			stopLayerMotions();
+			dispatchVideoState(true);
+		});
+		video.addEventListener("pause", () => {
+			video.classList.remove("banner-stage__video--active");
+			dispatchVideoState(false);
+			if (!stage?.hidden) syncBanner();
+		});
+		video.addEventListener("ended", () => {
+			advanceVideoSource(1);
+			void playBannerVideo();
+		});
+		video.addEventListener("error", () => {
+			dispatchVideoState(false);
+		});
+		window.addEventListener(BANNER_VIDEO_TOGGLE_EVENT, () => toggleBannerVideo());
 	}
 
 	// ---------------------------------------------------------------------
@@ -952,6 +1087,20 @@ const initialMobileBanner = page === "home";
 		.banner-stage__image--active
 			opacity: 1
 
+		/* 横幅背景视频：默认透明（图片作海报层），播放时淡入覆盖 */
+		.banner-stage__video
+			position: absolute
+			inset: 0
+			width: 100%
+			height: 100%
+			object-fit: cover
+			opacity: 0
+			pointer-events: none
+			transition: opacity var(--banner-fade-duration, 1200ms) var(--m3e-easing-standard)
+
+		.banner-stage__video--active
+			opacity: 1
+
 		.banner-stage__scrim
 			z-index: 1
 			background: unquote("rgb(0 0 0 / calc(var(--banner-dim-opacity) * 0.55))")
@@ -997,6 +1146,49 @@ const initialMobileBanner = page === "home";
 				vertical-align: -0.12em
 				background: currentColor
 				animation: banner-subtitle-caret var(--m3e-duration-long) steps(1, end) infinite
+
+		/* 首页标题下快捷入口：文字胶囊 / 圆形图标按钮（图像上的可读性白玻璃样式） */
+		.banner-stage__links
+			display: flex
+			flex-wrap: wrap
+			align-items: center
+			justify-content: center
+			gap: 0.75rem
+			margin-top: 1.25rem
+			pointer-events: auto
+
+		.banner-stage__link
+			display: inline-flex
+			align-items: center
+			gap: 0.375rem
+			height: 2.5rem
+			padding: 0 1.125rem
+			border-radius: var(--shape-corner-full)
+			border: 1px solid rgba(255, 255, 255, 0.45)
+			background: rgba(255, 255, 255, 0.14)
+			backdrop-filter: blur(8px)
+			-webkit-backdrop-filter: blur(8px)
+			color: white
+			font: var(--m3e-type-label-large)
+			text-decoration: none
+			text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35)
+			transition: background-color var(--m3e-duration-short) var(--m3e-easing-standard), transform var(--m3e-duration-short) var(--m3e-easing-standard)
+
+			&:hover
+				background: rgba(255, 255, 255, 0.28)
+
+			&:active
+				transform: scale(0.96)
+
+			> :global(svg)
+				width: 1.125rem
+				height: 1.125rem
+				flex-shrink: 0
+
+		.banner-stage__link--icon
+			width: 2.5rem
+			padding: 0
+			justify-content: center
 
 		.banner-stage__copy--context
 			inset: 50% auto auto 50%
@@ -1102,6 +1294,11 @@ const initialMobileBanner = page === "home";
 			height: 100lvh
 			z-index: -1
 			pointer-events: none
+
+		/* 全屏 hero 非首页：上下文文案（文章标题/描述）居中于顶部横幅条带，
+		   而非整个视口——条带高度与 #main-layout 的推送起点保持一致 */
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"] body:not([data-current-page="home"])) .banner-stage__copy--context
+			top: calc(var(--banner-stage-height) / 2)
 
 		:global(html[data-wallpaper-mode="fullscreen"]) .banner-stage__image
 			transform: scale(1.05)

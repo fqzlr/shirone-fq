@@ -24,7 +24,7 @@ async function waitForBannerState(
 
 async function expectSubtitleTyping(page: import("@playwright/test").Page) {
 	const subtitle = page.locator("#banner-wrapper [data-banner-home-copy] p");
-	const expected = "特別なことはないけど、君がいると十分です";
+	const expected = "不因虚度年华而悔恨，不因碌碌无为而羞愧";
 	await expect(subtitle).toHaveAttribute("data-subtitle-state", "typing");
 	const typingText = await subtitle.textContent();
 	expect(typingText).toBeTruthy();
@@ -34,6 +34,15 @@ async function expectSubtitleTyping(page: import("@playwright/test").Page) {
 	});
 	await expect(subtitle).toHaveText(expected);
 }
+
+const HOME_SUBTITLES = [
+	"不因虚度年华而悔恨，不因碌碌无为而羞愧",
+	"人不能同时拥有青春和对青春的感受",
+	"清醒是痛苦的，但糊涂是需要天赋的",
+	"我们都在阴沟里，但仍有人仰望星空",
+	"人生是旷野，不是轨道",
+	"凡是过往，皆为序章",
+];
 
 async function expectBannerOverlap(page: import("@playwright/test").Page) {
 	const geometry = await page.evaluate(() => {
@@ -151,34 +160,40 @@ test.describe("banner wallpaper", () => {
 	test("server response includes article banner context", async ({
 		request,
 	}) => {
-		const response = await request.get("/posts/guide/");
+		const response = await request.get("/posts/tech/git-guide/");
 		expect(response.ok()).toBe(true);
 		const html = await response.text();
 		expect(html).toContain("data-banner-context-title");
-		expect(html).toContain("Simple Guides for Fuwari");
-		expect(html).toContain("How to use this blog template.");
-		expect(html).toContain('datetime="2024-04-01"');
+		expect(html).toContain("Git 详细使用方法：从第一次提交到团队协作");
+		expect(html).toContain(
+			"从安装配置到分支协作，把日常开发需要的 Git 命令一次讲清楚，附常见翻车现场的救援方法。",
+		);
+		expect(html).toContain('datetime="2026-08-10"');
 	});
 
 	test("centers article context in a bounded box with home-scale type", async ({
 		page,
 	}) => {
 		await page.setViewportSize({ width: 1440, height: 1000 });
-		await page.goto("/posts/guide/", { waitUntil: "domcontentloaded" });
+		await page.goto("/posts/tech/git-guide/", {
+			waitUntil: "domcontentloaded",
+		});
 		await waitForBannerState(page, true);
 		const stage = page.locator("#banner-wrapper");
 		const context = stage.locator("[data-banner-context]");
 		await expect(stage).toHaveAttribute("data-copy-mode", "context");
 		await expect(context).toBeVisible();
 		await expect(context.locator("[data-banner-context-title]")).toHaveText(
-			"Simple Guides for Fuwari",
+			"Git 详细使用方法：从第一次提交到团队协作",
 		);
 		await expect(
 			context.locator("[data-banner-context-description]"),
-		).toHaveText("How to use this blog template.");
+		).toHaveText(
+			"从安装配置到分支协作，把日常开发需要的 Git 命令一次讲清楚，附常见翻车现场的救援方法。",
+		);
 		await expect(context.locator("time")).toHaveAttribute(
 			"datetime",
-			"2024-04-01",
+			"2026-08-10",
 		);
 
 		const layout = await context.evaluate((element) => {
@@ -217,7 +232,19 @@ test.describe("banner wallpaper", () => {
 		expect(layout?.centerX).toBeLessThan(1);
 		expect(layout?.centerY).toBeLessThan(1);
 		expect(layout?.boxWidth).toBeLessThanOrEqual(1024);
-		expect(layout?.titleSize).toBe(layout?.homeTitleSize);
+		// 标题能完整放下时与主页标题同字号；过长被缩放时字号介于最小值与满档之间
+		const contextTitle = context.locator("[data-banner-context-title]");
+		const titleFit = await contextTitle.getAttribute("data-title-fit");
+		if (titleFit === "full") {
+			expect(layout?.titleSize).toBe(layout?.homeTitleSize);
+		} else if (titleFit === "scaled") {
+			expect(Number.parseFloat(layout?.titleSize ?? "0")).toBeLessThan(
+				Number.parseFloat(layout?.homeTitleSize ?? "0"),
+			);
+			expect(
+				Number.parseFloat(layout?.titleSize ?? "0"),
+			).toBeGreaterThanOrEqual(36);
+		}
 		expect(layout?.textAlign).toBe("center");
 		expect(layout?.overflows).toBe(false);
 	});
@@ -227,7 +254,7 @@ test.describe("banner wallpaper", () => {
 	}) => {
 		for (const width of [1440, 1024]) {
 			await page.setViewportSize({ width, height: 1000 });
-			await page.goto("/posts/markdown-extended/", {
+			await page.goto("/posts/tech/git-guide/", {
 				waitUntil: "domcontentloaded",
 			});
 			await waitForBannerState(page, true);
@@ -256,13 +283,11 @@ test.describe("banner wallpaper", () => {
 		await waitForBannerState(page, true);
 		const context = page.locator("[data-banner-context]");
 		await expect(context.locator("[data-banner-context-title]")).toHaveText(
-			"Friends",
+			"友链",
 		);
 		await expect(
 			context.locator("[data-banner-context-description]"),
-		).toHaveText(
-			"Link exchange is welcome — see the About page for how to apply.",
-		);
+		).toHaveText("欢迎交换友链，申请方式见「关于」页。");
 		await expect(context.locator("[data-banner-context-meta]")).toBeHidden();
 	});
 
@@ -272,16 +297,16 @@ test.describe("banner wallpaper", () => {
 		await page.goto("/archive/", { waitUntil: "domcontentloaded" });
 		await waitForBannerState(page, true);
 		await expect(page.locator("[data-banner-context-title]")).toHaveText(
-			"Archive",
+			"归档",
 		);
 		await expect(page.locator("[data-banner-context-description]")).toHaveText(
-			/^\d+ posts$/,
+			/^\d+ 篇文章$/,
 		);
 
 		await page.goto("/about/", { waitUntil: "domcontentloaded" });
 		await waitForBannerState(page, true);
 		await expect(page.locator("[data-banner-context-title]")).toHaveText(
-			"About",
+			"关于",
 		);
 		await expect(page.locator("[data-banner-context-details]")).toBeHidden();
 	});
@@ -292,7 +317,7 @@ test.describe("banner wallpaper", () => {
 		const response = await request.get("/");
 		expect(response.ok()).toBe(true);
 		const html = await response.text();
-		expect(html).toContain("特別なことはないけど、君がいると十分です");
+		expect(html).toContain(HOME_SUBTITLES[0]);
 		expect(html).toContain("<picture");
 		expect(html).toContain('type="image/avif"');
 		expect(html).toContain("srcset=");
@@ -309,7 +334,7 @@ test.describe("banner wallpaper", () => {
 		);
 		await expect(page.locator("#banner-wrapper")).toHaveAttribute(
 			"data-subtitle-typewriter-speed",
-			"100",
+			"150",
 		);
 		await expect(page.locator("#banner-wrapper")).toHaveAttribute(
 			"data-subtitle-typewriter-delete-speed",
@@ -325,13 +350,7 @@ test.describe("banner wallpaper", () => {
 		);
 		await expect(page.locator("#banner-wrapper")).toHaveAttribute(
 			"data-home-subtitles",
-			JSON.stringify([
-				"特別なことはないけど、君がいると十分です",
-				"今でもあなたは私の光",
-				"君ってさ、知らないうちに私の毎日になってたよ",
-				"君と話すと、なんか毎日がちょっと楽しくなるんだ",
-				"今日はなんでもない日。でも、ちょっとだけいい日",
-			]),
+			JSON.stringify(HOME_SUBTITLES),
 		);
 	});
 
@@ -345,7 +364,7 @@ test.describe("banner wallpaper", () => {
 
 		await page.goto("/", { waitUntil: "domcontentloaded" });
 		await waitForBannerState(page, true);
-		await expect(page.locator("#banner-wrapper h1")).toHaveText("Shirone");
+		await expect(page.locator("#banner-wrapper h1")).toHaveText("Fqzlrのblog");
 		await expectSubtitleTyping(page);
 		await expect(page.locator("#navbar")).toHaveClass(
 			/top-app-bar--transparent/,
@@ -398,7 +417,9 @@ test.describe("banner wallpaper", () => {
 			if (isBannerAsset(request.url())) requests.push(request.url());
 		});
 
-		await page.goto("/posts/guide/", { waitUntil: "domcontentloaded" });
+		await page.goto("/posts/tech/git-guide/", {
+			waitUntil: "domcontentloaded",
+		});
 		await waitForBannerState(page, false);
 		await expect(page.locator("#banner-wrapper")).toBeHidden();
 		await expect(page.locator(".banner-waves")).toBeHidden();
@@ -522,7 +543,7 @@ test.describe("banner wallpaper", () => {
 		await waitForBannerState(page, true);
 		await expect(
 			page.locator("#banner-wrapper [data-banner-home-copy] p"),
-		).toHaveText("特別なことはないけど、君がいると十分です");
+		).toHaveText(HOME_SUBTITLES[0]);
 		await expect(
 			page.locator("#banner-wrapper [data-banner-home-copy] p"),
 		).toHaveAttribute("data-subtitle-state", "complete");
@@ -547,7 +568,7 @@ test.describe("banner wallpaper", () => {
 		await waitForBannerState(page, true);
 		await expect(
 			page.locator("#banner-wrapper [data-banner-home-copy] p"),
-		).toHaveText("特別なことはないけど、君がいると十分です");
+		).toHaveText(HOME_SUBTITLES[0]);
 		await expect(
 			page.locator("#banner-wrapper [data-banner-home-copy] p"),
 		).toHaveAttribute("data-subtitle-state", "complete");
@@ -573,7 +594,7 @@ test.describe("banner wallpaper", () => {
 		});
 		await page
 			.locator(
-				'#swup-container a.m3-blog-postcard__title[href="/posts/guide/"]',
+				'#swup-container a.m3-blog-postcard__title[href="/posts/philosophy/wittgenstein-language-limits/"]',
 			)
 			.click();
 		await page.waitForFunction(
@@ -582,11 +603,11 @@ test.describe("banner wallpaper", () => {
 				"post",
 		);
 		await expect(page.locator("[data-banner-context-title]")).toHaveText(
-			"Simple Guides for Fuwari",
+			"维特根斯坦：语言的边界就是世界的边界",
 		);
 		await expect(page.locator("#banner-wrapper")).toHaveAttribute(
 			"aria-label",
-			"Simple Guides for Fuwari",
+			"维特根斯坦：语言的边界就是世界的边界",
 		);
 		expect(
 			await page.evaluate(
@@ -603,10 +624,10 @@ test.describe("banner wallpaper", () => {
 				"friends",
 		);
 		await expect(page.locator("[data-banner-context-title]")).toHaveText(
-			"Friends",
+			"友链",
 		);
 		await expect(page.locator("[data-banner-context-description]")).toHaveText(
-			"Link exchange is welcome — see the About page for how to apply.",
+			"欢迎交换友链，申请方式见「关于」页。",
 		);
 		await expect(page.locator("[data-banner-context-meta]")).toBeHidden();
 		expect(
@@ -622,7 +643,9 @@ test.describe("banner wallpaper", () => {
 		page,
 	}) => {
 		await page.setViewportSize({ width: 1440, height: 1000 });
-		await page.goto("/posts/guide/", { waitUntil: "domcontentloaded" });
+		await page.goto("/posts/tech/git-guide/", {
+			waitUntil: "domcontentloaded",
+		});
 		await waitForBannerState(page, true);
 		await page.waitForFunction(() => Boolean(window.swup?.hooks));
 		await page.evaluate(() => {
@@ -677,7 +700,9 @@ test.describe("banner wallpaper", () => {
 			},
 		]) {
 			await setup();
-			await page.goto("/posts/guide/", { waitUntil: "domcontentloaded" });
+			await page.goto("/posts/tech/git-guide/", {
+				waitUntil: "domcontentloaded",
+			});
 			await page.waitForFunction(() => Boolean(window.swup?.hooks));
 			await page.evaluate(() => {
 				(
