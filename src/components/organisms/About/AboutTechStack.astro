@@ -272,8 +272,8 @@ const totalTech = techGroups.reduce(
 .tech-accordion
 	overflow: hidden
 	border: 1px solid var(--outline-variant)
-	border-radius: var(--shape-corner-m)
-	background: var(--surface-container-low)
+	border-radius: var(--shape-corner-l)
+	background: var(--card-bg)
 
 	&__head
 		display: flex
@@ -374,17 +374,20 @@ const totalTech = techGroups.reduce(
 	flex-direction: column
 	gap: 0.25rem
 	padding: 0.875rem 1rem
-	border-radius: var(--shape-corner-s)
-	background: var(--surface-container)
+	border: 1px solid var(--outline-variant)
+	border-radius: var(--shape-corner-m)
+	background: var(--card-bg)
 	color: var(--on-surface)
 	text-decoration: none
 	transition:
 		background-color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+		border-color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
 		transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
 		box-shadow var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
 
 	&:hover
-		background: var(--surface-container-high)
+		border-color: var(--outline)
+		background: unquote("color-mix(in oklab, var(--on-surface) 2%, var(--card-bg))")
 		transform: translateY(-2px)
 		box-shadow: var(--m3e-elevation-1)
 
@@ -412,6 +415,10 @@ const totalTech = techGroups.reduce(
 		font-size: 0.875rem
 		font-weight: 700
 		line-height: 1.3
+		transition: color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+	&:hover &__name
+		color: var(--primary)
 
 	&__desc
 		color: var(--on-surface-variant)

@@ -96,8 +96,8 @@ const socialLinks: SocialLink[] = [
 		align-items: center
 		padding: 1rem
 		border: 1px solid var(--outline-variant)
-		border-radius: var(--shape-corner-m)
-		background: var(--surface-container-low)
+		border-radius: var(--shape-corner-l)
+		background: var(--card-bg)
 		color: var(--on-surface)
 		text-decoration: none
 		transition:
@@ -108,7 +108,7 @@ const socialLinks: SocialLink[] = [
 
 		&:hover
 			border-color: var(--about-social-brand, var(--primary))
-			background: unquote("color-mix(in oklab, var(--about-social-brand, var(--primary)) 6%, var(--surface-container-low))")
+			background: unquote("color-mix(in oklab, var(--about-social-brand, var(--primary)) 6%, var(--card-bg))")
 			transform: translateY(-2px)
 			box-shadow: var(--m3e-elevation-1)
 
@@ -166,6 +166,10 @@ const socialLinks: SocialLink[] = [
 		line-height: 1.35
 		text-overflow: ellipsis
 		white-space: nowrap
+		transition: color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+	&__item:hover &__handle
+		color: var(--primary)
 
 	&__note
 		margin-top: 0.125rem

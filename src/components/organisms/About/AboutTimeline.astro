@@ -176,19 +176,22 @@ const milestones: Milestone[] = [
 		inset: 0
 		border-radius: var(--shape-corner-full)
 
-	/* 节点卡片 */
+	/* 节点卡片：对齐站点卡片语言（card-bg + outline-variant 描边 + corner-l） */
 	&__card
 		grid-area: card
 		padding: 0.875rem 1.125rem
-		border-radius: var(--shape-corner-m)
-		background: var(--surface-container-low)
+		border: 1px solid var(--outline-variant)
+		border-radius: var(--shape-corner-l)
+		background: var(--card-bg)
 		transition:
 			background-color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+			border-color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
 			transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
 			box-shadow var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
 
 	&__item:hover &__card
-		background: var(--surface-container)
+		border-color: var(--outline)
+		background: unquote("color-mix(in oklab, var(--on-surface) 2%, var(--card-bg))")
 		transform: translateX(0.25rem)
 		box-shadow: var(--m3e-elevation-1)
 
