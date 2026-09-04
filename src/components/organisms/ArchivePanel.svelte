@@ -165,6 +165,34 @@ const groups = $derived.by((): ArchiveGroup[] => {
 	);
 });
 
+/** 按标签视图（Firefly /tags/ 同款）：标签云 + Top 10 排行，点击应用站内标签筛选 */
+const tagStats = $derived.by(() => {
+	if (groupBy !== "tag") return [];
+	const counts = new Map<string, number>();
+	for (const p of filtered) {
+		for (const t of p.data.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
+	}
+	return [...counts.entries()]
+		.map(([name, count]) => ({ name, count }))
+		.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+});
+
+/** Top 10：按篇数降序取前十 */
+const topTags = $derived([...tagStats].sort((a, b) => b.count - a.count).slice(0, 10));
+/** 进度条基准：第一名篇数（相对百分比，与 Firefly 一致） */
+const topMaxCount = $derived(topTags.length > 0 ? topTags[0].count : 1);
+
+/** 点击标签云 / 排行项：应用标签筛选并同步到 URL（?tag=），切回按年时间轴 */
+function selectTag(name: string) {
+	tag = name;
+	groupBy = "year";
+	if (typeof window !== "undefined") {
+		const params = new URLSearchParams(window.location.search);
+		params.set("tag", name);
+		history.replaceState(null, "", `?${params.toString()}`);
+	}
+}
+
 onMount(() => {
 	const params = new URLSearchParams(window.location.search);
 	category = params.get("category") || "";
@@ -215,7 +243,57 @@ $effect(() => {
 			</ol>
 		</nav>
 	{/if}
-	{#if groups.length > 0}
+	{#if !filterCrumb && groupBy === "tag"}
+		<!-- 按标签视图：标签云 + Top 10 排行（Firefly /tags/ 同款布局，M3E token 实现） -->
+		{#if tagStats.length > 0}
+			<div class="archive-panel__tags-cloud">
+				{#each tagStats as t (t.name)}
+					<button
+						type="button"
+						class="archive-tags__pill"
+						onclick={() => selectTag(t.name)}
+					>
+						<span class="archive-tags__pill-name">{t.name}</span>
+						<span class="archive-tags__pill-count">{t.count}</span>
+					</button>
+				{/each}
+			</div>
+			{#if topTags.length > 0}
+				<section class="archive-panel__tags-top">
+					<h2 class="archive-panel__tags-top-title">Top 10</h2>
+					<ol class="archive-tags__top-list">
+						{#each topTags as t, i (t.name)}
+							<li>
+								<button
+									type="button"
+									class="archive-tags__row"
+									onclick={() => selectTag(t.name)}
+								>
+									<span class="archive-tags__rank">{i + 1}</span>
+									<span class="archive-tags__row-main">
+										<span class="archive-tags__row-head">
+											<span class="archive-tags__row-name">#{t.name}</span>
+											<span class="archive-tags__row-count">{countLabel(t.count)}</span>
+										</span>
+										<span class="archive-tags__bar" aria-hidden="true">
+											<span
+												class="archive-tags__bar-fill"
+												style={`width: ${(t.count / topMaxCount) * 100}%`}
+											></span>
+										</span>
+									</span>
+								</button>
+							</li>
+						{/each}
+					</ol>
+				</section>
+			{/if}
+		{:else}
+			<div class="archive-panel__empty">
+				<span>{i18n(I18nKey.noData)}</span>
+			</div>
+		{/if}
+	{:else if groups.length > 0}
 		<ArchiveList
 			{groups}
 			{countLabel}
@@ -308,6 +386,138 @@ $effect(() => {
 		color: var(--primary)
 		font: var(--m3e-type-body-medium)
 		font-weight: 600
+
+	/* —— 按标签视图：标签云 + Top 10 排行（Firefly /tags/ 同款布局，M3E token 实现） —— */
+	:global(&__tags-cloud)
+		display: flex
+		flex-wrap: wrap
+		gap: 0.625rem
+		padding-top: 0.25rem
+
+	:global(.archive-tags__pill)
+		display: inline-flex
+		align-items: center
+		gap: 0.375rem
+		padding: 0.3rem 0.5rem 0.3rem 0.85rem
+		border: 1px solid var(--outline-variant)
+		border-radius: var(--shape-corner-full)
+		background: var(--card-bg)
+		color: var(--on-surface)
+		font: var(--m3e-type-body-medium)
+		font-weight: 500
+		cursor: pointer
+		transition:
+			border-color var(--m3e-duration-short) var(--m3e-easing-standard),
+			background-color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+	:global(.archive-tags__pill:hover)
+		border-color: var(--primary)
+		background: unquote("color-mix(in oklab, var(--primary) 6%, var(--card-bg))")
+
+	:global(.archive-tags__pill:hover .archive-tags__pill-count)
+		background: var(--primary)
+		color: var(--card-bg)
+
+	:global(.archive-tags__pill-count)
+		display: inline-flex
+		align-items: center
+		justify-content: center
+		min-width: 1.5rem
+		padding: 0 0.375rem
+		border-radius: var(--shape-corner-full)
+		background: unquote("color-mix(in oklab, var(--primary) 12%, transparent)")
+		color: var(--primary)
+		font: var(--m3e-type-label-small)
+		font-weight: 700
+		transition:
+			background-color var(--m3e-duration-short) var(--m3e-easing-standard),
+			color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+	:global(&__tags-top)
+		margin-top: 2rem
+		padding-top: 1.5rem
+		border-top: 1px solid var(--outline-variant)
+
+	:global(&__tags-top-title)
+		margin: 0 0 1rem
+		color: var(--on-surface)
+		font: var(--m3e-type-title-medium)
+		font-weight: 700
+
+	:global(.archive-tags__top-list)
+		display: flex
+		flex-direction: column
+		gap: 0.375rem
+		margin: 0
+		padding: 0
+		list-style: none
+
+	:global(.archive-tags__row)
+		display: flex
+		align-items: flex-start
+		gap: 0.75rem
+		width: 100%
+		padding: 0.5rem 0.75rem
+		border: none
+		border-radius: var(--shape-corner-m)
+		background: none
+		text-align: left
+		cursor: pointer
+		transition: background-color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+	:global(.archive-tags__row:hover)
+		background: unquote("color-mix(in oklab, var(--primary) 6%, transparent)")
+
+	:global(.archive-tags__row:hover .archive-tags__row-name)
+		color: var(--primary)
+
+	:global(.archive-tags__rank)
+		flex-shrink: 0
+		width: 1.5rem
+		color: var(--primary)
+		font: var(--m3e-type-label-large)
+		font-weight: 700
+		text-align: right
+
+	:global(.archive-tags__row-main)
+		flex: 1
+		min-width: 0
+
+	:global(.archive-tags__row-head)
+		display: flex
+		align-items: baseline
+		justify-content: space-between
+		gap: 0.5rem
+		margin-bottom: 0.375rem
+
+	:global(.archive-tags__row-name)
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		color: var(--on-surface)
+		font: var(--m3e-type-body-medium)
+		font-weight: 500
+		transition: color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+	:global(.archive-tags__row-count)
+		flex-shrink: 0
+		color: var(--primary)
+		font: var(--m3e-type-label-small)
+		font-weight: 600
+
+	:global(.archive-tags__bar)
+		display: block
+		height: 0.5rem
+		overflow: hidden
+		border-radius: var(--shape-corner-full)
+		background: unquote("color-mix(in oklab, var(--primary) 10%, transparent)")
+
+	:global(.archive-tags__bar-fill)
+		display: block
+		height: 100%
+		border-radius: inherit
+		background: var(--primary)
+		transition: width var(--m3e-duration-long) var(--m3e-easing-emphasized-decelerate)
 
 	@media (max-width: bp-sm - 1px)
 		:global(&__crumb)
