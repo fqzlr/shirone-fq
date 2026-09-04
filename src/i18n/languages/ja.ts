@@ -46,6 +46,9 @@ export const ja: Translation = {
 	[Key.sponsorScan]: "{name} でスキャンして支援",
 	[Key.sponsorLinkBy]: "{name} で支援",
 	[Key.sponsorVisit]: "支援する",
+	[Key.sponsorList]: "支援者一覧",
+	[Key.sponsorEmpty]:
+		"まだ支援の記録がありません。最初の支援者になってください！",
 
 	[Key.moments]: "モーメンツ",
 	[Key.momentsNoResults]: "条件に一致するモーメンツはありません",
@@ -223,6 +226,8 @@ export const ja: Translation = {
 	[Key.siteInfoDomain]: "ドメイン",
 	[Key.siteInfoAstro]: "Astro",
 	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoPnpm]: "pnpm",
+	[Key.siteInfoSystem]: "システム情報",
 	[Key.siteInfoBuiltAt]: "ビルド日",
 	[Key.siteInfoMore]: "詳細を表示",
 	[Key.siteInfoLess]: "詳細を隠す",

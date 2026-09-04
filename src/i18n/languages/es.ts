@@ -47,6 +47,8 @@ export const es: Translation = {
 	[Key.sponsorScan]: "Escanea con {name} para donar",
 	[Key.sponsorLinkBy]: "Dona a través de {name}",
 	[Key.sponsorVisit]: "Donar",
+	[Key.sponsorList]: "Lista de donantes",
+	[Key.sponsorEmpty]: "Aún no hay donaciones. ¡Sé el primer donante!",
 
 	[Key.moments]: "Momentos",
 	[Key.momentsNoResults]: "No hay momentos que coincidan con los filtros",
@@ -226,6 +228,8 @@ export const es: Translation = {
 	[Key.siteInfoDomain]: "Dominio",
 	[Key.siteInfoAstro]: "Astro",
 	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoPnpm]: "pnpm",
+	[Key.siteInfoSystem]: "Sistema",
 	[Key.siteInfoBuiltAt]: "Fecha de compilación",
 	[Key.siteInfoMore]: "Más detalles",
 	[Key.siteInfoLess]: "Menos detalles",

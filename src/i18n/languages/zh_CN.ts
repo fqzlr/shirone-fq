@@ -44,6 +44,8 @@ export const zh_CN: Translation = {
 	[Key.sponsorScan]: "使用 {name} 扫码打赏",
 	[Key.sponsorLinkBy]: "通过 {name} 打赏",
 	[Key.sponsorVisit]: "前往打赏",
+	[Key.sponsorList]: "打赏名单",
+	[Key.sponsorEmpty]: "还没有打赏记录，快来成为第一位支持者吧！",
 
 	[Key.moments]: "动态",
 	[Key.momentsNoResults]: "没有符合条件的动态",
@@ -215,6 +217,8 @@ export const zh_CN: Translation = {
 	[Key.siteInfoDomain]: "域名",
 	[Key.siteInfoAstro]: "Astro 版本",
 	[Key.siteInfoNode]: "Node 版本",
+	[Key.siteInfoPnpm]: "pnpm 版本",
+	[Key.siteInfoSystem]: "系统信息",
 	[Key.siteInfoBuiltAt]: "构建时间",
 	[Key.siteInfoMore]: "展开更多信息",
 	[Key.siteInfoLess]: "收起更多信息",

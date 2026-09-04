@@ -9,7 +9,7 @@
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { Icon } from "astro-icon/components";
-import { resolveSponsorMethods, sponsorConfig } from "@/config";
+import { resolveSponsorMethods, siteConfig, sponsorConfig } from "@/config";
 import type { SponsorMethod } from "@/types/sponsorConfig";
 import { resolveAsset } from "@/utils/asset-utils";
 import { url } from "@/utils/url-utils";
@@ -21,6 +21,20 @@ interface Props {
 const className = Astro.props.class;
 
 const methods = resolveSponsorMethods();
+
+/** 打赏者名单：showSponsorsList !== false 时展示（空清单显示空态文案） */
+const donors = sponsorConfig.sponsors ?? [];
+const showDonors = sponsorConfig.showSponsorsList !== false;
+const siteLang = siteConfig.lang.replace("_", "-");
+const formatDonorDate = (date: string) => {
+	try {
+		return new Intl.DateTimeFormat(siteLang, { dateStyle: "medium" }).format(
+			new Date(date),
+		);
+	} catch {
+		return date;
+	}
+};
 
 const fallbackDescription = i18n(I18nKey.sponsorDescription);
 const description = (sponsorConfig.description ?? fallbackDescription).trim();
@@ -137,12 +151,74 @@ const isExternalUrl = (link: string) => /^https?:\/\//.test(link);
 			)
 		}
 	</div>
+	{
+		showDonors && (
+			<div class="sponsor__card sponsor__card--donors">
+				<header class="sponsor__donors-header">
+					<span class="sponsor__donors-badge" aria-hidden="true">
+						<Icon name="material-symbols:emoji-people-rounded" />
+					</span>
+					<h2 id="sponsor-donors-title">{i18n(I18nKey.sponsorList)}</h2>
+					{donors.length > 0 && (
+						<span class="sponsor__donors-count">{donors.length}</span>
+					)}
+				</header>
+				{donors.length > 0 ? (
+					<ul class="sponsor__donors-grid">
+						{donors.map((donor) => {
+							const avatar = donor.avatar
+								? donor.avatar.startsWith("/")
+									? url(donor.avatar)
+									: donor.avatar
+								: "";
+							return (
+								<li class="sponsor__donor">
+									{avatar ? (
+										<img
+											class="sponsor__donor-avatar"
+											src={avatar}
+											alt={donor.name}
+											loading="lazy"
+											decoding="async"
+										/>
+									) : (
+										<span
+											class="sponsor__donor-avatar sponsor__donor-avatar--initial"
+											aria-hidden="true"
+										>
+											{donor.name.charAt(0)}
+										</span>
+									)}
+									<div class="sponsor__donor-info">
+										<div class="sponsor__donor-name-row">
+											<span class="sponsor__donor-name">{donor.name}</span>
+											{donor.amount && (
+												<span class="sponsor__donor-amount">{donor.amount}</span>
+											)}
+										</div>
+										{donor.date && (
+											<time class="sponsor__donor-date" datetime={donor.date}>
+												{formatDonorDate(donor.date)}
+											</time>
+										)}
+									</div>
+								</li>
+							);
+						})}
+					</ul>
+				) : (
+					<p class="sponsor__donors-empty">{i18n(I18nKey.sponsorEmpty)}</p>
+				)}
+			</div>
+		)
+	}
 </section>
 
 <style lang="stylus">
 .sponsor
 	display: flex
 	flex-direction: column
+	gap: var(--m3e-space-4)
 
 	&__card
 		display: flex
@@ -207,11 +283,14 @@ const isExternalUrl = (link: string) => /^https?:\/\//.test(link);
 
 	&__grid
 		display: grid
-		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr))
+		grid-template-columns: repeat(2, minmax(0, 1fr))
 		gap: var(--m3e-space-4)
 		margin: var(--m3e-space-2) 0 0
 		padding: 0
 		list-style: none
+
+		@media (max-width: 40rem)
+			grid-template-columns: 1fr
 
 	&__method
 		display: flex
@@ -282,4 +361,117 @@ const isExternalUrl = (link: string) => /^https?:\/\//.test(link);
 		> :global(svg)
 			width: 1rem
 			height: 1rem
+
+	/* 打赏者名单卡片 */
+	&__donors-header
+		display: flex
+		align-items: center
+		gap: var(--m3e-space-3)
+
+		h2
+			margin: 0
+			font: var(--m3e-type-title-large)
+			font-weight: 700
+			color: var(--on-surface)
+
+	&__donors-badge
+		display: inline-flex
+		align-items: center
+		justify-content: center
+		width: 2rem
+		height: 2rem
+		flex-shrink: 0
+		border-radius: var(--shape-corner-m)
+		background: var(--primary-container)
+		color: var(--on-primary-container)
+
+		> :global(svg)
+			width: 1.125rem
+			height: 1.125rem
+
+	&__donors-count
+		margin-left: auto
+		padding: 0.125rem 0.625rem
+		border-radius: var(--shape-corner-full)
+		background: var(--surface-container)
+		font: var(--m3e-type-label-medium)
+		font-variant-numeric: tabular-nums
+		color: var(--on-surface-variant)
+
+	&__donors-grid
+		display: grid
+		grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr))
+		gap: var(--m3e-space-3)
+		margin: 0
+		padding: 0
+		list-style: none
+
+	&__donor
+		display: flex
+		align-items: center
+		gap: var(--m3e-space-3)
+		min-width: 0
+		padding: 0.625rem 0.75rem
+		border: 1px solid var(--outline-variant)
+		border-radius: var(--shape-corner-m)
+		transition: border-color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+		&:hover
+			border-color: var(--primary)
+
+	&__donor-avatar
+		width: 2.25rem
+		height: 2.25rem
+		flex-shrink: 0
+		border-radius: var(--shape-corner-full)
+		object-fit: cover
+
+		&--initial
+			display: inline-flex
+			align-items: center
+			justify-content: center
+			background: var(--primary-container)
+			font: var(--m3e-type-title-small)
+			font-weight: 700
+			color: var(--on-primary-container)
+
+	&__donor-info
+		display: flex
+		flex-direction: column
+		gap: 0.125rem
+		flex: 1
+		min-width: 0
+
+	&__donor-name-row
+		display: flex
+		align-items: center
+		gap: var(--m3e-space-2)
+		min-width: 0
+
+	&__donor-name
+		overflow: hidden
+		font: var(--m3e-type-label-large)
+		font-weight: 600
+		color: var(--on-surface)
+		text-overflow: ellipsis
+		white-space: nowrap
+
+	&__donor-amount
+		flex-shrink: 0
+		font: var(--m3e-type-label-medium)
+		font-weight: 700
+		font-variant-numeric: tabular-nums
+		color: var(--primary)
+
+	&__donor-date
+		font: var(--m3e-type-label-small)
+		font-variant-numeric: tabular-nums
+		color: var(--on-surface-variant)
+
+	&__donors-empty
+		margin: 0
+		padding: var(--m3e-space-6) 0
+		font: var(--m3e-type-body-medium)
+		color: var(--on-surface-variant)
+		text-align: center
 </style>

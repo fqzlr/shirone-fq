@@ -46,6 +46,9 @@ export const ko: Translation = {
 	[Key.sponsorScan]: "{name}으로 스캔하여 후원",
 	[Key.sponsorLinkBy]: "{name}으로 후원",
 	[Key.sponsorVisit]: "후원하기",
+	[Key.sponsorList]: "후원자 목록",
+	[Key.sponsorEmpty]:
+		"아직 후원 기록이 없습니다. 첫 번째 후원자가 되어 주세요!",
 
 	[Key.moments]: "모먼트",
 	[Key.momentsNoResults]: "조건에 맞는 모먼트가 없습니다",
@@ -222,6 +225,8 @@ export const ko: Translation = {
 	[Key.siteInfoDomain]: "도메인",
 	[Key.siteInfoAstro]: "Astro",
 	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoPnpm]: "pnpm",
+	[Key.siteInfoSystem]: "시스템 정보",
 	[Key.siteInfoBuiltAt]: "빌드 날짜",
 	[Key.siteInfoMore]: "더 보기",
 	[Key.siteInfoLess]: "접기",

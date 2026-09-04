@@ -1,10 +1,11 @@
 ---
 import { createRequire } from "node:module";
 /**
- * 站点信息侧栏 widget（规格表风格 + 可展开详情）。
- * 主行 = 构建平台 / 博客版本 / 文章许可；`<details>` 原生折叠展示更多信息
- * （域名 / Astro / Node / 构建时间），全部构建期取值、零客户端脚本。
- * 数据来源：环境变量识别（utils/build-platform）、package.json 版本、licenseConfig。
+ * 站点信息侧栏 widget（规格表 + 可展开构建信息卡片网格）。
+ * 主行 = 构建平台 / 博客版本 / 文章许可；`<details>` 原生折叠展开构建信息
+ * 网格（域名 / Astro / Node / pnpm / 构建时间 / 系统信息），全部构建期取值、
+ * 零客户端脚本。数据来源：环境变量识别（utils/build-platform）、
+ * package.json 版本、licenseConfig。
  */
 import MetaIcon from "@components/atoms/display/MetaIcon.astro";
 import I18nKey from "@i18n/i18nKey";
@@ -36,6 +37,27 @@ try {
 	astroVersion = "";
 }
 
+// pnpm 版本：从 npm_config_user_agent 解析（构建工具链信息）；解析失败时省略该行
+const pnpmVersion = (() => {
+	const match = /pnpm\/([\d.]+)/.exec(process.env.npm_config_user_agent ?? "");
+	return match ? `v${match[1]}` : "";
+})();
+
+// 系统信息：构建机平台 + 架构（与参考实现同语义，展示构建环境）
+const platformNames: Record<string, string> = {
+	win32: "Windows",
+	darwin: "macOS",
+	linux: "Linux",
+	freebsd: "FreeBSD",
+};
+const archNames: Record<string, string> = {
+	x64: "x86_64",
+	arm64: "ARM64",
+	arm: "ARM",
+	ia32: "x86",
+};
+const systemInfo = `${platformNames[process.platform] ?? process.platform} / ${archNames[process.arch] ?? process.arch}`;
+
 const domain = (() => {
 	try {
 		return new URL(siteConfig.site).hostname;
@@ -44,7 +66,23 @@ const domain = (() => {
 	}
 })();
 
-const builtAt = new Date().toISOString().slice(0, 10);
+// 构建时间：站点时区 + 站点语言格式化到秒（时区非法时回退 ISO 日期）
+const builtAt = (() => {
+	try {
+		return new Intl.DateTimeFormat(siteConfig.lang.replace("_", "-"), {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			hour12: false,
+			timeZone: siteConfig.timeZone,
+		}).format(new Date());
+	} catch {
+		return new Date().toISOString().slice(0, 10);
+	}
+})();
 
 const mainRows = [
 	{
@@ -69,16 +107,30 @@ const mainRows = [
 		: []),
 ];
 
-const moreRows = [
+interface DetailRow {
+	icon: string;
+	label: string;
+	value: string;
+	/** 独占整行（域名 / 构建时间 / 系统信息这类长值） */
+	full?: boolean;
+}
+
+const detailRows: DetailRow[] = [
 	...(domain
 		? [
 				{
 					icon: "material-symbols:language-rounded",
 					label: i18n(I18nKey.siteInfoDomain),
 					value: domain,
+					full: true,
 				},
 			]
 		: []),
+	{
+		icon: "material-symbols:rocket-launch-outline-rounded",
+		label: i18n(I18nKey.siteInfoVersion),
+		value: `v${pkg.version}`,
+	},
 	...(astroVersion
 		? [
 				{
@@ -93,10 +145,26 @@ const moreRows = [
 		label: i18n(I18nKey.siteInfoNode),
 		value: process.version,
 	},
+	...(pnpmVersion
+		? [
+				{
+					icon: "simple-icons:pnpm",
+					label: i18n(I18nKey.siteInfoPnpm),
+					value: pnpmVersion,
+				},
+			]
+		: []),
 	{
 		icon: "material-symbols:schedule-rounded",
 		label: i18n(I18nKey.siteInfoBuiltAt),
 		value: builtAt,
+		full: true,
+	},
+	{
+		icon: "material-symbols:computer-outline-rounded",
+		label: i18n(I18nKey.siteInfoSystem),
+		value: systemInfo,
+		full: true,
 	},
 ];
 ---
@@ -124,16 +192,15 @@ const moreRows = [
 			<span class="site-info__summary-text site-info__summary-text--close-label">{i18n(I18nKey.siteInfoLess)}</span>
 			<Icon name="material-symbols:keyboard-arrow-down-rounded" class="site-info__chevron" aria-hidden="true" />
 		</summary>
-		<ul class="site-info">
-			{moreRows.map((row) => (
-				<li class="site-info__row">
-					<MetaIcon icon={row.icon} />
-					<span class="site-info__label">{row.label}</span>
-					<span class="site-info__rule" aria-hidden="true"></span>
-					<span class="site-info__value">{row.value}</span>
-				</li>
+		<div class="site-info__grid">
+			{detailRows.map((row) => (
+				<div class:list={["site-info__card", { "site-info__card--full": row.full }]} title={row.value}>
+					<Icon name={row.icon} class="site-info__card-icon" aria-hidden="true" />
+					<span class="site-info__card-label">{row.label}</span>
+					<span class="site-info__card-value">{row.value}</span>
+				</div>
 			))}
-		</ul>
+		</div>
 	</details>
 </WidgetLayout>
 
@@ -178,11 +245,57 @@ const moreRows = [
 			&:hover
 				text-decoration: underline
 
+	/* 可展开的构建信息：2 列卡片网格，full 项独占整行 */
+	&__grid
+		display: grid
+		grid-template-columns: repeat(2, minmax(0, 1fr))
+		gap: var(--m3e-space-2)
+		padding-top: var(--m3e-space-2)
+
+	&__card
+		display: flex
+		flex-direction: column
+		align-items: center
+		gap: 0.125rem
+		min-width: 0
+		padding: 0.5rem 0.375rem
+		border-radius: var(--shape-corner-m)
+		background: var(--surface-container)
+		text-align: center
+
+		&--full
+			grid-column: 1 / -1
+
+	&__card-icon
+		width: 1.25rem
+		height: 1.25rem
+		color: var(--primary)
+
+	&__card-label
+		font: var(--m3e-type-label-medium)
+		color: var(--on-surface-variant)
+
+	&__card-value
+		max-width: 100%
+		overflow: hidden
+		font: var(--m3e-type-title-small)
+		font-weight: 700
+		font-variant-numeric: tabular-nums
+		color: var(--on-surface)
+		text-overflow: ellipsis
+		white-space: nowrap
+
 	&__more
+		display: flex
+		flex-direction: column
 		margin-top: var(--m3e-space-2)
 
-		&[open] > .site-info
-			padding-top: var(--m3e-space-2)
+		/* 折叠按钮沉底（与参考布局一致）：展开时网格在上、按钮在下 */
+		& &__summary
+			order: 2
+
+		& &__grid
+			order: 1
 
 	&__summary
 		display: flex

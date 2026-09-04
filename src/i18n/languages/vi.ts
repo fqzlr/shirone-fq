@@ -47,6 +47,8 @@ export const vi: Translation = {
 	[Key.sponsorScan]: "Quét mã bằng {name} để ủng hộ",
 	[Key.sponsorLinkBy]: "Ủng hộ qua {name}",
 	[Key.sponsorVisit]: "Ủng hộ",
+	[Key.sponsorList]: "Danh sách ủng hộ",
+	[Key.sponsorEmpty]: "Chưa có lượt ủng hộ nào, hãy là người ủng hộ đầu tiên!",
 
 	[Key.moments]: "Khoảnh khắc",
 	[Key.momentsNoResults]: "Không có khoảnh khắc nào khớp bộ lọc",
@@ -226,6 +228,8 @@ export const vi: Translation = {
 	[Key.siteInfoDomain]: "Tên miền",
 	[Key.siteInfoAstro]: "Astro",
 	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoPnpm]: "pnpm",
+	[Key.siteInfoSystem]: "Hệ thống",
 	[Key.siteInfoBuiltAt]: "Ngày dựng",
 	[Key.siteInfoMore]: "Xem thêm",
 	[Key.siteInfoLess]: "Thu gọn",

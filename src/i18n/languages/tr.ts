@@ -47,6 +47,8 @@ export const tr: Translation = {
 	[Key.sponsorScan]: "{name} ile tarayıp destek ol",
 	[Key.sponsorLinkBy]: "{name} üzerinden destek ol",
 	[Key.sponsorVisit]: "Bağış yap",
+	[Key.sponsorList]: "Bağışçı listesi",
+	[Key.sponsorEmpty]: "Henüz bağış yok. İlk destekçi olun!",
 
 	[Key.moments]: "Anlar",
 	[Key.momentsNoResults]: "Filtrelerle eşleşen an yok",
@@ -226,6 +228,8 @@ export const tr: Translation = {
 	[Key.siteInfoDomain]: "Alan adı",
 	[Key.siteInfoAstro]: "Astro",
 	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoPnpm]: "pnpm",
+	[Key.siteInfoSystem]: "Sistem",
 	[Key.siteInfoBuiltAt]: "Derleme tarihi",
 	[Key.siteInfoMore]: "Daha fazla göster",
 	[Key.siteInfoLess]: "Daha az göster",

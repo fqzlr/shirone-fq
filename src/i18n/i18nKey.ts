@@ -46,6 +46,10 @@ enum I18nKey {
 	/** 外链卡片默认描述，{name} 为打赏方式名称 */
 	sponsorLinkBy = "sponsorLinkBy",
 	sponsorVisit = "sponsorVisit",
+	/** 打赏者名单标题（/sponsor/ 名单卡片区） */
+	sponsorList = "sponsorList",
+	/** 打赏者名单为空时的占位文案 */
+	sponsorEmpty = "sponsorEmpty",
 
 	moments = "moments",
 	momentsNoResults = "momentsNoResults",
@@ -219,6 +223,8 @@ enum I18nKey {
 	siteInfoDomain = "siteInfoDomain",
 	siteInfoAstro = "siteInfoAstro",
 	siteInfoNode = "siteInfoNode",
+	siteInfoPnpm = "siteInfoPnpm",
+	siteInfoSystem = "siteInfoSystem",
 	siteInfoBuiltAt = "siteInfoBuiltAt",
 	siteInfoMore = "siteInfoMore",
 	siteInfoLess = "siteInfoLess",

@@ -44,6 +44,8 @@ export const zh_TW: Translation = {
 	[Key.sponsorScan]: "使用 {name} 掃碼打賞",
 	[Key.sponsorLinkBy]: "透過 {name} 打賞",
 	[Key.sponsorVisit]: "前往打賞",
+	[Key.sponsorList]: "打賞名單",
+	[Key.sponsorEmpty]: "還沒有打賞紀錄，快來成為第一位支持者吧！",
 
 	[Key.moments]: "動態",
 	[Key.momentsNoResults]: "沒有符合條件的動態",
@@ -215,6 +217,8 @@ export const zh_TW: Translation = {
 	[Key.siteInfoDomain]: "網域",
 	[Key.siteInfoAstro]: "Astro 版本",
 	[Key.siteInfoNode]: "Node 版本",
+	[Key.siteInfoPnpm]: "pnpm 版本",
+	[Key.siteInfoSystem]: "系統資訊",
 	[Key.siteInfoBuiltAt]: "建置時間",
 	[Key.siteInfoMore]: "展開更多資訊",
 	[Key.siteInfoLess]: "收起更多資訊",

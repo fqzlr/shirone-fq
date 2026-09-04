@@ -47,6 +47,8 @@ export const id: Translation = {
 	[Key.sponsorScan]: "Pindai dengan {name} untuk mendukung",
 	[Key.sponsorLinkBy]: "Dukung lewat {name}",
 	[Key.sponsorVisit]: "Donasi",
+	[Key.sponsorList]: "Daftar donatur",
+	[Key.sponsorEmpty]: "Belum ada donasi. Jadilah pendukung pertama!",
 
 	[Key.moments]: "Momen",
 	[Key.momentsNoResults]: "Tidak ada momen yang cocok dengan filter",
@@ -227,6 +229,8 @@ export const id: Translation = {
 	[Key.siteInfoDomain]: "Domain",
 	[Key.siteInfoAstro]: "Astro",
 	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoPnpm]: "pnpm",
+	[Key.siteInfoSystem]: "Sistem",
 	[Key.siteInfoBuiltAt]: "Tanggal build",
 	[Key.siteInfoMore]: "Detail lainnya",
 	[Key.siteInfoLess]: "Sembunyikan detail",

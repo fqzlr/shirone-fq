@@ -26,6 +26,18 @@ export interface SponsorMethod {
 	external?: boolean;
 }
 
+/** 打赏者条目：名单卡片区按数组顺序渲染 */
+export interface SponsorDonor {
+	/** 名称（直接展示；无头像时取首字符作占位头像） */
+	name: string;
+	/** 金额文案（如 "¥50"），省略时不显示 */
+	amount?: string;
+	/** 打赏日期（YYYY-MM-DD 等 Date 可解析值），省略时不显示 */
+	date?: string;
+	/** 头像地址（public 路径或远程 URL），省略时用首字符占位 */
+	avatar?: string;
+}
+
 /** 打赏页配置：`/sponsor/` 页的提示条文案与打赏方式清单 */
 export interface SponsorConfig {
 	/** 页面行为开关：false 时页面跳转 /404/ 且导航入口隐藏（与 pages.sponsor 取 AND） */
@@ -36,4 +48,10 @@ export interface SponsorConfig {
 	usage?: string;
 	/** 打赏方式清单，按数组顺序渲染卡片 */
 	methods: SponsorMethod[];
+	/** 是否展示打赏者名单卡片区（默认 true；sponsors 为空时显示空态文案） */
+	showSponsorsList?: boolean;
+	/** 打赏者清单，按数组顺序渲染 */
+	sponsors?: SponsorDonor[];
+	/** 是否在打赏页展示评论区（默认 true；仍需评论系统全局启用才渲染） */
+	showComment?: boolean;
 }

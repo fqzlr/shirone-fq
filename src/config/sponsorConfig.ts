@@ -11,6 +11,7 @@ import { withUserConfig } from "../utils/config-overlay.ts";
 export const sponsorConfig: SponsorConfig = withUserConfig("sponsor", {
 	enable: false,
 	methods: [],
+	sponsors: [],
 });
 
 /**

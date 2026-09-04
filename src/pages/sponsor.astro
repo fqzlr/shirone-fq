@@ -1,13 +1,32 @@
 ---
+import CommentSection from "@components/organisms/comment/CommentSection.astro";
 import SponsorSection from "@components/organisms/SponsorSection.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
+import {
+	commentConfig,
+	resolveCommentOptions,
+	siteConfig,
+	sponsorConfig,
+} from "@/config";
 import { isPageAvailable } from "@/utils/page-availability";
+import { url } from "@/utils/url-utils";
 
 if (!isPageAvailable("sponsor")) {
 	return Astro.redirect("/404/");
 }
+
+// 评论区：打赏页默认展示（showComment !== false），仍需评论系统全局启用
+const showComment =
+	resolveCommentOptions(commentConfig) !== null &&
+	sponsorConfig.showComment !== false;
+const commentContext = {
+	key: "sponsor",
+	path: url("/sponsor/"),
+	title: i18n(I18nKey.sponsor),
+	language: siteConfig.lang,
+};
 ---
 
 <MainGridLayout
@@ -16,4 +35,5 @@ if (!isPageAvailable("sponsor")) {
 	page="sponsor"
 >
 	<SponsorSection class="onload-animation" />
+	{showComment && <CommentSection context={commentContext} class="onload-animation" />}
 </MainGridLayout>

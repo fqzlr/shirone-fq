@@ -47,6 +47,8 @@ export const en: Translation = {
 	[Key.sponsorScan]: "Scan with {name} to support",
 	[Key.sponsorLinkBy]: "Support via {name}",
 	[Key.sponsorVisit]: "Donate",
+	[Key.sponsorList]: "Donor list",
+	[Key.sponsorEmpty]: "No donations yet — be the first supporter!",
 
 	[Key.moments]: "Moments",
 	[Key.momentsNoResults]: "No moments matched your filters",
@@ -225,6 +227,8 @@ export const en: Translation = {
 	[Key.siteInfoDomain]: "Domain",
 	[Key.siteInfoAstro]: "Astro",
 	[Key.siteInfoNode]: "Node",
+	[Key.siteInfoPnpm]: "pnpm",
+	[Key.siteInfoSystem]: "System",
 	[Key.siteInfoBuiltAt]: "Built",
 	[Key.siteInfoMore]: "More details",
 	[Key.siteInfoLess]: "Fewer details",
