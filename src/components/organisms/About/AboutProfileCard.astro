@@ -38,6 +38,8 @@ interface Props {
 	avatarShape?: "circle" | "rounded" | "square";
 	/** 触发词前可选小图标（Iconify 名） */
 	icon?: string;
+	/** 卡片风格：default 中性卡片；owner 站长紫（对齐友链页站长卡片色板） */
+	variant?: "default" | "owner";
 }
 
 const {
@@ -49,6 +51,7 @@ const {
 	avatar,
 	avatarShape = "circle",
 	icon,
+	variant = "default",
 } = Astro.props;
 
 const triggerText = trigger || name;
@@ -56,7 +59,11 @@ const avatarSrc = typeof avatar === "string" ? avatar : avatar?.src;
 const cardId = `about-profile-card-${id}`;
 ---
 
-<span class="about-profile-card" tabindex="0" aria-describedby={cardId}>
+<span
+	class:list={["about-profile-card", variant === "owner" && "about-profile-card--owner"]}
+	tabindex="0"
+	aria-describedby={cardId}
+>
 	<span class="about-profile-card__trigger">
 		{icon && (
 			<span class="about-profile-card__trigger-icon" aria-hidden="true">
@@ -227,6 +234,69 @@ const cardId = `about-profile-card-${id}`;
 		font-weight: 400
 		line-height: 1.55
 		word-break: break-word
+
+/* —— owner 变体：站长紫，与友链页站长卡片同源色板（#8d7cff / #ebe8ff / #5c49c7） —— */
+.about-profile-card--owner
+	.about-profile-card__trigger
+		color: #5c49c7
+		border-bottom-color: unquote("color-mix(in srgb, #8d7cff 45%, transparent)")
+
+	.about-profile-card__card
+		border-color: unquote("color-mix(in srgb, #8d7cff 38%, var(--outline-variant))")
+		background: unquote("color-mix(in srgb, #ebe8ff 48%, var(--card-bg))")
+		box-shadow: unquote("0 0.28rem 0.9rem color-mix(in srgb, #8d7cff 16%, transparent)")
+
+	.about-profile-card__card::before
+		border-top-color: unquote("color-mix(in srgb, #8d7cff 38%, var(--outline-variant))")
+		border-left-color: unquote("color-mix(in srgb, #8d7cff 38%, var(--outline-variant))")
+		background: unquote("color-mix(in srgb, #ebe8ff 48%, var(--card-bg))")
+
+	&:hover .about-profile-card__trigger,
+	&:focus-within .about-profile-card__trigger
+		color: #5c49c7
+		border-bottom-color: #8d7cff
+
+	.about-profile-card__name
+		color: #5c49c7
+		text-shadow: unquote("0 0 0.32rem color-mix(in srgb, #8d7cff 30%, transparent)")
+
+	.about-profile-card__role
+		color: #4a3d99
+
+	.about-profile-card__description
+		color: #4a3d99
+
+	.about-profile-card__avatar-img
+		box-shadow: unquote("0 0 0 2px color-mix(in srgb, #8d7cff 60%, white), 0 0 0 3.5px color-mix(in srgb, #8d7cff 24%, transparent)")
+
+/* —— owner 变体暗色模式（参考站暗色板 #a594ff / #3a2e7a） —— */
+:global(:root.dark) .about-profile-card--owner
+	.about-profile-card__trigger
+		color: #c4b8ff
+		border-bottom-color: unquote("color-mix(in srgb, #a594ff 45%, transparent)")
+
+	.about-profile-card__card
+		border-color: unquote("color-mix(in srgb, #a594ff 36%, var(--outline-variant))")
+		background: unquote("color-mix(in srgb, #3a2e7a 32%, var(--card-bg))")
+		box-shadow: unquote("0 0.28rem 0.9rem color-mix(in srgb, #8d7cff 18%, transparent)")
+
+	.about-profile-card__card::before
+		border-top-color: unquote("color-mix(in srgb, #a594ff 36%, var(--outline-variant))")
+		border-left-color: unquote("color-mix(in srgb, #a594ff 36%, var(--outline-variant))")
+		background: unquote("color-mix(in srgb, #3a2e7a 32%, var(--card-bg))")
+
+	.about-profile-card__name
+		color: #c4b8ff
+		text-shadow: 0 0 0.5rem rgba(141, 124, 255, 0.36)
+
+	.about-profile-card__role
+		color: #b0a4e8
+
+	.about-profile-card__description
+		color: #b0a4e8
+
+	.about-profile-card__avatar-img
+		box-shadow: unquote("0 0 0 2px color-mix(in srgb, #a594ff 60%, white), 0 0 0 3.5px color-mix(in srgb, #a594ff 24%, transparent)")
 
 @media (max-width: 768px)
 	.about-profile-card
