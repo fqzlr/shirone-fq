@@ -155,6 +155,18 @@ test.describe("banner wallpaper", () => {
 			resolveBannerState({ ...base, viewport: "mobile", page: "post" })
 				.copyMode,
 		).toBeNull();
+		// 全屏壁纸模式：仅首页显示 home 文案，非首页与 overlay 一致不显示
+		expect(
+			resolveBannerState({ ...base, mode: "fullscreen", page: "home" })
+				.copyMode,
+		).toBe("home");
+		expect(
+			resolveBannerState({ ...base, mode: "fullscreen", page: "post" })
+				.copyMode,
+		).toBeNull();
+		expect(
+			resolveBannerState({ ...base, mode: "overlay", page: "home" }).copyMode,
+		).toBeNull();
 	});
 
 	test("server response includes article banner context", async ({

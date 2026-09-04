@@ -313,10 +313,11 @@ const hasMonoFont =
 			top: 100vh;
 			top: 100lvh;
 		}
-		/* 全屏壁纸非首页（classic 随页滚动 / hero 固定壁纸）：桌面端内容下移到横幅条带之下，
-		   条带内展示页面上下文文案（文章标题/描述），与横幅模式一致 */
+		/* 全屏壁纸 classic 布局非首页：桌面端内容下移到横幅条带之下，
+		   条带内展示页面上下文文案（文章标题/描述），与横幅模式一致；
+		   hero 布局壁纸固定整屏、非首页不显示文案，内容与覆盖透明模式一致从顶栏下开始 */
 		@media (min-width: 1024px) {
-			html[data-wallpaper-mode="fullscreen"] body:not([data-current-page="home"]) #main-layout {
+			html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body:not([data-current-page="home"]) #main-layout {
 				top: var(--banner-content-top);
 			}
 		}

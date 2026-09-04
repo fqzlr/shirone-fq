@@ -29,8 +29,8 @@ export interface BannerState {
 /**
  * 按壁纸模式解析横幅舞台的可见性与内容形态：
  * - banner：桌面全页 + 移动首页，文案随页面切换（home/context）；
- * - fullscreen：全屏固定壁纸，所有页面可见；首页显示 home 文案，
- *   非首页带上下文标题时显示 context 文案（文章标题/描述），否则无文案；
+ * - fullscreen：全屏固定壁纸，所有页面可见；仅首页显示 home 文案，
+ *   非首页不显示文案（与 overlay 一致，上下文标题由页内卡片承载）；
  * - overlay：壁纸固定铺满视口作背景，内容卡片浮于其上，不显示文案；
  * - none：无壁纸。
  */
@@ -40,21 +40,10 @@ export function resolveBannerState(input: BannerStateInput): BannerState {
 
 	if (input.mode === "fullscreen" || input.mode === "overlay") {
 		const visible = hasImages;
-		const hasContextCopy =
-			input.mode === "fullscreen" &&
-			!isHome &&
-			Boolean(input.contextTitle?.trim());
 		return {
 			visible,
 			assetGroup: visible ? input.viewport : null,
-			copyMode:
-				input.mode === "fullscreen"
-					? isHome
-						? "home"
-						: hasContextCopy
-							? "context"
-							: null
-					: null,
+			copyMode: input.mode === "fullscreen" && isHome ? "home" : null,
 			rotate:
 				visible &&
 				input.carouselEnabled &&

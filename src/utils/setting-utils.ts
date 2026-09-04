@@ -23,6 +23,7 @@ import {
 	WALLPAPER_OVERLAY_CARD_OPACITY_KEY,
 	WALLPAPER_OVERLAY_OPACITY_KEY,
 } from "@constants/constants.ts";
+import { prefersReducedMotion } from "@utils/motion";
 import { applyCurrentScheme } from "@utils/theme-utils";
 import { expressiveCodeConfig, siteConfig } from "@/config";
 import type {
@@ -139,12 +140,45 @@ function syncWallpaperTransparentClass(mode: WallpaperMode): void {
 	);
 }
 
+// 壁纸模式 / 布局切换的柔和过渡：各模式几何差异大（横幅条 ↔ 整屏 fixed），
+// 直接切换会突兀跳变（忽大忽小）。时序上必须先淡出再落位：
+// 1. 给 <html> 打 data-wallpaper-switching，舞台按旧形态淡出（150ms）；
+// 2. 220ms 后（淡出已完成）再写入新模式属性并派发事件——几何变化发生在
+//    不可见窗口内，CSS 由 html[data-wallpaper-mode] 驱动，故落位必须延迟；
+// 3. 移除 data-wallpaper-switching，舞台以新形态淡入。
+// 快速连续切换时仅替换待执行的变更，不重置过渡计时，避免来回闪烁。
+const WALLPAPER_SWITCH_FADE_MS = 220;
+let wallpaperSwitchTimer: number | undefined;
+let pendingWallpaperChange: (() => void) | null = null;
+
+function applyWallpaperChangeWithFade(apply: () => void): void {
+	if (prefersReducedMotion()) {
+		window.clearTimeout(wallpaperSwitchTimer);
+		wallpaperSwitchTimer = undefined;
+		pendingWallpaperChange = null;
+		apply();
+		return;
+	}
+	pendingWallpaperChange = apply;
+	document.documentElement.dataset.wallpaperSwitching = "true";
+	if (wallpaperSwitchTimer !== undefined) return;
+	wallpaperSwitchTimer = window.setTimeout(() => {
+		wallpaperSwitchTimer = undefined;
+		const pending = pendingWallpaperChange;
+		pendingWallpaperChange = null;
+		pending?.();
+		delete document.documentElement.dataset.wallpaperSwitching;
+	}, WALLPAPER_SWITCH_FADE_MS);
+}
+
 export function applyWallpaperModeToDocument(mode: WallpaperMode): void {
-	document.documentElement.dataset.wallpaperMode = mode;
-	syncWallpaperTransparentClass(mode);
-	window.dispatchEvent(
-		new CustomEvent(WALLPAPER_MODE_CHANGE_EVENT, { detail: { mode } }),
-	);
+	applyWallpaperChangeWithFade(() => {
+		document.documentElement.dataset.wallpaperMode = mode;
+		syncWallpaperTransparentClass(mode);
+		window.dispatchEvent(
+			new CustomEvent(WALLPAPER_MODE_CHANGE_EVENT, { detail: { mode } }),
+		);
+	});
 }
 
 export function setWallpaperMode(mode: WallpaperMode): void {
@@ -171,14 +205,16 @@ export function applyFullscreenLayoutToDocument(
 	layout: FullscreenWallpaperLayout,
 ): void {
 	const safeLayout = layout === "hero" ? "hero" : "classic";
-	document.documentElement.dataset.fullscreenLayout = safeLayout;
-	// hero 布局在 fullscreen 模式下使用半透明卡片，需重新同步 body 类
-	syncWallpaperTransparentClass(getStoredWallpaperMode());
-	window.dispatchEvent(
-		new CustomEvent(WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, {
-			detail: { layout: safeLayout },
-		}),
-	);
+	applyWallpaperChangeWithFade(() => {
+		document.documentElement.dataset.fullscreenLayout = safeLayout;
+		// hero 布局在 fullscreen 模式下使用半透明卡片，需重新同步 body 类
+		syncWallpaperTransparentClass(getStoredWallpaperMode());
+		window.dispatchEvent(
+			new CustomEvent(WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, {
+				detail: { layout: safeLayout },
+			}),
+		);
+	});
 }
 
 export function setFullscreenLayout(layout: FullscreenWallpaperLayout): void {

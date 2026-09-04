@@ -952,9 +952,9 @@ const videoMode =
 	}
 
 	// ---------------------------------------------------------------------
-	// 全屏壁纸 hero 布局：首页标题随滚动平滑上移并淡出（壁纸保持 fixed，
-	// 标题以滚动速度上移、滚动半个视口后完全透明，与参考站一致）。
-	// 其余模式 / 非首页 / 过渡期一律复位，交还 CSS 控制。
+	// 全屏壁纸 hero 布局：横幅文案（首页标题 / 非首页上下文标题）随滚动平滑
+	// 上移并淡出（壁纸保持 fixed，文案以滚动速度上移、滚动半个视口后完全
+	// 透明，与参考站一致）。其余模式 / 过渡期一律复位，交还 CSS 控制。
 	// ---------------------------------------------------------------------
 	const HERO_TITLE_FADE_RATIO = 0.5;
 	let heroParallaxTicking = false;
@@ -965,20 +965,32 @@ const videoMode =
 		const html = document.documentElement;
 		return (
 			html.dataset.wallpaperMode === "fullscreen" &&
-			html.dataset.fullscreenLayout === "hero" &&
-			currentPage() === "home"
+			html.dataset.fullscreenLayout === "hero"
 		);
 	}
 
-	/** 记忆化写入：值未变化时跳过合成层属性的逐帧更新 */
+	/** 记忆化写入：值未变化时跳过合成层属性的逐帧更新。
+	 *  首页写 home 文案；非首页写上下文文案（保留其 CSS 居中位移前缀） */
 	function applyHeroTitleParallax(transform: string, opacity: string) {
 		if (transform === lastHeroTransform && opacity === lastHeroOpacity) return;
 		lastHeroTransform = transform;
 		lastHeroOpacity = opacity;
-		const copy = stage?.querySelector<HTMLElement>("[data-banner-home-copy]");
-		if (!copy) return;
-		copy.style.transform = transform;
-		copy.style.opacity = opacity;
+		const homeCopy = stage?.querySelector<HTMLElement>(
+			"[data-banner-home-copy]",
+		);
+		if (homeCopy) {
+			homeCopy.style.transform = transform;
+			homeCopy.style.opacity = opacity;
+		}
+		const contextCopy = stage?.querySelector<HTMLElement>(
+			"[data-banner-context]",
+		);
+		if (contextCopy) {
+			contextCopy.style.transform = transform
+				? `translate(-50%, -50%) ${transform}`
+				: "";
+			contextCopy.style.opacity = opacity;
+		}
 	}
 
 	function updateHeroTitleParallax() {
@@ -1000,6 +1012,11 @@ const videoMode =
 		window.requestAnimationFrame(updateHeroTitleParallax);
 	}
 
+	// ---------------------------------------------------------------------
+	// 壁纸模式 / 布局切换的柔和过渡（淡出 → 落位 → 淡入）由 setting-utils
+	// 编排：几何由 html[data-wallpaper-mode] 直接驱动，落位必须发生在
+	// data-wallpaper-switching 淡出完成之后，这里只响应变更事件做同步。
+	// ---------------------------------------------------------------------
 	if (stage) {
 		syncBanner();
 		updateHeroTitleParallax();
@@ -1061,9 +1078,20 @@ const videoMode =
 			height: var(--banner-stage-height)
 			overflow: hidden
 			background: var(--surface-container-lowest)
+			/* 模式切换时由 html[data-wallpaper-switching] 驱动的渐隐过渡 */
+			transition: opacity var(--m3e-duration-short) var(--m3e-easing-standard)
 
 			&[hidden]
 				display: none
+
+		/* 壁纸模式 / 布局切换：几何由 html[data-wallpaper-mode] 直接驱动，直接切换
+		   会突兀跳变（忽大忽小）。setting-utils 先打 data-wallpaper-switching 让
+		   舞台按旧形态淡出，220ms 后落位新几何并移除属性、淡入新形态。
+		   切换期间统一 short 时长：覆盖透明自身的 long 过渡会晚于落位计时器，
+		   导致几何在半透明状态被换掉；淡入由各模式自身的过渡接管 */
+		:global(html[data-wallpaper-switching]) .banner-stage
+			opacity: 0 !important
+			transition-duration: var(--m3e-duration-short) !important
 
 		.banner-stage__media,
 		.banner-stage__scrim,
@@ -1286,19 +1314,18 @@ const videoMode =
 			filter: blur(var(--overlay-blur, 0px))
 			transform: scale(1.05)
 
-		/* 全屏壁纸 hero 布局：壁纸固定整屏，内容滚动其上；非首页按覆盖透明参数虚化 */
+		/* 全屏壁纸 hero 布局：壁纸固定整屏，内容滚动其上；非首页按覆盖透明参数虚化。
+		   z-index 必须为 0（不能为负）：负 z 会把舞台画到 body 文档流盒子之下，
+		   而 body 盒子覆盖整页且可命中，点击会先落在 body 上——壁纸里的
+		   pointer-events:auto 链接永远收不到点击；置 0 后舞台仍在所有正 z 内容
+		   （#top-row z-50 / #main-layout z-30 / FAB z-45）之下，层级不受影响 */
 		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"]) .banner-stage
 			position: fixed
 			inset: 0
 			height: 100vh
 			height: 100lvh
-			z-index: -1
+			z-index: 0
 			pointer-events: none
-
-		/* 全屏 hero 非首页：上下文文案（文章标题/描述）居中于顶部横幅条带，
-		   而非整个视口——条带高度与 #main-layout 的推送起点保持一致 */
-		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"] body:not([data-current-page="home"])) .banner-stage__copy--context
-			top: calc(var(--banner-stage-height) / 2)
 
 		:global(html[data-wallpaper-mode="fullscreen"]) .banner-stage__image
 			transform: scale(1.05)
