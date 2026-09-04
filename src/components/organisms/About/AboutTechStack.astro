@@ -1,0 +1,456 @@
+---
+/**
+ * 关于页 · 站点技术栈手风琴（折叠分组 + 技术卡片 stagger 入场）。
+ *
+ * 数据内联（关于页专属），新增分组直接 push；首组默认展开。
+ * 颜色：黑白图标用 --tech-color / --tech-color-dark 变量按主题反转；
+ *       彩色图标用品牌色。CSS 颜色变量由调用方以 inline style 注入。
+ */
+import { Icon } from "astro-icon/components";
+
+interface TechItem {
+	name: string;
+	desc: string;
+	icon: string;
+	url: string;
+	/** 明色主题图标色 */
+	color: string;
+	/** 暗色主题图标色（黑白 logo 必备；彩色可省） */
+	darkColor?: string;
+}
+
+interface TechGroup {
+	id: string;
+	label: string;
+	icon: string;
+	items: TechItem[];
+}
+
+const techGroups: TechGroup[] = [
+	{
+		id: "core",
+		label: "核心框架",
+		icon: "material-symbols:code-blocks-rounded",
+		items: [
+			{
+				name: "Astro 7",
+				desc: "站点骨架，内容驱动的静态框架",
+				icon: "simple-icons:astro",
+				url: "https://astro.build",
+				color: "#ff5d01",
+			},
+			{
+				name: "Svelte 5",
+				desc: "编辑器与交互组件的界面层",
+				icon: "simple-icons:svelte",
+				url: "https://svelte.dev",
+				color: "#ff3e00",
+			},
+			{
+				name: "TypeScript",
+				desc: "全站类型安全",
+				icon: "simple-icons:typescript",
+				url: "https://www.typescriptlang.org",
+				color: "#3178c6",
+			},
+			{
+				name: "Tailwind CSS 4",
+				desc: "原子化样式引擎",
+				icon: "simple-icons:tailwindcss",
+				url: "https://tailwindcss.com",
+				color: "#38bdf8",
+			},
+		],
+	},
+	{
+		id: "content",
+		label: "内容与渲染",
+		icon: "material-symbols:terminal-rounded",
+		items: [
+			{
+				name: "MDX",
+				desc: "关于页的组件化内容",
+				icon: "simple-icons:mdx",
+				url: "https://mdxjs.com",
+				color: "#f9ac00",
+			},
+			{
+				name: "Expressive Code",
+				desc: "代码块美化",
+				icon: "material-symbols:data-object-rounded",
+				url: "https://expressive-code.com",
+				color: "#8b5cf6",
+			},
+			{
+				name: "KaTeX",
+				desc: "数学公式渲染",
+				icon: "material-symbols:functions-rounded",
+				url: "https://katex.org",
+				color: "#4f6bed",
+			},
+			{
+				name: "Mermaid",
+				desc: "流程图与图表",
+				icon: "simple-icons:mermaid",
+				url: "https://mermaid.js.org",
+				color: "#ff3670",
+			},
+		],
+	},
+	{
+		id: "motion",
+		label: "体验与动效",
+		icon: "material-symbols:auto-awesome-rounded",
+		items: [
+			{
+				name: "Swup",
+				desc: "页面无缝过渡，丝滑不闪屏",
+				icon: "material-symbols:transition-fade-rounded",
+				url: "https://swup.js.org",
+				color: "#0ea5e9",
+			},
+			{
+				name: "Pagefind",
+				desc: "静态全文搜索",
+				icon: "material-symbols:search-rounded",
+				url: "https://pagefind.app",
+				color: "#2563eb",
+			},
+		],
+	},
+	{
+		id: "deploy",
+		label: "部署与数据",
+		icon: "material-symbols:rocket-launch-rounded",
+		items: [
+			{
+				name: "Vercel",
+				desc: "站点托管与全球加速",
+				icon: "simple-icons:vercel",
+				url: "https://vercel.com",
+				color: "#111111",
+				darkColor: "#ffffff",
+			},
+			{
+				name: "Cloudflare",
+				desc: "DNS 与静态资源分发",
+				icon: "simple-icons:cloudflare",
+				url: "https://www.cloudflare.com",
+				color: "#f38020",
+			},
+			{
+				name: "Umami",
+				desc: "隐私友好的访问统计",
+				icon: "simple-icons:umami",
+				url: "https://umami.is",
+				color: "#111111",
+				darkColor: "#ffffff",
+			},
+		],
+	},
+	{
+		id: "engineering",
+		label: "工程化",
+		icon: "material-symbols:commit-rounded",
+		items: [
+			{
+				name: "pnpm",
+				desc: "包管理",
+				icon: "simple-icons:pnpm",
+				url: "https://pnpm.io",
+				color: "#f9ad00",
+			},
+			{
+				name: "Biome",
+				desc: "Lint 与格式化",
+				icon: "simple-icons:biome",
+				url: "https://biomejs.dev",
+				color: "#6f7bf7",
+			},
+			{
+				name: "Playwright",
+				desc: "端到端测试",
+				icon: "simple-icons:playwright",
+				url: "https://playwright.dev",
+				color: "#2ead33",
+			},
+		],
+	},
+];
+
+const totalTech = techGroups.reduce(
+	(sum, group) => sum + group.items.length,
+	0,
+);
+---
+
+<section
+	class="about-tech-stack not-prose"
+	aria-label={`站点技术栈（共 ${totalTech} 项）`}
+>
+	{
+		techGroups.map((group, index) => (
+			<div
+				class="tech-accordion"
+				data-tech-accordion={index === 0 ? "open" : "closed"}
+			>
+				<button
+					type="button"
+					class="tech-accordion__head"
+					aria-expanded={index === 0 ? "true" : "false"}
+				>
+					<span class="tech-accordion__group-icon" aria-hidden="true">
+						<Icon name={group.icon} />
+					</span>
+					<span class="tech-accordion__label">{group.label}</span>
+					<span class="tech-accordion__count">{group.items.length} 项</span>
+					<span class="tech-accordion__arrow" aria-hidden="true">
+						<Icon name="material-symbols:keyboard-arrow-down-rounded" />
+					</span>
+				</button>
+				<div class="tech-accordion__body">
+					<div class="tech-accordion__body-inner">
+						<div class="tech-accordion__grid">
+							{group.items.map((item, itemIndex) => (
+								<a
+									class="tech-card"
+									href={item.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									aria-label={`${item.name}：${item.desc}`}
+									style={`--tech-color: ${item.color};${
+										item.darkColor
+											? `--tech-color-dark: ${item.darkColor};`
+											: ""
+									}--i: ${itemIndex};`}
+								>
+									<span class="tech-card__icon" aria-hidden="true">
+										<Icon name={item.icon} />
+									</span>
+									<span class="tech-card__name">{item.name}</span>
+									<span class="tech-card__desc">{item.desc}</span>
+								</a>
+							))}
+						</div>
+					</div>
+				</div>
+			</div>
+		))
+	}
+</section>
+
+<!-- 手风琴展开/收起：事件委托；不依赖 Swup 生命周期，跨页替换安全 -->
+<script is:inline>
+	(function () {
+		if (window.__aboutTechAccordionReady) return;
+		window.__aboutTechAccordionReady = true;
+
+		document.addEventListener("click", function (e) {
+			var head = e.target && e.target.closest
+				? e.target.closest(".tech-accordion__head")
+				: null;
+			if (!head) return;
+			var item = head.closest("[data-tech-accordion]");
+			if (!item) return;
+			var open = item.getAttribute("data-tech-accordion") === "open";
+			item.setAttribute(
+				"data-tech-accordion",
+				open ? "closed" : "open",
+			);
+			head.setAttribute("aria-expanded", open ? "false" : "true");
+		});
+	})();
+</script>
+
+<style lang="stylus">
+.about-tech-stack
+	display: flex
+	flex-direction: column
+	gap: 0.75rem
+	margin: 1.25rem 0 1.75rem
+
+.tech-accordion
+	overflow: hidden
+	border: 1px solid var(--outline-variant)
+	border-radius: var(--shape-corner-m)
+	background: var(--surface-container-low)
+
+	&__head
+		display: flex
+		width: 100%
+		align-items: center
+		gap: 0.625rem
+		padding: 0.875rem 1rem
+		border: 0
+		background: transparent
+		color: var(--on-surface)
+		font: inherit
+		text-align: start
+		cursor: pointer
+		transition: background-color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+		&:hover
+			background: var(--btn-plain-bg-hover)
+		&:focus-visible
+			outline: 2px solid var(--primary)
+			outline-offset: -2px
+
+	&__group-icon
+		display: grid
+		width: 2.125rem
+		height: 2.125rem
+		flex: 0 0 2.125rem
+		place-items: center
+		border-radius: 0.625rem
+		background: unquote("color-mix(in oklab, var(--primary) 12%, transparent)")
+		color: var(--primary)
+		transition: transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+		> :global(svg)
+			width: 1.25rem
+			height: 1.25rem
+
+	&__head:hover &__group-icon
+		transform: scale(1.08)
+
+	&__label
+		flex: 1
+		overflow: hidden
+		font-size: 0.9375rem
+		font-weight: 700
+		line-height: 1.3
+		text-overflow: ellipsis
+		white-space: nowrap
+
+	&__count
+		flex: 0 0 auto
+		padding: 0.1875rem 0.625rem
+		border-radius: var(--shape-corner-full)
+		background: unquote("color-mix(in oklab, var(--primary) 12%, transparent)")
+		color: var(--primary)
+		font-size: 0.75rem
+		font-weight: 700
+		line-height: 1.4
+
+	&__arrow
+		width: 1.375rem
+		height: 1.375rem
+		flex: 0 0 1.375rem
+		color: var(--on-surface-variant)
+		transition:
+			transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+			color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+		> :global(svg)
+			width: 100%
+			height: 100%
+
+	&[data-tech-accordion="open"] &__arrow
+		color: var(--primary)
+		transform: rotate(180deg)
+
+	/* 展开/收起主体：grid-template-rows 过渡（合成层友好） */
+	&__body
+		display: grid
+		grid-template-rows: 0fr
+		transition: grid-template-rows var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+	&[data-tech-accordion="open"] &__body
+		grid-template-rows: 1fr
+
+	&__body-inner
+		overflow: hidden
+		min-height: 0
+
+	&__grid
+		display: grid
+		grid-template-columns: repeat(2, minmax(0, 1fr))
+		gap: 0.75rem
+		padding: 0.25rem 1rem 1rem
+
+.tech-card
+	display: flex
+	min-height: 4.5rem
+	flex-direction: column
+	gap: 0.25rem
+	padding: 0.875rem 1rem
+	border-radius: var(--shape-corner-s)
+	background: var(--surface-container)
+	color: var(--on-surface)
+	text-decoration: none
+	transition:
+		background-color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+		transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+		box-shadow var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+	&:hover
+		background: var(--surface-container-high)
+		transform: translateY(-2px)
+		box-shadow: var(--m3e-elevation-1)
+
+	&:focus-visible
+		outline: 2px solid var(--primary)
+		outline-offset: 2px
+
+	&__icon
+		display: block
+		width: 1.75rem
+		height: 1.75rem
+		color: var(--tech-color, var(--on-surface))
+		transition: transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+		> :global(svg)
+			width: 100%
+			height: 100%
+
+	&:hover &__icon,
+	&:focus-visible &__icon
+		transform: scale(1.12)
+
+	&__name
+		margin-top: 0.375rem
+		font-size: 0.875rem
+		font-weight: 700
+		line-height: 1.3
+
+	&__desc
+		color: var(--on-surface-variant)
+		font-size: 0.75rem
+		font-weight: 400
+		line-height: 1.4
+
+/* 展开时卡片依次渐入（stagger） */
+.tech-accordion[data-tech-accordion="open"] .tech-card
+	animation: tech-card-in 0.4s ease both
+	animation-delay: calc(0.12s + var(--i, 0) * 0.045s)
+
+@keyframes tech-card-in
+	from
+		opacity: 0
+		transform: translateY(0.5rem)
+	to
+		opacity: 1
+		transform: none
+
+@media (max-width: 768px)
+	.about-tech-stack
+		.tech-accordion__grid
+			grid-template-columns: 1fr
+			gap: 0.625rem
+
+@media (prefers-reduced-motion: reduce)
+	.about-tech-stack
+		.tech-accordion__head
+		.tech-accordion__group-icon
+		.tech-accordion__arrow
+		.tech-card
+		.tech-card__icon
+			transition: none
+		.tech-accordion[data-tech-accordion="open"] .tech-card
+			animation: none
+
+/* 暗色主题：黑白品牌图标反色 */
+:global(:root.dark) .about-tech-stack .tech-card
+	.tech-card__icon
+		color: var(--tech-color-dark, var(--tech-color, var(--on-surface)))
+</style>

@@ -1,4 +1,5 @@
 import type {
+	FriendCheckOptions,
 	FriendNoteItem,
 	FriendPageConfig,
 	FriendSiteInfo,
@@ -37,7 +38,93 @@ export const friendPageConfig: FriendPageConfig = withUserConfig("friendPage", {
 			content: "支持 HTTPS，以原创内容为主，能够正常访问且有持续更新",
 		},
 	],
+	// 友链可达性检测（check-flink）：默认开启，对接 https://check.fqzlr.com/result.json。
+	// 启用后：右上角状态徽标(绿/橙/红) + hover截图预览 + 暂存区/墓碑分级。
+	// 内容仓可用 config/friend-page.yaml 覆盖（friendPage.check.*），
+	// 或构建期设置环境变量 FRIEND_CHECK_RESULT_URL。
+	check: {
+		enable: true,
+		resultUrl: "https://check.fqzlr.com/result.json",
+		cacheTtlMinutes: 30,
+		pendingZone: [1, 6],
+		graveyardZone: [7, 9999],
+	},
 });
+
+const CHECK_TTL_MIN = 5;
+const CHECK_TTL_MAX = 24 * 60;
+const DEFAULT_PENDING_ZONE: [number, number] = [1, 6];
+const DEFAULT_GRAVEYARD_ZONE: [number, number] = [7, 9999];
+
+function isHttpUrl(value: string): boolean {
+	try {
+		const url = new URL(value);
+		return url.protocol === "https:" || url.protocol === "http:";
+	} catch {
+		return false;
+	}
+}
+
+function clampInt(value: number, min: number, max: number): number {
+	return Math.min(max, Math.max(min, Math.round(value)));
+}
+
+/** 校验闭区间（两个有限整数且 min ≤ max），非法时回退默认值 */
+function normalizeZone(
+	value: unknown,
+	fallback: [number, number],
+): [number, number] {
+	if (
+		Array.isArray(value) &&
+		value.length === 2 &&
+		value.every((n) => typeof n === "number" && Number.isFinite(n))
+	) {
+		const [min, max] = value as [number, number];
+		if (min <= max) return [Math.round(min), Math.round(max)];
+	}
+	return fallback;
+}
+
+/**
+ * 解析友链检测运行时契约：
+ * - resultUrl 显式配置优先，缺省回退环境变量 FRIEND_CHECK_RESULT_URL（本地/CI 预览用）；
+ * - URL 非法或留空时自动禁用（enable: false），保持零额外负担；
+ * - 分区阈值非法时回退默认区间；暂存区上限越过墓碑下限时同样回退，保证两区互斥。
+ * 返回值冻结，可安全经 props 传入客户端组件。
+ */
+export function resolveFriendCheckOptions(): FriendCheckOptions {
+	const check = friendPageConfig.check ?? {};
+	const rawUrl = (
+		check.resultUrl ??
+		process.env.FRIEND_CHECK_RESULT_URL ??
+		""
+	).trim();
+
+	const pendingZone = normalizeZone(
+		check.pendingZone ?? DEFAULT_PENDING_ZONE,
+		DEFAULT_PENDING_ZONE,
+	);
+	let graveyardZone = normalizeZone(
+		check.graveyardZone ?? DEFAULT_GRAVEYARD_ZONE,
+		DEFAULT_GRAVEYARD_ZONE,
+	);
+	if (pendingZone[1] >= graveyardZone[0]) {
+		// 两区互斥被破坏：回退默认分级，避免友链同时落入两个分区
+		graveyardZone = DEFAULT_GRAVEYARD_ZONE;
+	}
+
+	const enable =
+		check.enable === true && rawUrl.length > 0 && isHttpUrl(rawUrl);
+	return Object.freeze({
+		enable,
+		resultUrl: enable ? rawUrl : "",
+		cacheTtlMs:
+			clampInt(check.cacheTtlMinutes ?? 30, CHECK_TTL_MIN, CHECK_TTL_MAX) *
+			60_000,
+		pendingZone: Object.freeze(pendingZone),
+		graveyardZone: Object.freeze(graveyardZone),
+	} satisfies FriendCheckOptions);
+}
 
 /**
  * 解析友链引导模块的本站信息：显式配置优先，缺省回退 profile / site 配置。

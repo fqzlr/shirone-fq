@@ -4,6 +4,9 @@ import type { Translation } from "../translation.ts";
 export const th: Translation = {
 	[Key.home]: "หน้าแรก",
 	[Key.about]: "เกี่ยวกับ",
+	[Key.aboutSocialAria]: "ลิงก์โซเชียล",
+	[Key.aboutTechStackAria]: "สแต็กเทคโนโลยี ({count} รายการ)",
+	[Key.aboutTimelineAria]: "ไทม์ไลน์การอัปเดตไซต์",
 	[Key.archive]: "คลัง",
 	[Key.archiveGroup]: "จัดกลุ่มคลัง",
 	[Key.archiveGroupYear]: "ตามปี",
@@ -45,6 +48,14 @@ export const th: Translation = {
 	[Key.friendStep3Desc]: "ยืนยันข้อมูลเรียบร้อยแล้วจะเพิ่มลิงก์ให้โดยเร็ว",
 	[Key.friendCopyField]: "คัดลอก{name}",
 	[Key.friendCopyTemplate]: "คัดลอกเทมเพลต",
+	[Key.friendLatency]: "{ms} MS",
+	[Key.friendStatusTimeout]: "หมดเวลา",
+	[Key.friendPendingZone]: "โซนรอลิงก์",
+	[Key.friendPendingZoneDesc]: "ไซต์เหล่านี้ตรวจสอบล่าสุดไม่ตอบสนอง จะกลับมาเมื่อแก้ไขแล้ว",
+	[Key.friendGraveyardZone]: "สุสานลิงก์",
+	[Key.friendGraveyardNote]:
+		"ลิงก์ที่ถอดออกเนื่องจากเข้าไม่ได้เป็นเวลานาน ไซต์ปิดตัว หรือลิงก์ย้อนกลับสูญหาย เจ้าของไซต์ขอกู้คืนได้ตลอดเวลา",
+	[Key.friendZoneSites]: "{count} ไซต์",
 
 	[Key.moments]: "โมเมนต์",
 	[Key.momentsNoResults]: "ไม่มีโมเมนต์ที่ตรงกับตัวกรอง",

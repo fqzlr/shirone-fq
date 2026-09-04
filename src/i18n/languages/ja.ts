@@ -4,6 +4,9 @@ import type { Translation } from "../translation.ts";
 export const ja: Translation = {
 	[Key.home]: "Home",
 	[Key.about]: "About",
+	[Key.aboutSocialAria]: "交流リンク",
+	[Key.aboutTechStackAria]: "技術スタック（{count} 項目）",
+	[Key.aboutTimelineAria]: "サイトの更新タイムライン",
 	[Key.archive]: "Archive",
 	[Key.archiveGroup]: "アーカイブのグループ化",
 	[Key.archiveGroupYear]: "年別",
@@ -34,6 +37,15 @@ export const ja: Translation = {
 	[Key.friendStep3Desc]: "情報を確認でき次第、できるだけ早くリンクを追加します",
 	[Key.friendCopyField]: "{name}をコピー",
 	[Key.friendCopyTemplate]: "申請テンプレートをコピー",
+	[Key.friendLatency]: "{ms} MS",
+	[Key.friendStatusTimeout]: "タイムアウト",
+	[Key.friendPendingZone]: "リンク保留エリア",
+	[Key.friendPendingZoneDesc]:
+		"これらのサイトは直近のチェックで一時的に応答がありません。復旧すれば自動的に戻ります。",
+	[Key.friendGraveyardZone]: "リンク墓標",
+	[Key.friendGraveyardNote]:
+		"長期間アクセス不能・サイト閉鎖・被リンク消失により掲載を終了したリンクです。復旧後、いつでも再掲を申請できます。",
+	[Key.friendZoneSites]: "{count} 件",
 	[Key.guestbook]: "ゲストブック",
 	[Key.guestbookBanner]: "気軽にメッセージを残してください。",
 

@@ -34,6 +34,8 @@ yarn.lock
 
 # ide
 .idea
+# local agent workspace; shirone AI skills are exposed here via junctions to .agents/skills
+.codebuddy/
 
 # generated font subsets
 src/assets/fonts/.subset/
@@ -60,8 +62,14 @@ research/
 # playwright
 .playwright-cli/
 test-results/
+playtest-*/
 playwright-report/
 tests/site/visual.spec.ts-snapshots/
+# local playwright run logs and scratch outputs
+a11y.log
+pw.log
+*.log
+pt-*/
 
 # Lighthouse local reports
 artifacts/lighthouse/*

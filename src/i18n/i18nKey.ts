@@ -1,6 +1,12 @@
 enum I18nKey {
 	home = "home",
 	about = "about",
+	/** 关于页 · 社交链接分组无障碍名 */
+	aboutSocialAria = "aboutSocialAria",
+	/** 关于页 · 技术栈分组无障碍名，{count} 为技术项数 */
+	aboutTechStackAria = "aboutTechStackAria",
+	/** 关于页 · 魔改时间线分组无障碍名 */
+	aboutTimelineAria = "aboutTimelineAria",
 	archive = "archive",
 	/** 归档分组切换（Tabs）：tablist 无障碍名称 */
 	archiveGroup = "archiveGroup",
@@ -30,6 +36,18 @@ enum I18nKey {
 	friendStep3Desc = "friendStep3Desc",
 	friendCopyField = "friendCopyField",
 	friendCopyTemplate = "friendCopyTemplate",
+	/** 友链检测（check-flink）：右上角延迟徽标（{ms} 为毫秒数） */
+	friendLatency = "friendLatency",
+	/** 友链检测：超时徽标文案 */
+	friendStatusTimeout = "friendStatusTimeout",
+	/** 友链暂存区：标题与说明（连续少量检测失败的友链） */
+	friendPendingZone = "friendPendingZone",
+	friendPendingZoneDesc = "friendPendingZoneDesc",
+	/** 友链墓碑：标题与说明（长期失联下线的友链） */
+	friendGraveyardZone = "friendGraveyardZone",
+	friendGraveyardNote = "friendGraveyardNote",
+	/** 分区计数徽标，{count} 为站点数 */
+	friendZoneSites = "friendZoneSites",
 
 	guestbook = "guestbook",
 	guestbookBanner = "guestbookBanner",

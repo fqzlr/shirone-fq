@@ -1,0 +1,205 @@
+---
+/**
+ * 关于页 · 站长社交链接卡片网格（2 × 2）。
+ *
+ * 品牌色图标 + 内容区 + 外链箭头，悬停上浮 + 边框转 primary。
+ * 数据内联（关于页专属），新增 / 删除站点直接改 socialLinks 数组。
+ */
+import { Icon } from "astro-icon/components";
+
+interface SocialLink {
+	platform: string;
+	handle: string;
+	note?: string;
+	href: string;
+	icon: string;
+	/** 品牌色键（驱动 --about-social-brand 变量） */
+	brand: "github" | "bilibili" | "qq" | "email" | "rss" | "twitter";
+}
+
+const socialLinks: SocialLink[] = [
+	{
+		platform: "GitHub",
+		handle: "fqzlr",
+		note: "代码与项目",
+		href: "https://github.com/fqzlr",
+		icon: "simple-icons:github",
+		brand: "github",
+	},
+	{
+		platform: "B站",
+		handle: "番茄煮理人",
+		note: "关注一下，谢谢喵～",
+		href: "https://space.bilibili.com/2017273493",
+		icon: "simple-icons:bilibili",
+		brand: "bilibili",
+	},
+	{
+		platform: "QQ群",
+		handle: "加入群聊",
+		note: "吹水摸鱼都可以喵～",
+		href: "https://qm.qq.com/q/wrmF4FI9pu",
+		icon: "simple-icons:qq",
+		brand: "qq",
+	},
+	{
+		platform: "Email",
+		handle: "fqzlr@outlook.com",
+		note: "商务合作 / 交流都行喵～",
+		href: "mailto:fqzlr@outlook.com",
+		icon: "material-symbols:mail-outline-rounded",
+		brand: "email",
+	},
+];
+---
+
+<section class="about-social-links not-prose" aria-label="站长社交账号">
+	{
+		socialLinks.map((link) => (
+			<a
+				class={`about-social-links__item about-social-links__item--${link.brand}`}
+				href={link.href}
+				target={link.href.startsWith("http") ? "_blank" : undefined}
+				rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+				aria-label={`${link.platform}：${link.handle}`}
+			>
+				<span class="about-social-links__icon" aria-hidden="true">
+					<Icon name={link.icon} />
+				</span>
+				<span class="about-social-links__content">
+					<span class="about-social-links__platform">{link.platform}</span>
+					<span class="about-social-links__handle">{link.handle}</span>
+					{link.note && (
+						<span class="about-social-links__note">{link.note}</span>
+					)}
+				</span>
+				<span class="about-social-links__arrow" aria-hidden="true">
+					<Icon name="material-symbols:arrow-outward-rounded" />
+				</span>
+			</a>
+		))
+	}
+</section>
+
+<style lang="stylus">
+.about-social-links
+	display: grid
+	grid-template-columns: repeat(2, minmax(0, 1fr))
+	gap: 0.875rem
+	margin: 1.25rem 0 1.75rem
+
+	&__item
+		display: grid
+		min-height: 6rem
+		grid-template-columns: 3.25rem minmax(0, 1fr) 1.25rem
+		gap: 0.75rem
+		align-items: center
+		padding: 1rem
+		border: 1px solid var(--outline-variant)
+		border-radius: var(--shape-corner-m)
+		background: var(--surface-container-low)
+		color: var(--on-surface)
+		text-decoration: none
+		transition:
+			background-color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+			border-color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+			transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+			box-shadow var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+		&:hover
+			border-color: var(--about-social-brand, var(--primary))
+			background: unquote("color-mix(in oklab, var(--about-social-brand, var(--primary)) 6%, var(--surface-container-low))")
+			transform: translateY(-2px)
+			box-shadow: var(--m3e-elevation-1)
+
+		&:focus-visible
+			outline: 2px solid var(--primary)
+			outline-offset: 3px
+
+	&__icon
+		display: grid
+		width: 3.25rem
+		height: 3.25rem
+		place-items: center
+		color: var(--about-social-brand, var(--on-surface))
+		transition: transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+		> :global(svg)
+			width: 2.125rem
+			height: 2.125rem
+
+	&__item:hover &__icon,
+	&__item:focus-visible &__icon
+		transform: scale(1.08)
+
+	&__item--github
+		--about-social-brand: #24292f
+	&__item--bilibili
+		--about-social-brand: #00aeec
+	&__item--qq
+		--about-social-brand: #12b7f5
+	&__item--email
+		--about-social-brand: var(--primary)
+	&__item--rss
+		--about-social-brand: #f26522
+	&__item--twitter
+		--about-social-brand: #1d9bf0
+
+	&__content
+		display: flex
+		min-width: 0
+		flex-direction: column
+		gap: 0.125rem
+
+	&__platform
+		color: var(--on-surface-variant)
+		font-size: 0.75rem
+		font-weight: 500
+		letter-spacing: 0.02em
+		line-height: 1.3
+
+	&__handle
+		overflow: hidden
+		color: var(--on-surface)
+		font-size: 1rem
+		font-weight: 700
+		line-height: 1.35
+		text-overflow: ellipsis
+		white-space: nowrap
+
+	&__note
+		margin-top: 0.125rem
+		color: var(--on-surface-variant)
+		font-size: 0.75rem
+		font-weight: 400
+		line-height: 1.4
+
+	&__arrow
+		width: 1.25rem
+		height: 1.25rem
+		color: var(--on-surface-variant)
+		transition: color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+		> :global(svg)
+			width: 100%
+			height: 100%
+
+	&__item:hover &__arrow,
+	&__item:focus-visible &__arrow
+		color: var(--about-social-brand, var(--primary))
+
+@media (max-width: 768px)
+	.about-social-links
+		grid-template-columns: 1fr
+
+@media (prefers-reduced-motion: reduce)
+	.about-social-links
+		&__item,
+		&__icon,
+		&__arrow
+			transition: none
+
+/* 暗色主题：黑白品牌图标反色 */
+:global(:root.dark) .about-social-links__item--github
+	--about-social-brand: #f0f6fc
+</style>

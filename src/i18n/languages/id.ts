@@ -4,6 +4,9 @@ import type { Translation } from "../translation.ts";
 export const id: Translation = {
 	[Key.home]: "Beranda",
 	[Key.about]: "Tentang",
+	[Key.aboutSocialAria]: "Akun sosial",
+	[Key.aboutTechStackAria]: "Tumpukan teknologi ({count} item)",
+	[Key.aboutTimelineAria]: "Linimasa pembaruan situs",
 	[Key.archive]: "Arsip",
 	[Key.archiveGroup]: "Kelompokkan arsip",
 	[Key.archiveGroupYear]: "Berdasarkan tahun",
@@ -35,6 +38,15 @@ export const id: Translation = {
 		"Setelah informasi diverifikasi, tautan Anda akan segera ditambahkan",
 	[Key.friendCopyField]: "Salin {name}",
 	[Key.friendCopyTemplate]: "Salin templat permohonan",
+	[Key.friendLatency]: "{ms} MS",
+	[Key.friendStatusTimeout]: "Habis waktu",
+	[Key.friendPendingZone]: "Zona penantian",
+	[Key.friendPendingZoneDesc]:
+		"Situs ini sementara tidak merespons pada pemeriksaan terakhir; akan kembali setelah diperbaiki.",
+	[Key.friendGraveyardZone]: "Kuburan tautan",
+	[Key.friendGraveyardNote]:
+		"Tautan di sini dihapus karena lama tidak dapat diakses, situs ditutup, atau tautan balik hilang. Pemilik situs dapat meminta pemulihan kapan saja setelah diperbaiki.",
+	[Key.friendZoneSites]: "{count} situs",
 	[Key.guestbook]: "Buku tamu",
 	[Key.guestbookBanner]: "Tinggalkan pesan dan sapa.",
 

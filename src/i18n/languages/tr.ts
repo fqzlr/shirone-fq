@@ -4,6 +4,9 @@ import type { Translation } from "../translation.ts";
 export const tr: Translation = {
 	[Key.home]: "Anasayfa",
 	[Key.about]: "Hakkında",
+	[Key.aboutSocialAria]: "Sosyal hesaplar",
+	[Key.aboutTechStackAria]: "Teknoloji yığını ({count} öğe)",
+	[Key.aboutTimelineAria]: "Site güncelleme zaman çizelgesi",
 	[Key.archive]: "Arşiv",
 	[Key.archiveGroup]: "Arşivi grupla",
 	[Key.archiveGroupYear]: "Yıla göre",
@@ -35,6 +38,15 @@ export const tr: Translation = {
 		"Bilgiler doğrulandıktan sonra bağlantınız en kısa sürede eklenecektir",
 	[Key.friendCopyField]: "{name} kopyala",
 	[Key.friendCopyTemplate]: "Başvuru şablonunu kopyala",
+	[Key.friendLatency]: "{ms} MS",
+	[Key.friendStatusTimeout]: "Zaman aşımı",
+	[Key.friendPendingZone]: "Bekleme alanı",
+	[Key.friendPendingZoneDesc]:
+		"Bu siteler son kontrollerde geçici olarak yanıt vermedi; düzeltildiklerinde geri gelecekler.",
+	[Key.friendGraveyardZone]: "Bağlantı mezarlığı",
+	[Key.friendGraveyardNote]:
+		"Buradaki bağlantılar uzun süre erişilemediği, site kapatıldığı veya geri bağlantı kaybolduğu için kaldırıldı. Site sahipleri düzeltme sonrası her zaman geri yüklenme talebinde bulunabilir.",
+	[Key.friendZoneSites]: "{count} site",
 	[Key.guestbook]: "Ziyaretçi Defteri",
 	[Key.guestbookBanner]: "Bir mesaj bırakın ve selam verin.",
 

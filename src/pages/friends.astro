@@ -6,6 +6,7 @@ import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import {
 	friendPageConfig,
+	resolveFriendCheckOptions,
 	resolveFriendNotes,
 	resolveFriendSiteInfo,
 	resolveFriendTemplate,
@@ -21,10 +22,12 @@ if (!isPageAvailable("friends")) {
 // 信息模块：site 缺省回退 profile/site 配置，头像的本地相对路径在 SSR 侧解析为产物 URL
 const friendSite = resolveFriendSiteInfo();
 const friendAvatarUrl = await resolveAsset(friendSite.avatar ?? "");
+// 检测运行时契约：SSR 解析后经 props 下发，客户端组件不直接读 config
+const friendCheck = resolveFriendCheckOptions();
 ---
 
 <MainGridLayout title={i18n(I18nKey.friends)} description={i18n(I18nKey.friendsBanner)} page="friends">
-    <FriendSection friends={getFriendsList()} client:visible></FriendSection>
+    <FriendSection friends={getFriendsList()} check={friendCheck} client:visible></FriendSection>
     {
         friendPageConfig.enable && (
             <FriendGuide

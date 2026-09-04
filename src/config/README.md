@@ -121,7 +121,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 | `devicesConfig.ts` | 设备页行为控制：页面总开关、场景分类清单与单项禁用列表（设备清单维护在 `src/data/devices.ts`）；关闭页面时导航入口同步隐藏 |
 | `animeConfig.ts` | 番剧页与外部追番数据源：数据源选择（本地 / Bangumi 快照 / Bilibili 快照）、失败降级、提供方凭据环境配置与快照生命周期管理（本地番剧维护在 `src/data/anime.ts`） |
 | `llmsConfig.ts` | 大语言模型与 AI 友好内容系统：`/llms.txt`（索引）与 `/llms-full.txt`（全量正文汇编）静态端点生成控制、加密文章过滤、排除标签与自定义章节配置；支持内容仓 `config/llms.yaml` 覆盖（领域键 `llms`） |
-| `friendPageConfig.ts` | 友链页信息模块：`/friends/` 页的「本站信息 / 申请友链 / 注意事项」引导卡片（本站信息缺省回退 `profileConfig` / `siteConfig`，申请模板与注意事项可自定义）；支持内容仓 `config/friend-page.yaml` 覆盖（领域键 `friendPage`），`enable: false` 时零 DOM |
+| `friendPageConfig.ts` | 友链页信息模块：`/friends/` 页的「本站信息 / 申请友链 / 注意事项」引导卡片（本站信息缺省回退 `profileConfig` / `siteConfig`，申请模板与注意事项可自定义）；`check` 友链可达性检测（check-flink）：`enable` 总开关（默认 `false`，关闭时零请求 / 零徽标 DOM / 零分区模块）、`resultUrl`（留空自动禁用，构建期可用 `FRIEND_CHECK_RESULT_URL` 兜底）、缓存 TTL 与暂存区/墓碑 fail_count 区间；配套 `/friends.json` 端点供 check-flink 拉取；支持内容仓 `config/friend-page.yaml` 覆盖（领域键 `friendPage`），`enable: false` 时零 DOM |
 | `sponsorConfig.ts` | 打赏页 `/sponsor/` 行为与内容：`enable` 总开关（默认 `false`，与 `siteConfig.pages.sponsor` 取 AND，关闭时路由跳 `/404/`、导航入口自动隐藏、零 DOM）、描述与用途提示条（缺省回退 i18n 文案）、打赏方式清单（`qrcode` 扫码卡 / `url` 外链卡二选一）；支持内容仓 `config/sponsor.yaml` 覆盖（领域键 `sponsor`） |
 
 非首页 Banner 的标题、说明和可选日期由各页面通过 `MainGridLayout` 提供，并在 Swup 导航后从被替换的主内容容器同步。该上下文默认显示、不设配置开关；说明为空或与标题相同时自动省略，移动端非首页仍沿用紧凑布局并隐藏 Banner。

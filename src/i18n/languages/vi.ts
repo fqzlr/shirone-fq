@@ -4,6 +4,9 @@ import type { Translation } from "../translation.ts";
 export const vi: Translation = {
 	[Key.home]: "Trang chủ",
 	[Key.about]: "Giới thiệu",
+	[Key.aboutSocialAria]: "Liên kết mạng xã hội",
+	[Key.aboutTechStackAria]: "Ngăn xếp công nghệ ({count} mục)",
+	[Key.aboutTimelineAria]: "Dòng thời gian cập nhật",
 	[Key.archive]: "Kho bài",
 	[Key.archiveGroup]: "Nhóm kho bài",
 	[Key.archiveGroupYear]: "Theo năm",
@@ -35,6 +38,15 @@ export const vi: Translation = {
 		"Sau khi xác nhận thông tin, chúng tôi sẽ thêm liên kết của bạn sớm nhất có thể",
 	[Key.friendCopyField]: "Sao chép {name}",
 	[Key.friendCopyTemplate]: "Sao chép mẫu đăng ký",
+	[Key.friendLatency]: "{ms} MS",
+	[Key.friendStatusTimeout]: "Hết thời gian chờ",
+	[Key.friendPendingZone]: "Khu vực tạm hoãn",
+	[Key.friendPendingZoneDesc]:
+		"Các trang này tạm thời không phản hồi trong mấy lần kiểm tra gần đây; sẽ tự quay lại sau khi được khắc phục.",
+	[Key.friendGraveyardZone]: "Nghĩa trang liên kết",
+	[Key.friendGraveyardNote]:
+		"Các liên kết tại đây bị gỡ do truy cập không được lâu dài, trang đóng hoặc mất liên kết ngược. Chủ site có thể xin khôi phục bất cứ lúc nào sau khi khắc phục.",
+	[Key.friendZoneSites]: "{count} trang",
 	[Key.guestbook]: "Sổ lưu bút",
 	[Key.guestbookBanner]: "Hãy để lại lời nhắn và lời chào.",
 

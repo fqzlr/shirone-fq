@@ -236,14 +236,13 @@ document.addEventListener('swup:content:replace', bindSearchTriggers);
 			color var(--m3e-duration-short) var(--m3e-easing-standard);
 	}
 
+	/* 透明态（悬浮于 banner 上方）配色跟随日夜主题：
+		白天深色文字 / 夜晚浅色文字，不再硬编码白色 */
 		.top-app-bar--transparent {
 			background: transparent;
 			box-shadow: none;
 			backdrop-filter: none;
-			color: white;
-			--on-surface: white;
-			--on-surface-variant: rgba(255, 255, 255, 0.9);
-			--primary: white;
+			color: var(--on-surface);
 		}
 
 			:global(.top-app-bar--transparent .top-app-bar__search-shell--expanded) {
@@ -274,7 +273,7 @@ document.addEventListener('swup:content:replace', bindSearchTriggers);
 		}
 
 		.top-app-bar--transparent .top-app-bar__nav-link--active::after {
-		background: white;
+		background: var(--primary);
 	}
 
 	.top-app-bar__nav-link--active {

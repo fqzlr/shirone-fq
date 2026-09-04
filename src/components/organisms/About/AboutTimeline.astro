@@ -1,0 +1,273 @@
+---
+/**
+ * 关于页 · 站点魔改时间线（时间戳 + 圆点轨道 + 节点卡片）。
+ *
+ * 节点按 index stagger 渐入，轨道竖线由 transform-origin: top 同步生长。
+ * 数据内联，新增节点直接 push。
+ *
+ * 注意：@keyframes 必须全部位于 Stylus 顶层，不得嵌在选择器块中间，
+ * 否则 Stylus 会把后续 `&` 嵌套选择器编译错位（规则 body 丢失）。
+ */
+interface Milestone {
+	date: string;
+	title: string;
+	desc: string;
+	tag?: string;
+}
+
+const milestones: Milestone[] = [
+	{
+		date: "2025.10",
+		title: "fork 一份博客，开始魔改",
+		desc: "把开源模板 fork 回家，拉着本喵开始了大改造喵～",
+		tag: "起点",
+	},
+	{
+		date: "2026.07",
+		title: "友链自动检测上线",
+		desc: "给友链页接上了失效检测，掉线的小站自动进「暂留区」喵～",
+		tag: "功能",
+	},
+	{
+		date: "2026.08",
+		title: "时间线 & 图形化视图上线",
+		desc: "更新日志变成时间线+图形化双视图，魔改的手就没停过喵～",
+	},
+	{
+		date: "2026.09",
+		title: "打赏名单 & 关于页重构",
+		desc: "打赏页加上捐助者名单，关于页复刻了旧博客的人物卡片体验喵～",
+		tag: "体验",
+	},
+];
+---
+
+<section class="about-timeline not-prose" aria-label="站点更新时间线">
+	<ol class="about-timeline__list">
+		{
+			milestones.map((milestone, index) => (
+				<li class="about-timeline__item" style={`--i: ${index};`}>
+					<span class="about-timeline__date">{milestone.date}</span>
+					<span class="about-timeline__rail" aria-hidden="true">
+						<span class="about-timeline__dot" />
+					</span>
+					<div class="about-timeline__card">
+						<div class="about-timeline__card-head">
+							<span class="about-timeline__title">{milestone.title}</span>
+							{milestone.tag && (
+								<span class="about-timeline__tag">{milestone.tag}</span>
+							)}
+						</div>
+						<p class="about-timeline__desc">{milestone.desc}</p>
+					</div>
+				</li>
+			))
+		}
+	</ol>
+</section>
+
+<style lang="stylus">
+@keyframes timeline-item-in
+	from
+		opacity: 0
+		transform: translateY(0.75rem)
+	to
+		opacity: 1
+		transform: none
+
+@keyframes timeline-line-grow
+	from
+		transform: translateX(-50%) scaleY(0)
+	to
+		transform: translateX(-50%) scaleY(1)
+
+@keyframes timeline-dot-pulse
+	0%
+		box-shadow: 0 0 0 0 unquote("color-mix(in oklab, var(--primary) 35%, transparent)")
+	100%
+		box-shadow: 0 0 0 0.65rem unquote("color-mix(in oklab, var(--primary) 0%, transparent)")
+
+.about-timeline
+	margin: 1.25rem 0 1.75rem
+
+	&__list
+		display: flex
+		flex-direction: column
+		margin: 0
+		padding: 0
+		list-style: none
+
+	/* 节点：时间 | 轨道 | 卡片 */
+	&__item
+		--node-gap: 1.125rem
+		position: relative
+		display: grid
+		grid-template-columns: 4.5rem 1.75rem minmax(0, 1fr)
+		grid-template-areas: "date rail card"
+		gap: 0 0.75rem
+		align-items: start
+		padding-bottom: var(--node-gap)
+		opacity: 0
+		animation: timeline-item-in var(--m3e-duration-long) ease both
+		animation-delay: calc(var(--i, 0) * 0.12s)
+
+	&__item:last-child
+		--node-gap: 0px
+		padding-bottom: 0
+
+	&__date
+		grid-area: date
+		padding-top: 0.25rem
+		color: var(--primary)
+		font: var(--m3e-type-code)
+		font-weight: 700
+		letter-spacing: 0.02em
+		line-height: 1.4
+		text-align: right
+		white-space: nowrap
+
+	/* 轨道：竖线 + 圆点 */
+	&__rail
+		position: absolute
+		top: 0
+		bottom: calc(-1 * var(--node-gap))
+		left: 5.25rem
+		width: 1.75rem
+
+	&__rail::before
+		content: ""
+		position: absolute
+		top: 0
+		bottom: 0
+		left: 50%
+		width: 2px
+		border-radius: var(--shape-corner-full)
+		background: unquote("color-mix(in oklab, var(--primary) 25%, transparent)")
+		transform: translateX(-50%) scaleY(0)
+		transform-origin: top
+		animation: timeline-line-grow var(--m3e-duration-long) ease both
+		animation-delay: calc(var(--i, 0) * 0.12s + 0.1s)
+
+	&__item:first-child &__rail::before
+		top: 1.6rem
+
+	&__item:last-child &__rail::before
+		bottom: auto
+		height: 1.6rem
+
+	/* 圆点 */
+	&__dot
+		position: absolute
+		top: 1.15rem
+		left: 50%
+		width: 0.75rem
+		height: 0.75rem
+		border-radius: var(--shape-corner-full)
+		background: var(--primary)
+		box-shadow:
+			0 0 0 3px unquote("color-mix(in oklab, var(--primary) 15%, transparent)"),
+			0 0 0.5rem unquote("color-mix(in oklab, var(--primary) 35%, transparent)")
+		transform: translateX(-50%)
+		transition: transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+	&__dot::after
+		content: ""
+		position: absolute
+		inset: 0
+		border-radius: var(--shape-corner-full)
+
+	/* 节点卡片 */
+	&__card
+		grid-area: card
+		padding: 0.875rem 1.125rem
+		border-radius: var(--shape-corner-m)
+		background: var(--surface-container-low)
+		transition:
+			background-color var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+			transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
+			box-shadow var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+	&__item:hover &__card
+		background: var(--surface-container)
+		transform: translateX(0.25rem)
+		box-shadow: var(--m3e-elevation-1)
+
+	/* 悬停：圆点放大 + 伪元素脉冲扩散 */
+	&__item:hover &__dot
+		transform: translateX(-50%) scale(1.2)
+
+	&__item:hover &__dot::after
+		animation: timeline-dot-pulse var(--m3e-duration-long) ease-out infinite
+
+	&__card-head
+		display: flex
+		align-items: center
+		gap: 0.5rem
+		flex-wrap: wrap
+
+	&__title
+		color: var(--on-surface)
+		font-size: 0.9375rem
+		font-weight: 700
+		line-height: 1.35
+
+	&__tag
+		flex: 0 0 auto
+		padding: 0.125rem 0.5rem
+		border-radius: var(--shape-corner-full)
+		background: unquote("color-mix(in oklab, var(--primary) 12%, transparent)")
+		color: var(--primary)
+		font-size: 0.6875rem
+		font-weight: 700
+		line-height: 1.5
+
+	&__desc
+		margin: 0.25rem 0 0
+		color: var(--on-surface-variant)
+		font-size: 0.8125rem
+		font-weight: 400
+		line-height: 1.6
+
+@media (max-width: 768px)
+	.about-timeline
+		&__item
+			grid-template-columns: 1.25rem minmax(0, 1fr)
+			grid-template-areas:
+				"rail date"
+				"rail card"
+			gap: 0.375rem 0.625rem
+		&__date
+			padding-top: 0
+			text-align: left
+			white-space: normal
+		&__rail
+			left: 0
+			width: 1.25rem
+		&__dot
+			top: 0.5rem
+		&__item:first-child &__rail::before
+			top: 0.95rem
+		&__item:last-child &__rail::before
+			bottom: auto
+			height: 0.95rem
+		&__item:hover &__card
+			transform: none
+
+@media (prefers-reduced-motion: reduce)
+	.about-timeline__item,
+	.about-timeline__rail::before,
+	.about-timeline__card,
+	.about-timeline__dot
+		animation: none
+		transition: none
+
+	.about-timeline__item
+		opacity: 1
+
+	.about-timeline__rail::before
+		transform: translateX(-50%) scaleY(1)
+
+	.about-timeline__item:hover .about-timeline__dot,
+	.about-timeline__item:hover .about-timeline__dot::after
+		animation: none
+</style>

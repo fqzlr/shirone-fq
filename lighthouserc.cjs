@@ -36,7 +36,7 @@ module.exports = {
 		},
 		upload: {
 			target: "filesystem",
-			outputDir: "./artifacts/lighthouse",
+			outputDir: "./.codebuddy/ceshi/lighthouse",
 		},
 	},
 };

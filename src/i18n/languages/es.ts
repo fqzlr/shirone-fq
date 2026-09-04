@@ -4,6 +4,9 @@ import type { Translation } from "../translation.ts";
 export const es: Translation = {
 	[Key.home]: "Inicio",
 	[Key.about]: "Sobre mí",
+	[Key.aboutSocialAria]: "Cuentas sociales",
+	[Key.aboutTechStackAria]: "Stack técnico ({count} elementos)",
+	[Key.aboutTimelineAria]: "Cronología de actualizaciones",
 	[Key.archive]: "Archivo",
 	[Key.archiveGroup]: "Agrupar archivo por",
 	[Key.archiveGroupYear]: "Por año",
@@ -35,6 +38,15 @@ export const es: Translation = {
 		"Cuando verifiquemos la información, añadiremos tu enlace lo antes posible",
 	[Key.friendCopyField]: "Copiar {name}",
 	[Key.friendCopyTemplate]: "Copiar plantilla de solicitud",
+	[Key.friendLatency]: "{ms} MS",
+	[Key.friendStatusTimeout]: "Tiempo agotado",
+	[Key.friendPendingZone]: "Zona de espera",
+	[Key.friendPendingZoneDesc]:
+		"Estos sitios no respondieron en las últimas comprobaciones; volverán en cuanto se restablezcan.",
+	[Key.friendGraveyardZone]: "Cementerio de enlaces",
+	[Key.friendGraveyardNote]:
+		"Estos enlaces se retiraron por inaccesibilidad prolongada, sitios cerrados o enlaces recíprocos perdidos. Los autores pueden solicitar su restablecimiento en cualquier momento.",
+	[Key.friendZoneSites]: "{count} sitios",
 	[Key.guestbook]: "Libro de visitas",
 	[Key.guestbookBanner]: "Deja un mensaje y saluda.",
 

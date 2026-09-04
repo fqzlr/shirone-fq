@@ -4,6 +4,9 @@ import type { Translation } from "../translation.ts";
 export const en: Translation = {
 	[Key.home]: "Home",
 	[Key.about]: "About",
+	[Key.aboutSocialAria]: "Social accounts",
+	[Key.aboutTechStackAria]: "Tech stack ({count} items)",
+	[Key.aboutTimelineAria]: "Site update timeline",
 	[Key.archive]: "Archive",
 	[Key.archiveGroup]: "Group archive by",
 	[Key.archiveGroupYear]: "By Year",
@@ -35,6 +38,15 @@ export const en: Translation = {
 		"Once your info is verified, your link will be added as soon as possible",
 	[Key.friendCopyField]: "Copy {name}",
 	[Key.friendCopyTemplate]: "Copy application template",
+	[Key.friendLatency]: "{ms} MS",
+	[Key.friendStatusTimeout]: "Timeout",
+	[Key.friendPendingZone]: "Friend Staging Area",
+	[Key.friendPendingZoneDesc]:
+		"These sites failed a few recent checks — they will return once fixed.",
+	[Key.friendGraveyardZone]: "Friend Graveyard",
+	[Key.friendGraveyardNote]:
+		"Links listed here were taken offline due to prolonged inaccessibility, closed sites, or lost backlinks. Site owners are welcome to apply for restoration at any time once fixed.",
+	[Key.friendZoneSites]: "{count} sites",
 	[Key.guestbook]: "Guestbook",
 	[Key.guestbookBanner]: "Leave a message and say hello.",
 

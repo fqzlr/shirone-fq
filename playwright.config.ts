@@ -7,6 +7,8 @@ import { defineConfig } from "@playwright/test";
  */
 export default defineConfig({
 	testDir: "./tests",
+	// 测试产物（test-results / trace / 报告）统一输出到 .codebuddy/ceshi，不污染项目根目录
+	outputDir: ".codebuddy/ceshi/test-results",
 	timeout: 30_000,
 	expect: { timeout: 5_000 },
 	// 截图命名去掉平台/项目后缀（-win32），且随 spec 文件旁存放

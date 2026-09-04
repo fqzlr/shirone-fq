@@ -4,6 +4,9 @@ import type { Translation } from "../translation.ts";
 export const ko: Translation = {
 	[Key.home]: "홈",
 	[Key.about]: "소개",
+	[Key.aboutSocialAria]: "소셜 링크",
+	[Key.aboutTechStackAria]: "기술 스택({count} 항목)",
+	[Key.aboutTimelineAria]: "사이트 업데이트 타임라인",
 	[Key.archive]: "아카이브",
 	[Key.archiveGroup]: "아카이브 그룹 기준",
 	[Key.archiveGroupYear]: "연도별",
@@ -34,6 +37,15 @@ export const ko: Translation = {
 	[Key.friendStep3Desc]: "정보 확인 후 최대한 빠르게 추가해 드립니다",
 	[Key.friendCopyField]: "{name} 복사",
 	[Key.friendCopyTemplate]: "신청 템플릿 복사",
+	[Key.friendLatency]: "{ms} MS",
+	[Key.friendStatusTimeout]: "시간 초과",
+	[Key.friendPendingZone]: "링크 대기 구역",
+	[Key.friendPendingZoneDesc]:
+		"최근 점검에서 일시적으로 응답하지 않은 사이트입니다. 복구되면 자동으로 돌아옵니다.",
+	[Key.friendGraveyardZone]: "링크 묘비",
+	[Key.friendGraveyardNote]:
+		"오랫동안 접속할 수 없거나 사이트가 닫히거나 역링크가 사라져 게재가 중단된 링크입니다. 복구 후 언제든지 재게재를 신청할 수 있습니다.",
+	[Key.friendZoneSites]: "{count}개 사이트",
 	[Key.guestbook]: "방명록",
 	[Key.guestbookBanner]: "자유롭게 인사와 메시지를 남겨 주세요.",
 

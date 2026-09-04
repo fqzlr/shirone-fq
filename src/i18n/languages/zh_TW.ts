@@ -4,6 +4,9 @@ import type { Translation } from "../translation.ts";
 export const zh_TW: Translation = {
 	[Key.home]: "首頁",
 	[Key.about]: "關於",
+	[Key.aboutSocialAria]: "站長社群連結",
+	[Key.aboutTechStackAria]: "網站技術棧（共 {count} 項）",
+	[Key.aboutTimelineAria]: "網站更新時間線",
 	[Key.archive]: "彙整",
 	[Key.archiveGroup]: "彙整分組",
 	[Key.archiveGroupYear]: "依年份",
@@ -34,6 +37,14 @@ export const zh_TW: Translation = {
 	[Key.friendStep3Desc]: "確認資訊無誤後會盡快新增您的友鏈",
 	[Key.friendCopyField]: "複製{name}",
 	[Key.friendCopyTemplate]: "複製申請範本",
+	[Key.friendLatency]: "{ms} MS",
+	[Key.friendStatusTimeout]: "逾時",
+	[Key.friendPendingZone]: "友鏈暫存區",
+	[Key.friendPendingZoneDesc]: "這些站點近幾次檢測暫時失聯，修復後會自動歸隊。",
+	[Key.friendGraveyardZone]: "友鏈墓碑",
+	[Key.friendGraveyardNote]:
+		"此處友鏈因長期無法訪問、站點關閉或反鏈丟失而下線。站長修復後可隨時申請恢復。",
+	[Key.friendZoneSites]: "{count} 個站點",
 
 	[Key.sponsor]: "打賞",
 	[Key.sponsorBanner]: "打賞支持",
