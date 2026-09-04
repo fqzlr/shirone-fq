@@ -394,17 +394,17 @@ $effect(() => {
 			margin-bottom: 1rem
 
 /* —— 按标签视图：标签云 + Top 10 排行（Firefly /tags/ 同款布局，M3E token 实现） —— */
-:global(&__tags-cloud)
+:global(.archive-panel__tags-cloud)
 	display: flex
 	flex-wrap: wrap
-	gap: 0.625rem
+	gap: 0.75rem
 	padding-top: 0.25rem
 
 :global(.archive-tags__pill)
 	display: inline-flex
 	align-items: center
-	gap: 0.375rem
-	padding: 0.3rem 0.5rem 0.3rem 0.85rem
+	gap: 0.5rem
+	padding: 0.375rem 0.75rem
 	border: 1px solid var(--outline-variant)
 	border-radius: var(--shape-corner-full)
 	background: var(--card-bg)
@@ -439,13 +439,13 @@ $effect(() => {
 		background-color var(--m3e-duration-short) var(--m3e-easing-standard),
 		color var(--m3e-duration-short) var(--m3e-easing-standard)
 
-:global(&__tags-top)
-	margin-top: 2rem
-	padding-top: 1.5rem
+:global(.archive-panel__tags-top)
+	margin-top: 2.5rem
+	padding-top: 1.75rem
 	border-top: 1px solid var(--outline-variant)
 
-:global(&__tags-top-title)
-	margin: 0 0 1rem
+:global(.archive-panel__tags-top-title)
+	margin: 0 0 1.25rem
 	color: var(--on-surface)
 	font: var(--m3e-type-title-medium)
 	font-weight: 700
@@ -453,7 +453,7 @@ $effect(() => {
 :global(.archive-tags__top-list)
 	display: flex
 	flex-direction: column
-	gap: 0.375rem
+	gap: 0.75rem
 	margin: 0
 	padding: 0
 	list-style: none
