@@ -12,8 +12,11 @@ import { expect, test } from "@playwright/test";
 function runningCardAnimations(): number {
 	return Array.from(document.querySelectorAll(".m3-blog-postcard"))
 		.flatMap((el) => el.getAnimations())
-		.filter((a) => a.playState === "running" || a.playState === "pending")
-		.length;
+		.filter(
+			(a) =>
+				(a.playState as string) === "running" ||
+				(a.playState as string) === "pending",
+		).length;
 }
 
 test.describe("文章列表布局模式", () => {

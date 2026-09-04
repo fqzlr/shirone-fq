@@ -185,8 +185,12 @@ test.describe("Comment System - Configuration & Architecture", () => {
 		expect(resolved).not.toBeNull();
 		expect(resolved?.provider).toBe("twikoo");
 		expect(resolved?.lazy).toBe(true);
-		expect(resolved?.twikoo.envId).toBe("https://twikoo.mysqil.com");
-		expect(resolved?.twikoo.placeholder).toBe("Comment guidance");
+		// provider 已断言为 twikoo，类型安全访问 twikoo 字段
+		const twikooOpts = (
+			resolved as { twikoo: { envId: string; placeholder: string } }
+		).twikoo;
+		expect(twikooOpts.envId).toBe("https://twikoo.mysqil.com");
+		expect(twikooOpts.placeholder).toBe("Comment guidance");
 	});
 
 	test("resolveCommentOptions validates waline provider", () => {

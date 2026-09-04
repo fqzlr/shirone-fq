@@ -142,7 +142,7 @@ test.describe("动态页", () => {
 		await expect
 			.poll(() =>
 				currentImage.evaluate(
-					(image) => image.complete && image.naturalWidth > 0,
+					(image: HTMLImageElement) => image.complete && image.naturalWidth > 0,
 				),
 			)
 			.toBe(true);
@@ -191,7 +191,7 @@ test.describe("动态页", () => {
 		await expect
 			.poll(() =>
 				currentImage.evaluate(
-					(image) => image.complete && image.naturalWidth > 0,
+					(image: HTMLImageElement) => image.complete && image.naturalWidth > 0,
 				),
 			)
 			.toBe(true);

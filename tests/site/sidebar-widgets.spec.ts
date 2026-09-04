@@ -34,9 +34,10 @@ test.describe("Sidebar latest moments widget", () => {
 		expect(excerpt?.trim().length ?? 0).toBeGreaterThan(0);
 
 		// 「查看更多动态」入口指向瞬间页
-		await expect(
-			widget.locator(".widget-index-link a"),
-		).toHaveAttribute("href", /\/moments\//);
+		await expect(widget.locator(".widget-index-link a")).toHaveAttribute(
+			"href",
+			/\/moments\//,
+		);
 	});
 
 	test("persists across Swup client-side navigation (no pages filter)", async ({
@@ -63,9 +64,7 @@ test.describe("Sidebar advertisement widget", () => {
 	}) => {
 		await page.goto("/", { waitUntil: "networkidle" });
 		// 默认 enable: false，且无 ad 载荷：不应出现任何广告位 DOM
-		await expect(page.locator('widget-layout[data-id^="ad-"]')).toHaveCount(
-			0,
-		);
+		await expect(page.locator('widget-layout[data-id^="ad-"]')).toHaveCount(0);
 		await expect(page.locator(".advertisement-wrapper")).toHaveCount(0);
 	});
 });

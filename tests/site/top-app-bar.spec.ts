@@ -21,8 +21,12 @@ test.describe("top app bar content alignment", () => {
 		]);
 		expect(geometry[0]).not.toBeNull();
 		expect(geometry[1]).not.toBeNull();
-		expect(geometry[1]!.x + geometry[1]!.width / 2).toBeCloseTo(
-			geometry[0]!.x + geometry[0]!.width / 2,
+		const [contentBox, navBox] = geometry as [
+			{ x: number; width: number },
+			{ x: number; width: number },
+		];
+		expect(navBox.x + navBox.width / 2).toBeCloseTo(
+			contentBox.x + contentBox.width / 2,
 			0,
 		);
 	});

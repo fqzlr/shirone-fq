@@ -1,5 +1,5 @@
-import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { expect, test } from "@playwright/test";
 import {
 	normalizeDiscoveryCount,
 	resolveArticleDiscoveryOptions,
@@ -16,10 +16,10 @@ import { vi } from "../../src/i18n/languages/vi";
 import { zh_CN } from "../../src/i18n/languages/zh_CN";
 import { zh_TW } from "../../src/i18n/languages/zh_TW";
 import {
+	type DiscoverableArticle,
 	discoverArticles,
 	selectRandomArticles,
 	selectRelatedArticles,
-	type DiscoverableArticle,
 } from "../../src/utils/article-discovery";
 
 const translations = [en, es, id, ja, ko, th, tr, vi, zh_CN, zh_TW];

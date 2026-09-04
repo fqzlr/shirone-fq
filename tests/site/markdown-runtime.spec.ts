@@ -494,7 +494,7 @@ test.describe("Markdown syntax runtime loading", () => {
 		await expect(card.locator("[data-github-info]")).not.toBeHidden();
 		await expect(card.locator("[data-github-avatar]")).not.toBeHidden();
 		expect(
-			await card.evaluate((element) => element.offsetHeight),
+			await card.evaluate((element: HTMLElement) => element.offsetHeight),
 		).toBeGreaterThan(80);
 		await expect(card).toHaveAttribute("data-github-state", "ready");
 		await expect(card).not.toHaveClass(/\bfetch-waiting\b/);

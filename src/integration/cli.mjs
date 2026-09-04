@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 /**
  * Shirone CLI.
  *
@@ -10,11 +11,18 @@
  * bare project before anything else is installed.
  */
 
+import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { cp, mkdir, readFile, readdir, rename, writeFile } from "node:fs/promises";
+import {
+	cp,
+	mkdir,
+	readdir,
+	readFile,
+	rename,
+	writeFile,
+} from "node:fs/promises";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { spawnSync } from "node:child_process";
 
 const PACKAGE_ROOT = resolve(fileURLToPath(import.meta.url), "../..");
 const TEMPLATE_DIR = join(PACKAGE_ROOT, "template");
@@ -36,7 +44,10 @@ const colours = {
 const log = {
 	step: (msg) => console.log(`${colours.cyan}›${colours.reset} ${msg}`),
 	ok: (msg) => console.log(`${colours.green}✓${colours.reset} ${msg}`),
-	skip: (msg) => console.log(`${colours.dim}·${colours.reset} ${colours.dim}${msg}${colours.reset}`),
+	skip: (msg) =>
+		console.log(
+			`${colours.dim}·${colours.reset} ${colours.dim}${msg}${colours.reset}`,
+		),
 	warn: (msg) => console.log(`${colours.yellow}!${colours.reset} ${msg}`),
 	err: (msg) => console.error(`${colours.red}✗${colours.reset} ${msg}`),
 };
@@ -71,7 +82,10 @@ async function readPackageManager() {
 async function copyEntry(from, to, { force, quiet = false }) {
 	if (!existsSync(from)) return { copied: false, reason: "missing" };
 	if (existsSync(to) && !force) {
-		if (!quiet) log.skip(`${relative(CWD, to) || "."} already exists (use --force to overwrite)`);
+		if (!quiet)
+			log.skip(
+				`${relative(CWD, to) || "."} already exists (use --force to overwrite)`,
+			);
 		return { copied: false, reason: "exists" };
 	}
 	await mkdir(dirname(to), { recursive: true });
@@ -195,7 +209,11 @@ async function ensurePnpmWorkspace() {
 
 	const allowIndex = lines.findIndex((line) => /^allowBuilds:\s*$/.test(line));
 	if (allowIndex === -1) {
-		lines = [...lines.join("\n").trimEnd().split("\n"), "", ...allowBlock.split("\n")];
+		lines = [
+			...lines.join("\n").trimEnd().split("\n"),
+			"",
+			...allowBlock.split("\n"),
+		];
 	} else {
 		// Rewrite the whole indented block so placeholders become `true`.
 		let end = allowIndex + 1;
@@ -214,7 +232,10 @@ async function ensurePnpmWorkspace() {
 	}
 
 	if (!lines.some((line) => /^onlyBuiltDependencies:\s*$/.test(line))) {
-		lines = [...lines.join("\n").trimEnd().split("\n"), ...onlyBlock.split("\n")];
+		lines = [
+			...lines.join("\n").trimEnd().split("\n"),
+			...onlyBlock.split("\n"),
+		];
 	}
 
 	const next = `${lines.join("\n").trimEnd()}\n`;
@@ -238,7 +259,9 @@ async function ensurePackageJson(packageName) {
 		const version = await readPackageVersion();
 		const dependencies = {
 			astro: peers.astro ?? "^7.0.0",
-			...Object.fromEntries(Object.entries(peers).filter(([name]) => name !== "astro")),
+			...Object.fromEntries(
+				Object.entries(peers).filter(([name]) => name !== "astro"),
+			),
 			[packageName]: version ? `^${version}` : "latest",
 		};
 		const pkg = {
@@ -275,7 +298,9 @@ async function ensurePackageJson(packageName) {
 	const version = await readPackageVersion();
 	const wantedDeps = {
 		astro: peers.astro ?? "^7.0.0",
-		...Object.fromEntries(Object.entries(peers).filter(([name]) => name !== "astro")),
+		...Object.fromEntries(
+			Object.entries(peers).filter(([name]) => name !== "astro"),
+		),
 		[packageName]: version ? `^${version}` : "latest",
 	};
 
@@ -395,7 +420,8 @@ async function installDependencies() {
 	const pm = detectPackageManager();
 	// pnpm treats a CI environment as `--frozen-lockfile`, and this install
 	// exists precisely because package.json just changed — so opt out.
-	const args = pm === "pnpm" ? ["install", "--no-frozen-lockfile"] : ["install"];
+	const args =
+		pm === "pnpm" ? ["install", "--no-frozen-lockfile"] : ["install"];
 	log.step(`installing dependencies with ${pm} ${args.slice(1).join(" ")}`);
 	const result = spawnSync(pm, args, {
 		cwd: CWD,
@@ -403,7 +429,9 @@ async function installDependencies() {
 		shell: process.platform === "win32",
 	});
 	if (result.status !== 0) {
-		log.err(`${pm} install failed — run it manually and check the output above`);
+		log.err(
+			`${pm} install failed — run it manually and check the output above`,
+		);
 		process.exitCode = 1;
 		return false;
 	}
@@ -439,7 +467,11 @@ async function ensureTsConfig(packageName, { force }) {
 				paths: desiredPaths,
 			},
 		};
-		await writeFile(tsconfigPath, `${JSON.stringify(tsconfig, null, 2)}\n`, "utf8");
+		await writeFile(
+			tsconfigPath,
+			`${JSON.stringify(tsconfig, null, 2)}\n`,
+			"utf8",
+		);
 		log.ok("tsconfig.json");
 		return;
 	}
@@ -457,7 +489,11 @@ async function ensureTsConfig(packageName, { force }) {
 		}
 	}
 	if (changed) {
-		await writeFile(tsconfigPath, `${JSON.stringify(tsconfig, null, 2)}\n`, "utf8");
+		await writeFile(
+			tsconfigPath,
+			`${JSON.stringify(tsconfig, null, 2)}\n`,
+			"utf8",
+		);
 		log.ok("tsconfig.json (theme path aliases)");
 	} else {
 		log.skip("tsconfig.json already configured");
@@ -494,7 +530,9 @@ async function backup(relativePath) {
  * is kept as a backup); a config that already wires the theme in is left alone.
  */
 async function ensureAstroConfig(packageName, { force }) {
-	const present = ASTRO_CONFIG_FILENAMES.filter((name) => existsSync(join(CWD, name)));
+	const present = ASTRO_CONFIG_FILENAMES.filter((name) =>
+		existsSync(join(CWD, name)),
+	);
 	const target = join(CWD, "astro.config.mjs");
 
 	for (const name of present) {
@@ -545,7 +583,9 @@ async function clearStarterFiles() {
 				contents.includes("astro.build") ||
 				contents.includes("<slot />");
 			if (!isStarter) {
-				log.warn(`${relativePath} is yours — left in place, but it overrides the theme`);
+				log.warn(
+					`${relativePath} is yours — left in place, but it overrides the theme`,
+				);
 				continue;
 			}
 		}
@@ -560,7 +600,9 @@ async function clearStarterFiles() {
 	// A `src/pages/` that still holds routes shadows the theme's own pages.
 	const pagesDir = join(CWD, "src/pages");
 	if (existsSync(pagesDir)) {
-		const leftovers = (await readdir(pagesDir)).filter((name) => !name.startsWith("."));
+		const leftovers = (await readdir(pagesDir)).filter(
+			(name) => !name.startsWith("."),
+		);
 		if (leftovers.length > 0) {
 			log.warn(
 				`src/pages/ still contains ${leftovers.join(", ")} — ` +
@@ -579,7 +621,8 @@ async function listRelative(dir) {
 	for (const entry of await readdir(dir, { withFileTypes: true })) {
 		const full = join(dir, entry.name);
 		if (entry.isDirectory()) {
-			for (const sub of await listRelative(full)) out.push(join(entry.name, sub));
+			for (const sub of await listRelative(full))
+				out.push(join(entry.name, sub));
 		} else {
 			out.push(entry.name);
 		}
@@ -590,7 +633,8 @@ async function listRelative(dir) {
 /** Top-level `export … NAME` declarations in a TypeScript source. */
 function tsExportNames(src) {
 	const names = new Set();
-	const re = /^\s*export\s+(?:const|let|var|function|class|type|interface|enum)\s+([A-Za-z0-9_$]+)/gm;
+	const re =
+		/^\s*export\s+(?:const|let|var|function|class|type|interface|enum)\s+([A-Za-z0-9_$]+)/gm;
 	for (const m of src.matchAll(re)) names.add(m[1]);
 	return names;
 }
@@ -687,7 +731,7 @@ function objectFieldKeys(src) {
 				i = skipString(src, i);
 				continue;
 			}
-			if (ch === "{" ) {
+			if (ch === "{") {
 				open = i;
 				break;
 			}
@@ -741,7 +785,9 @@ async function checkState() {
 	const stale = usrFiles.filter((f) => !tplSet.has(f)).sort();
 
 	const fieldDiffs = [];
-	for (const rel of tplFiles.filter((f) => f.endsWith(".ts") && usrSet.has(f))) {
+	for (const rel of tplFiles.filter(
+		(f) => f.endsWith(".ts") && usrSet.has(f),
+	)) {
 		const diff = await diffConfigFile(
 			join(tplConfig, rel),
 			join(usrConfig, rel),
@@ -773,26 +819,46 @@ async function checkAndUpdate(packageName) {
 		missing.length === 0 && stale.length === 0 && fieldDiffs.length === 0;
 
 	if (clean) {
-		console.log(`\n${colours.green}${colours.bold}Up to date.${colours.reset}\n`);
+		console.log(
+			`\n${colours.green}${colours.bold}Up to date.${colours.reset}\n`,
+		);
 	} else {
-		console.log(`\n${colours.bold}Found ${missing.length + stale.length + fieldDiffs.length} difference(s) from the template:${colours.reset}\n`);
+		console.log(
+			`\n${colours.bold}Found ${missing.length + stale.length + fieldDiffs.length} difference(s) from the template:${colours.reset}\n`,
+		);
 
 		if (missing.length) {
-			log.warn(`${missing.length} file(s) missing from ${CONTENT_ROOT}/config/`);
-			for (const f of missing) console.log(`    ${colours.dim}− ${f}${colours.reset}`);
+			log.warn(
+				`${missing.length} file(s) missing from ${CONTENT_ROOT}/config/`,
+			);
+			for (const f of missing)
+				console.log(`    ${colours.dim}− ${f}${colours.reset}`);
 		}
 		if (stale.length) {
-			log.warn(`${stale.length} file(s) no longer exist in the template (kept)`);
-			for (const f of stale) console.log(`    ${colours.dim}− ${f}${colours.reset}`);
+			log.warn(
+				`${stale.length} file(s) no longer exist in the template (kept)`,
+			);
+			for (const f of stale)
+				console.log(`    ${colours.dim}− ${f}${colours.reset}`);
 		}
 		for (const d of fieldDiffs) {
-			log.warn(`${join(CONTENT_ROOT, "config", d.rel)} differs from the template`);
-			for (const n of d.missingExports) console.log(`    ${colours.dim}− missing export: ${n}${colours.reset}`);
-			for (const n of d.extraExports) console.log(`    ${colours.dim}− extra export (yours): ${n}${colours.reset}`);
+			log.warn(
+				`${join(CONTENT_ROOT, "config", d.rel)} differs from the template`,
+			);
+			for (const n of d.missingExports)
+				console.log(`    ${colours.dim}− missing export: ${n}${colours.reset}`);
+			for (const n of d.extraExports)
+				console.log(
+					`    ${colours.dim}− extra export (yours): ${n}${colours.reset}`,
+				);
 			for (const [name, keys] of Object.entries(d.missingFields))
-				console.log(`    ${colours.dim}− ${name}: missing field(s): ${keys.join(", ")}${colours.reset}`);
+				console.log(
+					`    ${colours.dim}− ${name}: missing field(s): ${keys.join(", ")}${colours.reset}`,
+				);
 			for (const [name, keys] of Object.entries(d.extraFields))
-				console.log(`    ${colours.dim}− ${name}: field(s) not in template: ${keys.join(", ")}${colours.reset}`);
+				console.log(
+					`    ${colours.dim}− ${name}: field(s) not in template: ${keys.join(", ")}${colours.reset}`,
+				);
 		}
 
 		// Restore missing files (never touch the user's own files).
@@ -805,7 +871,9 @@ async function checkAndUpdate(packageName) {
 					{ force: false, quiet: true },
 				);
 			}
-			log.ok(`${missing.length} file(s) restored under ${CONTENT_ROOT}/config/`);
+			log.ok(
+				`${missing.length} file(s) restored under ${CONTENT_ROOT}/config/`,
+			);
 		}
 	}
 
@@ -826,7 +894,8 @@ async function checkAndUpdate(packageName) {
 		log.skip("dependencies already declared");
 	}
 
-	if (!clean) console.log(`\n${colours.green}${colours.bold}Done.${colours.reset}\n`);
+	if (!clean)
+		console.log(`\n${colours.green}${colours.bold}Done.${colours.reset}\n`);
 }
 
 async function init(args) {
@@ -848,14 +917,20 @@ async function init(args) {
 		return checkAndUpdate(packageName);
 	}
 
-	console.log(`\n${colours.bold}Shirone${colours.reset} · initialising project\n`);
+	console.log(
+		`\n${colours.bold}Shirone${colours.reset} · initialising project\n`,
+	);
 
 	// 1. Content + configuration.
-	await copyEntry(join(TEMPLATE_DIR, CONTENT_ROOT), join(CWD, CONTENT_ROOT), { force });
+	await copyEntry(join(TEMPLATE_DIR, CONTENT_ROOT), join(CWD, CONTENT_ROOT), {
+		force,
+	});
 
 	// 2. Static assets (favicons, banners, demo images). Merged rather than
 	// copied wholesale: the starter project already owns a `public/`.
-	await mergeDirectory(join(TEMPLATE_DIR, "public"), join(CWD, "public"), { force });
+	await mergeDirectory(join(TEMPLATE_DIR, "public"), join(CWD, "public"), {
+		force,
+	});
 
 	// 2b. Project root files (.env.example, .gitignore, README, editor hints, …).
 	// Installed without clobbering anything the user already has.
@@ -915,9 +990,13 @@ async function info() {
 
 	console.log(`\n${colours.bold}${packageName}${colours.reset}`);
 	console.log(`  package root : ${PACKAGE_ROOT}`);
-	console.log(`  template     : ${existsSync(TEMPLATE_DIR) ? "present" : colours.red + "MISSING" + colours.reset}`);
+	console.log(
+		`  template     : ${existsSync(TEMPLATE_DIR) ? "present" : `${colours.red}MISSING${colours.reset}`}`,
+	);
 	console.log(`  project      : ${CWD}`);
-	console.log(`  content dir  : ${join(CWD, CONTENT_ROOT)} ${existsSync(join(CWD, CONTENT_ROOT)) ? colours.green + "✓" + colours.reset : colours.yellow + "(not initialised)" + colours.reset}`);
+	console.log(
+		`  content dir  : ${join(CWD, CONTENT_ROOT)} ${existsSync(join(CWD, CONTENT_ROOT)) ? `${colours.green}✓${colours.reset}` : `${colours.yellow}(not initialised)${colours.reset}`}`,
+	);
 
 	if (existsSync(pagesDir)) {
 		const count = await countFiles(pagesDir);

@@ -45,7 +45,6 @@ test.describe("M3E Ambient Texture & Pattern System", () => {
 
 		// 切换预设为 cyber-dots
 		await page.evaluate(() => {
-			// @ts-expect-error dynamic import in browser
 			import("/src/utils/setting-utils.ts").then((mod) => {
 				mod.setTexturePreset("cyber-dots");
 			});
@@ -69,7 +68,6 @@ test.describe("M3E Ambient Texture & Pattern System", () => {
 		await page.goto("/", { waitUntil: "domcontentloaded" });
 
 		await page.evaluate(() => {
-			// @ts-expect-error dynamic import in browser
 			import("/src/utils/setting-utils.ts").then((mod) => {
 				mod.setTextureOpacity(0.2);
 			});
@@ -99,7 +97,6 @@ test.describe("M3E Ambient Texture & Pattern System", () => {
 
 		for (const preset of presets) {
 			await page.evaluate((p) => {
-				// @ts-expect-error dynamic import in browser
 				import("/src/utils/setting-utils.ts").then((mod) => {
 					mod.setTexturePreset(p);
 				});
@@ -158,7 +155,6 @@ test.describe("M3E Ambient Texture & Pattern System", () => {
 
 		// 启用 reduced motion
 		await page.evaluate(() => {
-			// @ts-expect-error dynamic import in browser
 			import("/src/utils/setting-utils.ts").then((mod) => {
 				mod.setMotionPreference(true);
 			});
@@ -173,7 +169,6 @@ test.describe("M3E Ambient Texture & Pattern System", () => {
 
 		// 切换到 geometric
 		await page.evaluate(() => {
-			// @ts-expect-error dynamic import in browser
 			import("/src/utils/setting-utils.ts").then((mod) => {
 				mod.setTexturePreset("geometric");
 			});
@@ -203,7 +198,6 @@ test.describe("M3E Ambient Texture & Pattern System", () => {
 		await page.goto("/", { waitUntil: "domcontentloaded" });
 
 		await page.evaluate(() => {
-			// @ts-expect-error dynamic import in browser
 			import("/src/utils/setting-utils.ts").then((mod) => {
 				mod.setTexturePreset("none");
 			});

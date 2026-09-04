@@ -1,8 +1,8 @@
 ---
-import { render, type CollectionEntry } from "astro:content";
+import { type CollectionEntry, render } from "astro:content";
 import path from "node:path";
-import AccentBar from "@components/atoms/display/AccentBar.svelte";
 import IconButton from "@components/atoms/action/IconButton.svelte";
+import AccentBar from "@components/atoms/display/AccentBar.svelte";
 import Card from "@components/atoms/display/Card.svelte";
 import Markdown from "@components/content/Markdown.astro";
 import ImageWrapper from "@components/molecules/ImageWrapper.astro";
@@ -62,7 +62,6 @@ export async function getStaticPaths() {
 	}));
 	const discoveryOptions = resolveArticleDiscoveryOptions(articleConfig);
 
-	
 	const paths: {
 		params: { permalink: string };
 		props: {
@@ -75,7 +74,8 @@ export async function getStaticPaths() {
 		let permalink: string | null = null;
 
 		if (hasCustomPermalink(entry)) {
-			permalink = entry.data.permalink?.replace(/^\/+/, "").replace(/\/+$/, "") ?? null;
+			permalink =
+				entry.data.permalink?.replace(/^\/+/, "").replace(/\/+$/, "") ?? null;
 		} else if (permalinkConfig.enable) {
 			permalink = generatePermalinkSlug(entry);
 		}
@@ -102,7 +102,6 @@ export async function getStaticPaths() {
 	}
 
 	return paths;
-	
 }
 
 const { entry, discovery } = Astro.props;

@@ -134,6 +134,23 @@ const wavyLinearWaveSpeed = $derived(
 );
 // 全宽路径 = 容器宽 + 左右各 2 个波长余量（官方 widthWithExtraPhase）
 const wavyLinearPathW = $derived(resolvedWidth + wavyLinearWaveLength * 2);
+// 官方 determinate 振幅回调：≤0.1 / ≥0.95 为 0（直线/圆），中间为 1（满波/满星）
+const officialIndicatorAmplitude = (p: number): number =>
+	p <= 0.1 || p >= 0.95 ? 0 : 1;
+
+// 初始振幅（SSR/首帧直接按当前 progress 得到正确形态，避免闪动）
+function initialWavyAmp(): number {
+	if (!wavy) return 0;
+	if (typeof amplitude === "number") return amplitude;
+	const hasProgress = typeof progress === "number" && progress >= 0;
+	if (typeof amplitude === "function")
+		return hasProgress ? amplitude(progress as number) : 1;
+	return hasProgress ? officialIndicatorAmplitude(progress as number) : 1;
+}
+let wavyAmp = $state(initialWavyAmp());
+let wavyAmpJob: number | null = null;
+let wavyAmpInited = false;
+
 // 振幅 0..1 直接重建路径（官方 scaleY 近似：controlY 按振幅缩放，stroke 保持 4dp）
 const wavyLinearPathD = $derived(
 	buildLinearWavePath(
@@ -206,10 +223,7 @@ const wavyCircFlowMs = $derived(
 	(wavyCircWaveLength / wavyCircWaveSpeed) * 1000 * wavyCircNumVertices,
 );
 
-// 官方 determinate 振幅回调：≤0.1 / ≥0.95 为 0（直线/圆），中间为 1（满波/满星）
-const officialIndicatorAmplitude = (p: number): number =>
-	p <= 0.1 || p >= 0.95 ? 0 : 1;
-
+// 官方 determinate 振幅目标：≤0.1 / ≥0.95 为 0（直线/圆），中间为 1（满波/满星）
 const wavyAmpTarget = $derived(
 	wavy
 		? determinate
@@ -221,19 +235,6 @@ const wavyAmpTarget = $derived(
 				: 1
 		: 0,
 );
-
-// 初始振幅（SSR/首帧直接按当前 progress 得到正确形态，避免闪动）
-function initialWavyAmp(): number {
-	if (!wavy) return 0;
-	if (typeof amplitude === "number") return amplitude;
-	const hasProgress = typeof progress === "number" && progress >= 0;
-	if (typeof amplitude === "function")
-		return hasProgress ? amplitude(progress as number) : 1;
-	return hasProgress ? officialIndicatorAmplitude(progress as number) : 1;
-}
-let wavyAmp = $state(initialWavyAmp());
-let wavyAmpJob: number | null = null;
-let wavyAmpInited = false;
 
 // 振幅动画：官方 Increasing 500ms standard / Decreasing 500ms emphasized-accelerate
 $effect(() => {

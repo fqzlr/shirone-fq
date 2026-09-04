@@ -1,14 +1,14 @@
-import { existsSync, mkdirSync, statSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import type { ResolvedShironesPaths } from "./types.ts";
 import {
 	createOverlayTargets,
+	type OverrideRegistryRef,
 	overrideKey,
 	resolveOverride,
-	type OverrideRegistryRef,
 } from "./registry.ts";
+import type { ResolvedShironesPaths } from "./types.ts";
 
 /**
  * The integration needs values from user-authored TypeScript *before* Vite
@@ -90,12 +90,19 @@ function overlayEsbuildPlugin(
 		setup(build: any) {
 			// Theme path aliases (`@/config/...`, `@utils/...`, ...).
 			build.onResolve(
-				{ filter: /^@(\/|components\/|utils\/|layouts\/|i18n\/|constants\/|assets\/)/ },
+				{
+					filter:
+						/^@(\/|components\/|utils\/|layouts\/|i18n\/|constants\/|assets\/)/,
+				},
 				// biome-ignore lint/suspicious/noExplicitAny: see above.
 				(args: any) => {
 					for (const [prefix, sub] of Object.entries(ALIAS_MAP)) {
 						if (!args.path.startsWith(prefix)) continue;
-						const target = join(paths.packageSrc, sub, args.path.slice(prefix.length));
+						const target = join(
+							paths.packageSrc,
+							sub,
+							args.path.slice(prefix.length),
+						);
 						const file = probeFile(target);
 						if (file) return { path: redirect(file) };
 					}

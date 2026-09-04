@@ -558,7 +558,7 @@ test.describe("Mermaid diagrams", () => {
 					?.querySelector<SVGElement>("rect.journey-section, rect.task");
 				const foreground = luminance(getComputedStyle(label).color);
 				const background = fill && luminance(getComputedStyle(fill).fill);
-				if (foreground === null || background === null) return 0;
+				if (foreground === null || background == null) return 0;
 				const lighter = Math.max(foreground, background);
 				const darker = Math.min(foreground, background);
 				return (lighter + 0.05) / (darker + 0.05);
@@ -774,7 +774,7 @@ test.describe("Mermaid diagrams", () => {
 					getComputedStyle(label.querySelector(".edgeLabel") ?? label).color,
 				);
 				const background = luminance(getComputedStyle(label).backgroundColor);
-				if (foreground === null || background === null) return 0;
+				if (foreground === null || background == null) return 0;
 				const lighter = Math.max(foreground, background);
 				const darker = Math.min(foreground, background);
 				return (lighter + 0.05) / (darker + 0.05);
@@ -790,7 +790,7 @@ test.describe("Mermaid diagrams", () => {
 				return labels.map((label) => {
 					const foreground = luminance(getComputedStyle(label).color);
 					const background = luminance(getComputedStyle(shape).fill);
-					if (foreground === null || background === null) return 0;
+					if (foreground === null || background == null) return 0;
 					const lighter = Math.max(foreground, background);
 					const darker = Math.min(foreground, background);
 					return (lighter + 0.05) / (darker + 0.05);
@@ -885,7 +885,7 @@ test.describe("Mermaid diagrams", () => {
 				if (!label || !shape) return 0;
 				const foreground = luminance(getComputedStyle(label).color);
 				const background = luminance(getComputedStyle(shape).fill);
-				if (foreground === null || background === null) return 0;
+				if (foreground === null || background == null) return 0;
 				const lighter = Math.max(foreground, background);
 				const darker = Math.min(foreground, background);
 				return (lighter + 0.05) / (darker + 0.05);

@@ -39,7 +39,7 @@ test.describe("archive filter breadcrumb", () => {
 		const panel = page.locator(".archive-panel");
 		const crumb = page.locator(".archive-panel__crumb");
 		const current = page.locator(".archive-panel__crumb-current");
-		const panelPadding = await panel.evaluate((element) => {
+		const panelPadding = await panel.evaluate((element: HTMLElement) => {
 			const style = getComputedStyle(element);
 			return {
 				left: Number.parseFloat(style.paddingLeft),
@@ -61,9 +61,12 @@ test.describe("archive filter breadcrumb", () => {
 		expect(panelBox).not.toBeNull();
 		expect(crumbBox).not.toBeNull();
 		expect(currentBox).not.toBeNull();
-		expect(crumbBox!.x).toBeGreaterThanOrEqual(panelBox!.x + panelPadding.left);
-		expect(currentBox!.x + currentBox!.width).toBeLessThanOrEqual(
-			panelBox!.x + panelBox!.width - panelPadding.right,
+		const pb = panelBox as { x: number; width: number };
+		const cb = crumbBox as { x: number };
+		const cub = currentBox as { x: number; width: number };
+		expect(cb.x).toBeGreaterThanOrEqual(pb.x + panelPadding.left);
+		expect(cub.x + cub.width).toBeLessThanOrEqual(
+			pb.x + pb.width - panelPadding.right,
 		);
 		expect(
 			await page

@@ -44,7 +44,8 @@ export async function getCalendarData(): Promise<CalendarData> {
 			url: getPostUrl(post),
 			date,
 		};
-		(postsByDate[date] ??= []).push(item);
+		if (!postsByDate[date]) postsByDate[date] = [];
+		postsByDate[date].push(item);
 		activeMonthSet.add(date.slice(0, 7));
 	}
 

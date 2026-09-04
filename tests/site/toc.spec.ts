@@ -45,12 +45,13 @@ test.describe("Site TOC", () => {
 			};
 		});
 		expect(initialBounds).not.toBeNull();
-		expect(initialBounds!.wrapperTop).toBeGreaterThanOrEqual(
-			initialBounds!.titleBottom,
-		);
-		expect(initialBounds!.firstTop).toBeGreaterThanOrEqual(
-			initialBounds!.wrapperTop,
-		);
+		const bounds = initialBounds as {
+			wrapperTop: number;
+			titleBottom: number;
+			firstTop: number;
+		};
+		expect(bounds.wrapperTop).toBeGreaterThanOrEqual(bounds.titleBottom);
+		expect(bounds.firstTop).toBeGreaterThanOrEqual(bounds.wrapperTop);
 
 		// 滚动到底部 → 高亮最后一个标题
 		await page.evaluate(() =>

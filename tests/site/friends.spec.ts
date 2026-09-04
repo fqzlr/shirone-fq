@@ -112,12 +112,12 @@ test.describe("友链页 Swup 导航", () => {
 			]);
 			expect(centers[0]).not.toBeNull();
 			expect(centers[1]).not.toBeNull();
+			const [left, right] = centers as [
+				{ x: number; width: number },
+				{ x: number; width: number },
+			];
 			expect(
-				Math.abs(
-					centers[0]!.x +
-						centers[0]!.width / 2 -
-						(centers[1]!.x + centers[1]!.width / 2),
-				),
+				Math.abs(left.x + left.width / 2 - (right.x + right.width / 2)),
 			).toBeLessThanOrEqual(1);
 
 			await page.locator('#top-row a[data-nav-key="home"]').click();

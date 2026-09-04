@@ -123,10 +123,10 @@ test.describe("侧栏分类与标签入口", () => {
 		]);
 		expect(widgetBox).not.toBeNull();
 		expect(linkBox).not.toBeNull();
+		const wb = widgetBox as { x: number; width: number };
+		const lb = linkBox as { x: number; width: number };
 		expect(
-			Math.abs(
-				widgetBox!.x + widgetBox!.width / 2 - (linkBox!.x + linkBox!.width / 2),
-			),
+			Math.abs(wb.x + wb.width / 2 - (lb.x + lb.width / 2)),
 		).toBeLessThanOrEqual(1);
 	});
 });
