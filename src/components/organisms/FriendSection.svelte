@@ -109,14 +109,6 @@ function countLabel(count: number) {
 	return `${count} ${i18n(count === 1 ? I18nKey.friendsCount : I18nKey.friendsCounts)}`;
 }
 
-function hostOf(url: string): string {
-	try {
-		return new URL(url).host.replace(/^www\./, "");
-	} catch {
-		return url;
-	}
-}
-
 /** 标签筛选：指示器展示 → 淡出 → 列表重新揭幕（与动态页同语言） */
 function onTagChange() {
 	phaseTimers.forEach(clearTimeout);
@@ -388,21 +380,13 @@ onMount(() => {
 					{i18n(I18nKey.friendZoneSites).replace("{count}", String(zones.pending.length))}
 				</span>
 			</header>
-			<div class="friend-section__zone-grid">
+			<div class="friend-section__zone-grid friend-section__list">
 				{#each zones.pending as entry (entry.friend.id)}
-					<a
-						class="friend-zone-card"
-						href={entry.friend.siteurl}
-						target="_blank"
-						rel="noopener noreferrer"
-						title={entry.friend.title}
-					>
-						<Avatar src={entry.friend.imgurl} alt={entry.friend.title} size={38} shape="circle" />
-						<div class="friend-zone-card__text">
-							<span class="friend-zone-card__name">{entry.friend.title}</span>
-							<span class="friend-zone-card__host">{hostOf(entry.friend.siteurl)}</span>
-						</div>
-					</a>
+					<FriendCard
+						friend={entry.friend}
+						status={statusMap[normalizeSiteUrl(entry.friend.siteurl)]}
+						{checkEnabled}
+					/>
 				{/each}
 			</div>
 		</section>
@@ -591,49 +575,6 @@ onMount(() => {
 	@media (max-width: bp-sm - 1px)
 		&__list
 			padding-top: 1.25rem
-		&__zone-grid
-			grid-template-columns: repeat(2, minmax(0, 1fr))
-
-/* 暂存区小卡：一行 4 列的紧凑横排（窄屏两列） */
-.friend-zone-card
-	display: flex
-	align-items: center
-	gap: 0.625rem
-	min-width: 0
-	padding: 0.625rem 0.75rem
-	border: 1px solid var(--outline-variant)
-	border-radius: var(--shape-corner-m)
-	background: var(--card-bg)
-	color: var(--on-surface)
-	text-decoration: none
-	transition:
-		border-color var(--m3e-duration-medium) var(--m3e-easing-standard),
-		transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
-
-	&:hover
-		border-color: var(--primary)
-		transform: translateY(-1px)
-
-.friend-zone-card__text
-	flex: 1
-	min-width: 0
-	display: flex
-	flex-direction: column
-	gap: 0.125rem
-
-.friend-zone-card__name
-	overflow: hidden
-	text-overflow: ellipsis
-	white-space: nowrap
-	font: var(--m3e-type-label-large)
-	font-weight: 700
-
-.friend-zone-card__host
-	overflow: hidden
-	text-overflow: ellipsis
-	white-space: nowrap
-	color: var(--on-surface-variant)
-	font: var(--m3e-type-label-small)
 
 /* 墓碑头像墙 chip */
 .friend-tomb-chip
