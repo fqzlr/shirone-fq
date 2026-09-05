@@ -87,7 +87,8 @@ const initialFloatingOn = (() => {
 	try {
 		return localStorage.getItem(FLOATING_LYRICS_KEY) !== "false";
 	} catch {
-		return false;
+		// 默认开：播放音乐时默认显示浮动歌词
+		return true;
 	}
 })();
 let floatingOn = $state(initialFloatingOn);
@@ -106,10 +107,11 @@ let dockShape = $state<DockShape>("disc");
 let dockHover = false;
 let dockLyricsOn = $state(
 	(() => {
+		// 默认关：播放时默认显示的是悬浮歌词（与 floatingOn 互斥）
 		try {
-			return localStorage.getItem(DOCK_LYRICS_KEY) !== "false";
+			return localStorage.getItem(DOCK_LYRICS_KEY) === "true";
 		} catch {
-			return true;
+			return false;
 		}
 	})(),
 );
