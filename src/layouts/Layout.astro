@@ -320,9 +320,11 @@ const hasMonoFont =
 			html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body:not([data-current-page="home"]) #main-layout {
 				top: var(--banner-content-top);
 			}
-			/* classic 非首页横幅高度对齐参考站：45vh 档（短屏 380px 兜底），
-			   内容上沿随之下移（--banner-content-top 在 body 上重算继承） */
-			html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body:not([data-current-page="home"]) {
+			/* 非首页横幅高度对齐参考站：45vh 档（短屏 380px 兜底）。
+			   全屏 classic 与横幅模式的非首页一致；内容上沿随之下移
+			   （--banner-content-top 在 body 上重算继承） */
+			html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body:not([data-current-page="home"]),
+			html[data-wallpaper-mode="banner"] body:not([data-current-page="home"])[data-banner-has-desktop="true"] {
 				--banner-stage-height: max(45vh, 380px);
 				--banner-content-top: calc(max(45vh, 380px) - var(--banner-panel-overlap));
 			}

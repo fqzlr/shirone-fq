@@ -1429,8 +1429,10 @@ const videoMode =
 		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body[data-current-page="home"][data-banner-reveal]) .banner-stage__gradient
 			opacity: 1
 
-		/* classic 非首页横幅变矮（45vh 档）：标题字号对齐参考站页面标题尺度 */
-		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body:not([data-current-page="home"])) .banner-stage__context-title
+		/* 非首页横幅变矮（45vh 档）：标题字号对齐参考站页面标题尺度
+		   （全屏 classic 与横幅模式的非首页一致） */
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body:not([data-current-page="home"])) .banner-stage__context-title,
+		:global(html[data-wallpaper-mode="banner"] body:not([data-current-page="home"])) .banner-stage__context-title
 			font-size: clamp(2rem, 4vw, 3rem)
 
 		/* 下滑箭头：仅全屏 classic 首页显示；滚过阈值后由脚本加 --hide 淡出 */
