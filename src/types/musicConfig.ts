@@ -65,6 +65,8 @@ export interface MusicConfig {
 	readonly defaultMode: PlaybackMode;
 	/** 是否启用歌词功能（歌词面板 + 浮动歌词按钮），默认 true；关闭时两个按钮零 DOM */
 	readonly showLyrics?: boolean;
+	/** 是否启用悬浮唱片（左下角可拖动快捷控件），默认 true；关闭时零 DOM */
+	readonly showFloatPlayer?: boolean;
 }
 
 export interface MusicSnapshot {

@@ -285,6 +285,8 @@ enum I18nKey {
 	musicLyrics = "musicLyrics",
 	/** 浮动歌词开关（播放器控制行按钮） */
 	musicFloatingLyrics = "musicFloatingLyrics",
+	/** 悬浮播放器面板的「列表」标签页 */
+	musicTabPlaylist = "musicTabPlaylist",
 	musicNoLyrics = "musicNoLyrics",
 	musicLoadingLyrics = "musicLoadingLyrics",
 	musicFailedLyrics = "musicFailedLyrics",

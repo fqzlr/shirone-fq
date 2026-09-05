@@ -36,8 +36,6 @@ export const id: Translation = {
 	[Key.friendStep3Title]: "Tunggu peninjauan",
 	[Key.friendStep3Desc]:
 		"Setelah informasi diverifikasi, tautan Anda akan segera ditambahkan",
-	[Key.friendContactHeading]:
-		"Anda juga dapat menghubungi saya melalui cara berikut",
 	[Key.friendCopyField]: "Salin {name}",
 	[Key.friendCopyTemplate]: "Salin templat permohonan",
 	[Key.friendLatency]: "{ms} MS",
@@ -277,16 +275,17 @@ export const id: Translation = {
 	[Key.musicEmpty]: "Tidak ada lagu dalam daftar putar",
 	[Key.musicLoading]: "Memuat musik...",
 	[Key.musicNowPlaying]: "Sedang diputar: {title}",
+	[Key.musicLyrics]: "Lirik",
+	[Key.musicFloatingLyrics]: "Lirik mengambang",
+	[Key.musicTabPlaylist]: "Daftar",
+	[Key.musicNoLyrics]: "Lirik tidak tersedia",
+	[Key.musicLoadingLyrics]: "Memuat lirik…",
+	[Key.musicFailedLyrics]: "Gagal memuat lirik",
 	[Key.musicErrorEmptyPlaylist]: "Daftar putar kosong.",
 	[Key.musicErrorSourceUnavailable]: "Lagu ini tidak tersedia.",
 	[Key.musicErrorAutoplayBlocked]:
 		"Pemutaran otomatis diblokir. Tekan putar untuk memulai.",
 	[Key.musicErrorInvalidTrack]: "Lagu ini tidak valid.",
-	[Key.musicLyrics]: "Lirik",
-	[Key.musicFloatingLyrics]: "Lirik mengambang",
-	[Key.musicNoLyrics]: "Lirik tidak tersedia",
-	[Key.musicLoadingLyrics]: "Memuat lirik…",
-	[Key.musicFailedLyrics]: "Gagal memuat lirik",
 
 	[Key.themeColor]: "Theme Color",
 	[Key.colorStyle]: "Gaya Warna",

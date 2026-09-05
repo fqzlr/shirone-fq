@@ -178,7 +178,9 @@ const tagStats = $derived.by(() => {
 });
 
 /** Top 10：按篇数降序取前十 */
-const topTags = $derived([...tagStats].sort((a, b) => b.count - a.count).slice(0, 10));
+const topTags = $derived(
+	[...tagStats].sort((a, b) => b.count - a.count).slice(0, 10),
+);
 /** 进度条基准：第一名篇数（相对百分比，与 Firefly 一致） */
 const topMaxCount = $derived(topTags.length > 0 ? topTags[0].count : 1);
 

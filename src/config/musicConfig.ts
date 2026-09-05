@@ -67,6 +67,7 @@ export const musicConfig: MusicConfig = withUserConfig("music", {
 	defaultVolume: 0.7,
 	defaultMode: "sequence",
 	showLyrics: true,
+	showFloatPlayer: true,
 });
 
 export interface ResolvedMusicOptions {
@@ -76,6 +77,7 @@ export interface ResolvedMusicOptions {
 	readonly defaultVolume: number;
 	readonly defaultMode: PlaybackMode;
 	readonly showLyrics: boolean;
+	readonly showFloatPlayer: boolean;
 }
 
 const ABSOLUTE_MEDIA_SOURCE = /^(?:https?:)?\/\//i;
@@ -138,6 +140,7 @@ export function resolveMusicOptions(
 			defaultVolume: clampMusicVolume(config.defaultVolume),
 			defaultMode: config.defaultMode,
 			showLyrics: config.showLyrics !== false,
+			showFloatPlayer: config.showFloatPlayer !== false,
 		});
 	}
 
@@ -163,6 +166,7 @@ export function resolveMusicOptions(
 			defaultVolume: clampMusicVolume(config.defaultVolume),
 			defaultMode: config.defaultMode,
 			showLyrics: config.showLyrics !== false,
+			showFloatPlayer: config.showFloatPlayer !== false,
 		});
 	}
 
@@ -174,5 +178,6 @@ export function resolveMusicOptions(
 		defaultVolume: clampMusicVolume(config.defaultVolume),
 		defaultMode: config.defaultMode,
 		showLyrics: config.showLyrics !== false,
+		showFloatPlayer: config.showFloatPlayer !== false,
 	});
 }
