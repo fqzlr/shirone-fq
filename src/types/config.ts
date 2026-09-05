@@ -199,6 +199,10 @@ export type SiteConfig = {
 		waves: {
 			enable: boolean;
 		};
+		/** 渐变过渡：横幅模式切换页面时的渐变动画，enable 为访客开关的站点默认值 */
+		gradient?: {
+			enable?: boolean;
+		};
 	};
 	/** Markdown 正文图片处理配置。 */
 	imageOptimization?: {

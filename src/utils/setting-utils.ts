@@ -402,9 +402,9 @@ export function setBannerWavesEnabled(enabled: boolean): void {
 	);
 }
 
-/** 渐变过渡默认开启；与水波纹相互独立，由各自开关独立控制 */
+/** 渐变过渡站点默认值（banner.gradient.enable，默认 true）；与水波纹相互独立 */
 export function getDefaultBannerGradientEnabled(): boolean {
-	return true;
+	return siteConfig.banner.gradient?.enable ?? true;
 }
 
 export function getStoredBannerGradientEnabled(): boolean {

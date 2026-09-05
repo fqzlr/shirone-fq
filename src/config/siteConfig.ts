@@ -177,6 +177,10 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 			// 在 Banner 底部渲染页面背景色水波纹；关闭后不输出波浪 DOM。
 			enable: true,
 		},
+		gradient: {
+			// 横幅模式切换页面时的渐变过渡动画，访客可在显示设置面板中开关。
+			enable: true,
+		},
 	},
 	// Markdown 正文图片处理；仅匹配远程图片，不会产生额外网络请求或客户端代码。
 	imageOptimization: {
