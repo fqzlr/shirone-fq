@@ -252,6 +252,16 @@ const videoMode =
 	</div>
 	{siteConfig.banner.waves.enable && <BannerWaves />}
 	<div class="banner-stage__gradient" aria-hidden="true"></div>
+	{page === "home" && (
+		<button
+			type="button"
+			class="banner-stage__scroll-down"
+			data-banner-scroll-down
+			aria-label="向下滚动查看内容"
+		>
+			<Icon name="material-symbols:keyboard-arrow-down-rounded" aria-hidden="true" />
+		</button>
+	)}
 </section>
 
 <script>
@@ -266,7 +276,7 @@ const videoMode =
 		EASING_DECELERATE,
 		prefersReducedMotion,
 	} from "@utils/motion";
-	import { getStoredWallpaperMode } from "@utils/setting-utils";
+	import { getStoredFullscreenLayout, getStoredWallpaperMode } from "@utils/setting-utils";
 	import {
 		BANNER_CAROUSEL_CHANGE_EVENT,
 		BANNER_GRADIENT_CHANGE_EVENT,
@@ -813,6 +823,7 @@ const videoMode =
 		const context = contextOverride ?? readContext();
 		const state = resolveBannerState({
 			mode: getStoredWallpaperMode(),
+			fullscreenLayout: getStoredFullscreenLayout(),
 			page,
 			viewport,
 			imageCount: images.length,
@@ -1013,6 +1024,47 @@ const videoMode =
 	}
 
 	// ---------------------------------------------------------------------
+	// 全屏壁纸 classic 布局：首屏底部只留下滑箭头，水波纹/渐变过渡在滚动后
+	// 才淡入。滚过阈值后箭头淡出，body[data-banner-reveal] 驱动波浪/渐变
+	// 淡入；其余模式一律复位（箭头由 CSS 控制仅 classic 首页显示）。
+	// ---------------------------------------------------------------------
+	const CLASSIC_SCROLL_REVEAL_THRESHOLD = 100;
+	let classicScrollTicking = false;
+
+	function isClassicHomeLayout(): boolean {
+		const html = document.documentElement;
+		return (
+			html.dataset.wallpaperMode === "fullscreen" &&
+			html.dataset.fullscreenLayout === "classic" &&
+			document.body.dataset.currentPage === "home"
+		);
+	}
+
+	function updateClassicScrollState() {
+		classicScrollTicking = false;
+		const scrollDown = stage?.querySelector<HTMLElement>(
+			"[data-banner-scroll-down]",
+		);
+		if (!isClassicHomeLayout()) {
+			document.body.removeAttribute("data-banner-reveal");
+			scrollDown?.classList.remove("banner-stage__scroll-down--hide");
+			return;
+		}
+		const scrolled = window.scrollY > CLASSIC_SCROLL_REVEAL_THRESHOLD;
+		document.body.toggleAttribute("data-banner-reveal", scrolled);
+		scrollDown?.classList.toggle(
+			"banner-stage__scroll-down--hide",
+			scrolled,
+		);
+	}
+
+	function requestClassicScrollState() {
+		if (classicScrollTicking) return;
+		classicScrollTicking = true;
+		window.requestAnimationFrame(updateClassicScrollState);
+	}
+
+	// ---------------------------------------------------------------------
 	// 壁纸模式 / 布局切换的柔和过渡（淡出 → 落位 → 淡入）由 setting-utils
 	// 编排：几何由 html[data-wallpaper-mode] 直接驱动，落位必须发生在
 	// data-wallpaper-switching 淡出完成之后，这里只响应变更事件做同步。
@@ -1020,6 +1072,7 @@ const videoMode =
 	if (stage) {
 		syncBanner();
 		updateHeroTitleParallax();
+		updateClassicScrollState();
 		if (!window.__shironeBannerBound) {
 			window.__shironeBannerBound = true;
 			window.addEventListener(WALLPAPER_MODE_CHANGE_EVENT, () => syncBanner());
@@ -1030,17 +1083,35 @@ const videoMode =
 			window.addEventListener(BANNER_GRADIENT_CHANGE_EVENT, () => syncBanner());
 			window.addEventListener(
 				"scroll",
-				() => requestHeroTitleParallax(),
+				() => {
+					requestHeroTitleParallax();
+					requestClassicScrollState();
+				},
 				{ passive: true },
 			);
 			window.addEventListener("resize", () => {
 				requestHeroTitleParallax();
+				requestClassicScrollState();
 				if (currentViewport() === "desktop" && stage?.hidden === false) {
 					scheduleContextTitleFit();
 				}
 			});
-			window.addEventListener(WALLPAPER_MODE_CHANGE_EVENT, () => requestHeroTitleParallax());
-			window.addEventListener(WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, () => requestHeroTitleParallax());
+			window.addEventListener(WALLPAPER_MODE_CHANGE_EVENT, () => {
+				requestHeroTitleParallax();
+				requestClassicScrollState();
+			});
+			window.addEventListener(WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, () => {
+				requestHeroTitleParallax();
+				requestClassicScrollState();
+			});
+			// 下滑箭头点击：平滑滚动到内容区（事件委托，箭头随页面 SSR 常驻）
+			stage.addEventListener("click", (event) => {
+				const target = event.target as Element | null;
+				if (!target?.closest("[data-banner-scroll-down]")) return;
+				document
+					.getElementById("main-layout")
+					?.scrollIntoView({ behavior: "smooth" });
+			});
 			window.matchMedia("(min-width: 1024px)").addEventListener("change", () => syncBanner());
 				window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", () => {
 					if (prefersReducedMotion()) {
@@ -1065,6 +1136,7 @@ const videoMode =
 			});
 			document.addEventListener("swup:page:view", () => {
 				scheduleNavigationSync(true);
+				requestClassicScrollState();
 			});
 			document.fonts?.ready.then(scheduleContextTitleFit);
 		}
@@ -1347,6 +1419,62 @@ const videoMode =
 			:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body:not([data-current-page="home"])) .banner-stage
 				display: none
 
+		/* classic 首页：首屏底部只留下滑箭头，水波纹/渐变滚动后才淡入（参考站行为） */
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body[data-current-page="home"] .banner-waves),
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body[data-current-page="home"]) .banner-stage__gradient
+			opacity: 0
+			transition: opacity var(--m3e-duration-long) var(--m3e-easing-standard)
+
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body[data-current-page="home"][data-banner-reveal] .banner-waves),
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body[data-current-page="home"][data-banner-reveal]) .banner-stage__gradient
+			opacity: 1
+
+		/* classic 非首页横幅变矮（45vh 档）：标题字号对齐参考站页面标题尺度 */
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"] body:not([data-current-page="home"])) .banner-stage__context-title
+			font-size: clamp(2rem, 4vw, 3rem)
+
+		/* 下滑箭头：仅全屏 classic 首页显示；滚过阈值后由脚本加 --hide 淡出 */
+		.banner-stage__scroll-down
+			display: none
+			position: absolute
+			bottom: 3rem
+			left: 50%
+			z-index: 4
+			padding: 0.25rem
+			border: 0
+			background: transparent
+			color: rgba(255, 255, 255, 0.85)
+			cursor: pointer
+			pointer-events: auto
+			transform: translateX(-50%)
+			transition:
+				opacity var(--m3e-duration-medium) var(--m3e-easing-standard),
+				visibility var(--m3e-duration-medium) var(--m3e-easing-standard),
+				color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+			> :global(svg)
+				display: block
+				width: 3.5rem
+				height: 3.5rem
+				filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35))
+				animation: banner-scroll-down-bounce 2s var(--m3e-easing-standard) infinite
+
+			&:hover
+				color: #fff
+
+			&:focus-visible
+				border-radius: var(--shape-corner-full)
+				outline: 2px solid rgba(255, 255, 255, 0.9)
+				outline-offset: 2px
+
+		.banner-stage__scroll-down--hide
+			opacity: 0
+			visibility: hidden
+			pointer-events: none
+
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="classic"]) body[data-current-page="home"] .banner-stage__scroll-down
+			display: inline-flex
+
 		/* 水波纹 / 渐变过渡是横幅底部的过渡装饰：覆盖透明与全屏 hero 下无意义，
 		   classic 壁纸随页滚动，与横幅模式一致保留 */
 		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"] .banner-waves),
@@ -1377,14 +1505,23 @@ const videoMode =
 		100%
 			opacity: 0
 
+	@keyframes banner-scroll-down-bounce
+		0%,
+		100%
+			transform: translateY(0)
+		50%
+			transform: translateY(0.5rem)
+
 	:global(html.motion-reduced) .banner-stage__image,
-	:global(html.motion-reduced) .banner-stage__copy p[data-subtitle-state="typing"]::after
+	:global(html.motion-reduced) .banner-stage__copy p[data-subtitle-state="typing"]::after,
+	:global(html.motion-reduced) .banner-stage__scroll-down > :global(svg)
 		transition: none
 		animation: none
 
 	@media (prefers-reduced-motion: reduce)
 		.banner-stage__image,
-		.banner-stage__copy p[data-subtitle-state="typing"]::after
+		.banner-stage__copy p[data-subtitle-state="typing"]::after,
+		.banner-stage__scroll-down > :global(svg)
 			transition: none
 			animation: none
 </style>
