@@ -35,6 +35,7 @@ export const ko: Translation = {
 		"신청 템플릿을 복사해 수정한 뒤 아래 댓글로 보내 주세요",
 	[Key.friendStep3Title]: "검토 대기",
 	[Key.friendStep3Desc]: "정보 확인 후 최대한 빠르게 추가해 드립니다",
+	[Key.friendContactHeading]: "연락처",
 	[Key.friendCopyField]: "{name} 복사",
 	[Key.friendCopyTemplate]: "신청 템플릿 복사",
 	[Key.friendLatency]: "{ms} MS",

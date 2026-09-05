@@ -36,6 +36,7 @@ export const tr: Translation = {
 	[Key.friendStep3Title]: "İncelemeyi bekleyin",
 	[Key.friendStep3Desc]:
 		"Bilgiler doğrulandıktan sonra bağlantınız en kısa sürede eklenecektir",
+	[Key.friendContactHeading]: "İletişim",
 	[Key.friendCopyField]: "{name} kopyala",
 	[Key.friendCopyTemplate]: "Başvuru şablonunu kopyala",
 	[Key.friendLatency]: "{ms} MS",

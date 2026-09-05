@@ -46,6 +46,7 @@ export const th: Translation = {
 	[Key.friendStep2Desc]: "คัดลอกเทมเพลต แก้ไขข้อมูล แล้วส่งในช่องคอมเมนต์ด้านล่าง",
 	[Key.friendStep3Title]: "รอตรวจสอบ",
 	[Key.friendStep3Desc]: "ยืนยันข้อมูลเรียบร้อยแล้วจะเพิ่มลิงก์ให้โดยเร็ว",
+	[Key.friendContactHeading]: "ช่องทางติดต่อ",
 	[Key.friendCopyField]: "คัดลอก{name}",
 	[Key.friendCopyTemplate]: "คัดลอกเทมเพลต",
 	[Key.friendLatency]: "{ms} MS",

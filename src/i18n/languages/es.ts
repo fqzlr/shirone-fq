@@ -36,6 +36,7 @@ export const es: Translation = {
 	[Key.friendStep3Title]: "Espera la revisión",
 	[Key.friendStep3Desc]:
 		"Cuando verifiquemos la información, añadiremos tu enlace lo antes posible",
+	[Key.friendContactHeading]: "Contacto",
 	[Key.friendCopyField]: "Copiar {name}",
 	[Key.friendCopyTemplate]: "Copiar plantilla de solicitud",
 	[Key.friendLatency]: "{ms} MS",

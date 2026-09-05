@@ -36,6 +36,7 @@ export const id: Translation = {
 	[Key.friendStep3Title]: "Tunggu peninjauan",
 	[Key.friendStep3Desc]:
 		"Setelah informasi diverifikasi, tautan Anda akan segera ditambahkan",
+	[Key.friendContactHeading]: "Kontak",
 	[Key.friendCopyField]: "Salin {name}",
 	[Key.friendCopyTemplate]: "Salin templat permohonan",
 	[Key.friendLatency]: "{ms} MS",
