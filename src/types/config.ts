@@ -76,6 +76,14 @@ export type DisplaySettingsConfig = {
 	texture?: boolean;
 	/** 是否在显示设置面板展示樱花特效开关（默认 true，且受 effects.sakura 提供默认值） */
 	effects?: boolean;
+	/** 是否在显示设置面板展示「首页壁纸标题」开关（默认 true，且受 banner.homeText.enable 控制） */
+	bannerTitle?: boolean;
+	/** 是否在显示设置面板展示「壁纸轮播」开关（默认 true，且受 banner.carousel.enable 控制） */
+	bannerCarousel?: boolean;
+	/** 是否在显示设置面板展示「水波纹动画」开关（默认 true，仅横幅模式显示，且受 banner.waves.enable 控制） */
+	bannerWaves?: boolean;
+	/** 是否在显示设置面板展示「渐变过渡」开关（默认 true，仅横幅模式显示） */
+	bannerGradient?: boolean;
 };
 
 export type SiteConfig = {

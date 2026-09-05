@@ -26,6 +26,11 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		layoutMode: true, // 是否展示文章列表布局（列表/网格）切换
 		reduceMotion: true, // 是否展示减少动效切换
 		texture: true, // 是否展示背景纹理选择
+		effects: true, // 是否展示樱花特效开关
+		bannerTitle: true, // 是否展示「首页壁纸标题」开关
+		bannerCarousel: true, // 是否展示「壁纸轮播」开关
+		bannerWaves: true, // 是否展示「水波纹动画」开关（仅横幅模式显示）
+		bannerGradient: true, // 是否展示「渐变过渡」开关（仅横幅模式显示）
 	},
 	// 统一页面开关：false 时对应页面跳转 /404/，顶栏与移动抽屉的导航入口自动隐藏
 	// （无需再改 nav-bar.yaml）；与各行为领域 enable 取 AND
@@ -254,6 +259,11 @@ export function resolveDisplaySettings(): {
 	layoutMode: boolean;
 	reduceMotion: boolean;
 	texture: boolean;
+	effects: boolean;
+	bannerTitle: boolean;
+	bannerCarousel: boolean;
+	bannerWaves: boolean;
+	bannerGradient: boolean;
 } {
 	const cfg = siteConfig.displaySettings;
 	const textureOpts = resolveTextureOptions(
@@ -267,5 +277,10 @@ export function resolveDisplaySettings(): {
 		layoutMode: cfg?.layoutMode ?? true,
 		reduceMotion: cfg?.reduceMotion ?? true,
 		texture: textureOpts.enable && (cfg?.texture ?? true),
+		effects: cfg?.effects ?? true,
+		bannerTitle: cfg?.bannerTitle ?? true,
+		bannerCarousel: cfg?.bannerCarousel ?? true,
+		bannerWaves: cfg?.bannerWaves ?? true,
+		bannerGradient: cfg?.bannerGradient ?? true,
 	};
 }

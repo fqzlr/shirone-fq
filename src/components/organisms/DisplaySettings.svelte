@@ -686,14 +686,14 @@ const stylePreviews = $derived(
                                 <Icon icon="fa6-solid:arrow-rotate-left" class="text-[0.75rem]"></Icon>
                             </button>
                         </div>
-                        {#if siteConfig.banner.homeText.enable}
+                        {#if siteConfig.banner.homeText.enable && displayConfig.bannerTitle}
                             <div class="m3-toggle-row">
                                 <Icon icon="material-symbols:titlecase-rounded" class="text-lg text-[var(--primary)]" />
                                 <span class="text-sm font-bold text-[var(--on-surface)] flex-1">{i18n(I18nKey.wallpaperTitle)}</span>
                                 <Switch bind:checked={bannerTitleEnabled} label={i18n(I18nKey.wallpaperTitle)} icons />
                             </div>
                         {/if}
-                        {#if siteConfig.banner.carousel.enable}
+                        {#if siteConfig.banner.carousel.enable && displayConfig.bannerCarousel}
                             <div class="m3-toggle-row">
                                 <Icon icon="material-symbols:view-carousel-outline" class="text-lg text-[var(--primary)]" />
                                 <span class="text-sm font-bold text-[var(--on-surface)] flex-1">{i18n(I18nKey.wallpaperCarousel)}</span>
@@ -701,18 +701,20 @@ const stylePreviews = $derived(
                             </div>
                         {/if}
                         {#if wallpaperMode === "banner"}
-                            {#if siteConfig.banner.waves.enable}
+                            {#if siteConfig.banner.waves.enable && displayConfig.bannerWaves}
                                 <div class="m3-toggle-row">
                                     <Icon icon="material-symbols:airwave-rounded" class="text-lg text-[var(--primary)]" />
                                     <span class="text-sm font-bold text-[var(--on-surface)] flex-1">{i18n(I18nKey.wavesAnimation)}</span>
                                     <Switch bind:checked={bannerWavesEnabled} label={i18n(I18nKey.wavesAnimation)} icons />
                                 </div>
                             {/if}
-                            <div class="m3-toggle-row">
-                                <Icon icon="material-symbols:gradient" class="text-lg text-[var(--primary)]" />
-                                <span class="text-sm font-bold text-[var(--on-surface)] flex-1">{i18n(I18nKey.gradientTransition)}</span>
-                                <Switch bind:checked={bannerGradientEnabled} label={i18n(I18nKey.gradientTransition)} icons />
-                            </div>
+                            {#if displayConfig.bannerGradient}
+                                <div class="m3-toggle-row">
+                                    <Icon icon="material-symbols:gradient" class="text-lg text-[var(--primary)]" />
+                                    <span class="text-sm font-bold text-[var(--on-surface)] flex-1">{i18n(I18nKey.gradientTransition)}</span>
+                                    <Switch bind:checked={bannerGradientEnabled} label={i18n(I18nKey.gradientTransition)} icons />
+                                </div>
+                            {/if}
                         {/if}
                     </div>
                 {/if}
