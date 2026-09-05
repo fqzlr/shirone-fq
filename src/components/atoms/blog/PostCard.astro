@@ -17,8 +17,10 @@ interface Props {
 	href: string;
 	title: string;
 	description?: string;
-	/** 封面图地址（省略则无封面，右侧显示进入箭头按钮） */
+	/** 封面图地址（省略则无封面；开启随机封面回退时由 randomCover 兜底） */
 	image?: string;
+	/** 随机封面回退（仅无 image 时传入）：src 为图床随机图端点，fallback 为本地兜底图 */
+	randomCover?: { src: string; fallback: string };
 	imageSrcset?: string;
 	imageAvifSrcset?: string;
 	imageSizes?: string;
@@ -42,6 +44,7 @@ const {
 	title,
 	description,
 	image,
+	randomCover,
 	imageSrcset,
 	imageAvifSrcset,
 	imageSizes,
@@ -59,7 +62,7 @@ const {
 	style,
 } = Astro.props;
 
-const hasCover = !!image;
+const hasCover = !!image || !!randomCover;
 const pinnedLabel = i18n(I18nKey.pinned);
 const encryptedLabel = i18n(I18nKey.postEncryptedBadge);
 /* 置顶 + 加密并存时合入可访问名称，避免屏幕阅读器丢失任一状态 */
@@ -134,7 +137,7 @@ const titleLabel =
 			<picture>
 				{imageAvifSrcset && <source type="image/avif" srcset={imageAvifSrcset} sizes={imageSizes} />}
 				<img
-					src={image}
+					src={image || randomCover?.src || ""}
 					srcset={imageSrcset}
 					sizes={imageSizes}
 					width={imageWidth}
@@ -142,8 +145,11 @@ const titleLabel =
 					alt={imageAlt}
 					loading="lazy"
 					decoding="async"
+					data-fallback={randomCover?.fallback}
 					onload="this.parentElement?.previousElementSibling?.classList.add('m3-blog-postcard__cover-loading--done')"
-					onerror="this.parentElement?.previousElementSibling?.classList.add('m3-blog-postcard__cover-loading--done')"
+					onerror={randomCover
+						? "if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback='';}this.parentElement?.previousElementSibling?.classList.add('m3-blog-postcard__cover-loading--done')"
+						: "this.parentElement?.previousElementSibling?.classList.add('m3-blog-postcard__cover-loading--done')"}
 				/>
 			</picture>
 			<span class="m3-blog-postcard__cover-mask" aria-hidden="true"></span>

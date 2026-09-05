@@ -13,7 +13,8 @@ import { i18n } from "@i18n/translation";
 import { formatDateToYYYYMMDD } from "@utils/date-utils";
 import { isEncryptedPost } from "@utils/post-encryption";
 import { getProjectImageLoader } from "@utils/project-images";
-import { getCategoryUrl, getDir, getTagUrl } from "@utils/url-utils";
+import { getCategoryUrl, getDir, getTagUrl, url as buildUrl } from "@utils/url-utils";
+import { randomCoverConfig, resolveRandomCoverOptions } from "@/config";
 
 interface Props {
 	class?: string;
@@ -115,6 +116,14 @@ if (image) {
 	}
 }
 
+// 无封面回退：randomCover 开启时使用图床随机图 + 本地兜底图（关闭态保持原行为，短路为 null）
+const randomCoverOptions = coverUrl
+	? null
+	: resolveRandomCoverOptions(randomCoverConfig);
+const randomCover = randomCoverOptions
+	? { src: randomCoverOptions.randomUrl, fallback: buildUrl(randomCoverOptions.fallbackUrl) }
+	: undefined;
+
 const categoryLink = category
 	? { name: category, href: getCategoryUrl(category) }
 	: null;
@@ -139,6 +148,7 @@ const excerpt =
 	title={title}
 	description={excerpt}
 	image={coverUrl}
+	randomCover={randomCover}
 	imageSrcset={coverSrcset}
 	imageAvifSrcset={coverAvifSrcset}
 	imageSizes="(max-width: 767px) calc(100vw - 4rem), (min-width: 1280px) 342px, 28vw"

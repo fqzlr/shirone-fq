@@ -34,6 +34,7 @@ import {
 	getPostUrl,
 	getPostUrlBySlug,
 	removeFileExtension,
+	url,
 } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import katexStylesheet from "katex/dist/katex.css?url";
@@ -43,10 +44,12 @@ import {
 	commentConfig,
 	licenseConfig,
 	profileConfig,
+	randomCoverConfig,
 	resolveArticleDiscoveryOptions,
 	resolveArticleShareOptions,
 	resolveCommentOptions,
 	resolveLastUpdatedNoticeOptions,
+	resolveRandomCoverOptions,
 	resolveUmamiOptions,
 	siteConfig,
 	umamiConfig,
@@ -172,6 +175,11 @@ const jsonLd = {
 		? entry.data.lang.replace("_", "-")
 		: siteConfig.lang.replace("_", "-"),
 };
+
+// 无封面回退：randomCover 开启时使用图床随机图（加载失败换本地兜底图）
+const randomCoverOptions = entry.data.image
+	? null
+	: resolveRandomCoverOptions(randomCoverConfig);
 ---
 
 <MainGridLayout banner={entry.data.image} title={entry.data.title} description={effectiveDescription} bannerDate={formatDateToYYYYMMDD(entry.data.published)} lang={entry.data.lang} setOGTypeArticle={true} headings={effectiveHeadings} postCategory={entry.data.category || undefined} page="post" hasComments={postCommentEnabled}>
@@ -243,12 +251,12 @@ const jsonLd = {
 						category={entry.data.category}
 					></PostMetadata>
 				)}
-				{!entry.data.image && <div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-5"></div>}
+				{!entry.data.image && !randomCoverOptions && <div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-5"></div>}
 			</div>
 
             <!-- always show cover as long as it has one -->
 
-			{entry.data.image &&
+			{entry.data.image ? (
 				<ImageWrapper
 					id="post-cover"
 					src={entry.data.image}
@@ -261,7 +269,26 @@ const jsonLd = {
 					formats={["avif", "webp"]}
 					quality={65}
 				/>
-			}
+			) : (
+				randomCoverOptions && (
+					<div
+						id="post-cover"
+						class="mb-8 rounded-xl banner-container onload-animation overflow-hidden relative"
+						style="aspect-ratio: 16 / 9"
+					>
+						<img
+							src={randomCoverOptions.randomUrl}
+							alt=""
+							class="w-full h-full object-cover"
+							loading="eager"
+							fetchpriority="high"
+							decoding="async"
+							data-fallback={url(randomCoverOptions.fallbackUrl)}
+							onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback='';}"
+						/>
+					</div>
+				)
+			)}
 
             {isEncrypted ? (
                 <EncryptedContent

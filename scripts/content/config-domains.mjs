@@ -68,6 +68,12 @@ export const CONFIG_DOMAINS = Object.freeze([
 		module: "@/types/postListConfig",
 	},
 	{
+		key: "randomCover",
+		file: "random-cover",
+		type: "RandomCoverConfig",
+		module: "@/types/randomCoverConfig",
+	},
+	{
 		key: "article",
 		file: "article",
 		type: "ArticleConfig",
