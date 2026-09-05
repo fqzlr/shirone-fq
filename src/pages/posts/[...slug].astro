@@ -29,6 +29,7 @@ import {
 	mergeMarkdownSyntaxSnapshots,
 } from "@utils/markdown-syntaxes.mjs";
 import { initPostIdMap } from "@utils/permalink-utils";
+import { randomCoverUrlWithSeed } from "@utils/random-cover";
 import {
 	getDir,
 	getPostUrl,
@@ -277,7 +278,7 @@ const randomCoverOptions = entry.data.image
 						style="aspect-ratio: 16 / 9"
 					>
 						<img
-							src={randomCoverOptions.randomUrl}
+							src={randomCoverUrlWithSeed(randomCoverOptions.randomUrl, entry.id)}
 							alt=""
 							class="w-full h-full object-cover"
 							loading="eager"
