@@ -281,6 +281,13 @@ enum I18nKey {
 	musicErrorSourceUnavailable = "musicErrorSourceUnavailable",
 	musicErrorAutoplayBlocked = "musicErrorAutoplayBlocked",
 	musicErrorInvalidTrack = "musicErrorInvalidTrack",
+	/** 歌词面板开关（播放器控制行按钮） */
+	musicLyrics = "musicLyrics",
+	/** 浮动歌词开关（播放器控制行按钮） */
+	musicFloatingLyrics = "musicFloatingLyrics",
+	musicNoLyrics = "musicNoLyrics",
+	musicLoadingLyrics = "musicLoadingLyrics",
+	musicFailedLyrics = "musicFailedLyrics",
 
 	themeColor = "themeColor",
 	colorStyle = "colorStyle",

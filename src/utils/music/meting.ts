@@ -61,6 +61,7 @@ export function parseMetingSong(
 
 	const artist = (song.artist ?? song.author ?? "").trim() || undefined;
 	const cover = (song.pic ?? "").trim() || undefined;
+	const lrc = (song.lrc ?? "").trim() || undefined;
 
 	let duration: number | undefined;
 	if (typeof song.duration === "number" && Number.isFinite(song.duration)) {
@@ -85,6 +86,7 @@ export function parseMetingSong(
 		artist,
 		cover,
 		duration,
+		lrc,
 	});
 }
 

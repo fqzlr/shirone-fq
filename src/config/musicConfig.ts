@@ -66,6 +66,7 @@ export const musicConfig: MusicConfig = withUserConfig("music", {
 	},
 	defaultVolume: 0.7,
 	defaultMode: "sequence",
+	showLyrics: true,
 });
 
 export interface ResolvedMusicOptions {
@@ -74,6 +75,7 @@ export interface ResolvedMusicOptions {
 	readonly meting?: MetingMusicConfig;
 	readonly defaultVolume: number;
 	readonly defaultMode: PlaybackMode;
+	readonly showLyrics: boolean;
 }
 
 const ABSOLUTE_MEDIA_SOURCE = /^(?:https?:)?\/\//i;
@@ -109,8 +111,9 @@ function normalizeTrack(
 		track.duration > 0
 			? track.duration
 			: undefined;
+	const lrc = track.lrc?.trim() || undefined;
 
-	return Object.freeze({ id, title, source, artist, cover, duration });
+	return Object.freeze({ id, title, source, artist, cover, duration, lrc });
 }
 
 export function clampMusicVolume(value: number, fallback = 0.7): number {
@@ -134,6 +137,7 @@ export function resolveMusicOptions(
 			meting: config.meting,
 			defaultVolume: clampMusicVolume(config.defaultVolume),
 			defaultMode: config.defaultMode,
+			showLyrics: config.showLyrics !== false,
 		});
 	}
 
@@ -158,6 +162,7 @@ export function resolveMusicOptions(
 			meting: config.meting,
 			defaultVolume: clampMusicVolume(config.defaultVolume),
 			defaultMode: config.defaultMode,
+			showLyrics: config.showLyrics !== false,
 		});
 	}
 
@@ -168,5 +173,6 @@ export function resolveMusicOptions(
 		playlist: Object.freeze(playlist),
 		defaultVolume: clampMusicVolume(config.defaultVolume),
 		defaultMode: config.defaultMode,
+		showLyrics: config.showLyrics !== false,
 	});
 }

@@ -278,6 +278,11 @@ export const ja: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"自動再生がブロックされました。再生ボタンを押してください。",
 	[Key.musicErrorInvalidTrack]: "曲の情報が無効です。",
+	[Key.musicLyrics]: "歌詞",
+	[Key.musicFloatingLyrics]: "フローティング歌詞",
+	[Key.musicNoLyrics]: "歌詞がありません",
+	[Key.musicLoadingLyrics]: "歌詞を読み込み中…",
+	[Key.musicFailedLyrics]: "歌詞の読み込みに失敗しました",
 
 	[Key.themeColor]: "Theme Color",
 	[Key.colorStyle]: "配色スタイル",

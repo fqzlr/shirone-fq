@@ -267,6 +267,11 @@ export const zh_CN: Translation = {
 	[Key.musicErrorSourceUnavailable]: "该音源不可用",
 	[Key.musicErrorAutoplayBlocked]: "自动播放受限，请点击播放按钮开始",
 	[Key.musicErrorInvalidTrack]: "歌曲信息无效",
+	[Key.musicLyrics]: "歌词",
+	[Key.musicFloatingLyrics]: "浮动歌词",
+	[Key.musicNoLyrics]: "暂无歌词",
+	[Key.musicLoadingLyrics]: "歌词加载中…",
+	[Key.musicFailedLyrics]: "歌词加载失败",
 
 	[Key.themeColor]: "Theme Color",
 	[Key.colorStyle]: "配色风格",

@@ -264,6 +264,11 @@ export const th: Translation = {
 	[Key.musicErrorSourceUnavailable]: "ไม่สามารถเล่นเพลงนี้ได้",
 	[Key.musicErrorAutoplayBlocked]: "ระบบบล็อกการเล่นอัตโนมัติ กดปุ่มเล่นเพื่อเริ่ม",
 	[Key.musicErrorInvalidTrack]: "ข้อมูลเพลงนี้ไม่ถูกต้อง",
+	[Key.musicLyrics]: "เนื้อเพลง",
+	[Key.musicFloatingLyrics]: "เนื้อเพลงลอย",
+	[Key.musicNoLyrics]: "ยังไม่มีเนื้อเพลง",
+	[Key.musicLoadingLyrics]: "กำลังโหลดเนื้อเพลง…",
+	[Key.musicFailedLyrics]: "โหลดเนื้อเพลงไม่สำเร็จ",
 
 	[Key.themeColor]: "Theme Color",
 	[Key.colorStyle]: "สไตล์สี",

@@ -99,6 +99,28 @@ export const musicSidebarStylus = `
 		align-items: center
 		gap: 0.25rem
 
+	&__lyrics-actions
+		display: flex
+		align-items: center
+		gap: 0.125rem
+		margin-left: 0.125rem
+
+		.m3-icon-button
+			position: relative
+			width: 1.25rem
+			height: 1.25rem
+			padding: 0
+			color: var(--on-surface-variant)
+
+			&::after
+				content: ""
+				position: absolute
+				inset: -0.5rem
+				z-index: 1
+
+			&:hover
+				color: var(--primary)
+
 		.m3-icon-button
 			position: relative
 			width: 1.25rem
@@ -301,6 +323,65 @@ export const musicSidebarStylus = `
 	&__playlist-panel
 		overflow: hidden
 
+	/* 歌词面板：控制行下方抽屉（collapse 展开收起），列表居中列 + 当前行高亮 */
+	&__lyrics-panel
+		overflow: hidden
+
+	&__lyrics-empty
+		margin: 0
+		padding: 1rem
+		color: var(--on-surface-variant)
+		font: var(--m3e-type-body-small)
+		text-align: center
+
+	&__lyrics-list
+		display: flex
+		flex-direction: column
+		align-items: center
+		gap: 0.375rem
+		max-height: 11rem
+		margin-top: 0.25rem
+		padding: 5.5rem 0.5rem
+		overflow-y: auto
+		overscroll-behavior: contain
+		scrollbar-width: none
+		-webkit-mask-image: linear-gradient(to bottom, transparent 0, black 2.5rem, black calc(100% - 2.5rem), transparent 100%)
+		mask-image: linear-gradient(to bottom, transparent 0, black 2.5rem, black calc(100% - 2.5rem), transparent 100%)
+
+		&::-webkit-scrollbar
+			display: none
+
+	&__lyric-line
+		width: 100%
+		padding: 0.25rem 0.5rem
+		border: none
+		border-radius: var(--shape-corner-s)
+		background: transparent
+		color: var(--on-surface-variant)
+		font: var(--m3e-type-body-small)
+		line-height: 1.55
+		text-align: center
+		text-wrap: balance
+		cursor: pointer
+		opacity: 0.72
+		transition:
+			color var(--m3e-duration-short) var(--m3e-easing-standard),
+			font-size var(--m3e-duration-short) var(--m3e-easing-standard),
+			font-weight var(--m3e-duration-short) var(--m3e-easing-standard)
+
+		&:hover
+			color: var(--primary)
+
+		&:focus-visible
+			outline: 2px solid var(--primary)
+			outline-offset: 1px
+
+		&--active
+			color: var(--primary)
+			font-size: 1rem
+			font-weight: 700
+			opacity: 1
+
 	&__playlist
 		list-style: none
 		max-height: 12rem
@@ -433,4 +514,116 @@ html.motion-reduced .music-player__cover img
 	.music-player__cover::before,
 	.music-player__cover img
 		animation: none
+
+/* ─────────────────────────────────────────────────────────────
+   浮动歌词：fixed 底部歌词条（portal 到 body，跨页常驻）
+   复刻旧博客 FloatingLyrics：上一行 / 当前行（点击跳播）/ 下一行
+   ───────────────────────────────────────────────────────────── */
+.music-floating-lyrics
+	position: fixed
+	left: 0
+	right: 0
+	bottom: 0
+	z-index: 60
+	display: flex
+	align-items: center
+	justify-content: center
+	padding: 0.5rem 3rem
+	min-height: 3.25rem
+	pointer-events: none
+	background: unquote("color-mix(in oklab, var(--page-bg) 88%, transparent)")
+	-webkit-backdrop-filter: blur(10px)
+	backdrop-filter: blur(10px)
+	border-top: 1px solid var(--outline-variant)
+	box-shadow: 0 -0.25rem 1rem unquote("color-mix(in oklab, var(--on-surface) 6%, transparent)")
+	transform: translateY(110%)
+	transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1)
+
+	&--shown
+		transform: translateY(0)
+		pointer-events: auto
+
+	&__close
+		position: absolute
+		top: 50%
+		left: 0.75rem
+		display: inline-flex
+		align-items: center
+		justify-content: center
+		width: 1.75rem
+		height: 1.75rem
+		padding: 0
+		border: none
+		border-radius: var(--shape-corner-full)
+		background: transparent
+		color: var(--on-surface-variant)
+		cursor: pointer
+		opacity: 0.6
+		transition: opacity var(--m3e-duration-short) var(--m3e-easing-standard), color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+		&:hover
+			opacity: 1
+			color: var(--primary)
+
+		> svg
+			width: 1.125rem
+			height: 1.125rem
+
+	&__lines
+		display: flex
+		min-width: 0
+		flex-direction: column
+		align-items: center
+		gap: 0.125rem
+
+	&__adjacent
+		max-width: 70vw
+		margin: 0
+		overflow: hidden
+		color: var(--on-surface-variant)
+		font: var(--m3e-type-label-small)
+		line-height: 1.4
+		text-overflow: ellipsis
+		white-space: nowrap
+		opacity: 0.75
+
+	&__current
+		max-width: 70vw
+		margin: 0
+		padding: 0
+		overflow: hidden
+		border: none
+		background: transparent
+		color: var(--primary)
+		font: var(--m3e-type-title-small)
+		font-weight: 700
+		line-height: 1.4
+		text-overflow: ellipsis
+		white-space: nowrap
+		text-shadow: unquote("0 1px 8px color-mix(in oklab, var(--primary) 25%, transparent)")
+		cursor: pointer
+		transition: opacity var(--m3e-duration-short) var(--m3e-easing-standard)
+
+		&:hover:not(:disabled)
+			opacity: 0.8
+
+		&:disabled
+			cursor: default
+
+@media (max-width: 767.98px)
+	.music-floating-lyrics
+		padding-bottom: unquote("max(0.5rem, env(safe-area-inset-bottom, 0))")
+
+	.music-floating-lyrics__adjacent
+		display: none
+
+	body.music-has-floating-lyrics
+		padding-bottom: 3.25rem
+
+body.music-has-floating-lyrics
+	@media (min-width: 768px)
+		padding-bottom: 4.5rem
+
+html.motion-reduced .music-floating-lyrics
+	transition: none
 `;

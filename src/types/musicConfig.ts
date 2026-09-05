@@ -32,6 +32,11 @@ export interface TrackDescriptor {
 	readonly coverWidth?: number;
 	readonly coverHeight?: number;
 	readonly duration?: number;
+	/**
+	 * 歌词（LRC）：远端 URL（http(s):// 或 / 开头）或内嵌 LRC 文本。
+	 * 留空时歌词面板显示「暂无歌词」，浮动歌词不展示。
+	 */
+	readonly lrc?: string;
 }
 
 export interface MetingMusicConfig {
@@ -58,6 +63,8 @@ export interface MusicConfig {
 	readonly defaultVolume: number;
 	/** 初始播放模式 */
 	readonly defaultMode: PlaybackMode;
+	/** 是否启用歌词功能（歌词面板 + 浮动歌词按钮），默认 true；关闭时两个按钮零 DOM */
+	readonly showLyrics?: boolean;
 }
 
 export interface MusicSnapshot {

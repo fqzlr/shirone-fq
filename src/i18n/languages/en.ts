@@ -278,6 +278,11 @@ export const en: Translation = {
 	[Key.musicErrorSourceUnavailable]: "This track is unavailable.",
 	[Key.musicErrorAutoplayBlocked]: "Autoplay was blocked. Press play to start.",
 	[Key.musicErrorInvalidTrack]: "This track is invalid.",
+	[Key.musicLyrics]: "Lyrics",
+	[Key.musicFloatingLyrics]: "Floating lyrics",
+	[Key.musicNoLyrics]: "No lyrics available",
+	[Key.musicLoadingLyrics]: "Loading lyrics…",
+	[Key.musicFailedLyrics]: "Failed to load lyrics",
 
 	[Key.themeColor]: "Theme Color",
 	[Key.colorStyle]: "Color Style",

@@ -280,6 +280,11 @@ export const vi: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"Tự động phát đã bị chặn. Nhấn nút phát để bắt đầu.",
 	[Key.musicErrorInvalidTrack]: "Bài hát này không hợp lệ.",
+	[Key.musicLyrics]: "Lời bài hát",
+	[Key.musicFloatingLyrics]: "Lời bài hát nổi",
+	[Key.musicNoLyrics]: "Chưa có lời bài hát",
+	[Key.musicLoadingLyrics]: "Đang tải lời bài hát…",
+	[Key.musicFailedLyrics]: "Không thể tải lời bài hát",
 
 	[Key.themeColor]: "Theme Color",
 	[Key.colorStyle]: "Phong cách màu",

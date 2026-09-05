@@ -282,6 +282,11 @@ export const id: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"Pemutaran otomatis diblokir. Tekan putar untuk memulai.",
 	[Key.musicErrorInvalidTrack]: "Lagu ini tidak valid.",
+	[Key.musicLyrics]: "Lirik",
+	[Key.musicFloatingLyrics]: "Lirik mengambang",
+	[Key.musicNoLyrics]: "Lirik tidak tersedia",
+	[Key.musicLoadingLyrics]: "Memuat lirik…",
+	[Key.musicFailedLyrics]: "Gagal memuat lirik",
 
 	[Key.themeColor]: "Theme Color",
 	[Key.colorStyle]: "Gaya Warna",

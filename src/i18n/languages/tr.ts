@@ -280,6 +280,11 @@ export const tr: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"Otomatik oynatma engellendi. Başlatmak için oynat düğmesine basın.",
 	[Key.musicErrorInvalidTrack]: "Bu parça geçersiz.",
+	[Key.musicLyrics]: "Şarkı sözleri",
+	[Key.musicFloatingLyrics]: "Yüzen şarkı sözleri",
+	[Key.musicNoLyrics]: "Şarkı sözü yok",
+	[Key.musicLoadingLyrics]: "Şarkı sözleri yükleniyor…",
+	[Key.musicFailedLyrics]: "Şarkı sözleri yüklenemedi",
 
 	[Key.themeColor]: "Theme Color",
 	[Key.colorStyle]: "Renk Stili",

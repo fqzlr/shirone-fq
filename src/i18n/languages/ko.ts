@@ -277,6 +277,11 @@ export const ko: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"자동 재생이 차단되었습니다. 재생 버튼을 눌러 시작하세요.",
 	[Key.musicErrorInvalidTrack]: "곡 정보가 올바르지 않습니다.",
+	[Key.musicLyrics]: "가사",
+	[Key.musicFloatingLyrics]: "플로팅 가사",
+	[Key.musicNoLyrics]: "가사가 없습니다",
+	[Key.musicLoadingLyrics]: "가사를 불러오는 중…",
+	[Key.musicFailedLyrics]: "가사 로드에 실패했습니다",
 
 	[Key.themeColor]: "Theme Color",
 	[Key.colorStyle]: "색상 스타일",
