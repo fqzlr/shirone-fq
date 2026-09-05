@@ -319,11 +319,6 @@ function setVolume(event: Event): void {
 				<strong title={currentTitle}>{currentTitle}</strong>
 				<span title={currentArtist}>{currentArtist}</span>
 				<div class="music-player__submeta">
-					<div class="music-player__time-display" aria-hidden="true">
-						<span>{displayTime}</span>
-						<span class="music-player__time-separator">/</span>
-						<span>{displayDuration}</span>
-					</div>
 					<div class="music-player__volume-inline">
 						<Tooltip label={snapshot.muted ? labels.unmute : labels.mute} placement="top">
 							<IconButton
@@ -349,39 +344,40 @@ function setVolume(event: Event): void {
 								style={`--vol-pct: ${Math.round(snapshot.volume * 100)}%`}
 							/>
 						</div>
-						{#if lyricsFeatureOn}
-							<div class="music-player__lyrics-actions">
-								<Tooltip label={labels.lyrics} placement="top">
-									<IconButton
-										icon="material-symbols:subtitles-off-outline-rounded"
-										checkedIcon="material-symbols:subtitles-outline-rounded"
-										label={labels.lyrics}
-										size="xsmall"
-										toggle
-										checked={lyricsOpen}
-										ariaExpanded={lyricsOpen}
-										ariaControls="sidebar-music-lyrics"
-										onclick={toggleLyrics}
-									/>
-								</Tooltip>
-								<Tooltip label={labels.floatingLyrics} placement="top">
-									<IconButton
-										icon="material-symbols:lyrics-outline-rounded"
-										label={labels.floatingLyrics}
-										size="xsmall"
-										toggle
-										checked={floatingOn}
-										onclick={toggleFloatingLyrics}
-									/>
-								</Tooltip>
-							</div>
-						{/if}
 					</div>
+					{#if lyricsFeatureOn}
+						<div class="music-player__lyrics-actions">
+							<Tooltip label={labels.lyrics} placement="top">
+								<IconButton
+									icon="material-symbols:subtitles-off-outline-rounded"
+									checkedIcon="material-symbols:subtitles-outline-rounded"
+									label={labels.lyrics}
+									size="xsmall"
+									toggle
+									checked={lyricsOpen}
+									ariaExpanded={lyricsOpen}
+									ariaControls="sidebar-music-lyrics"
+									onclick={toggleLyrics}
+								/>
+							</Tooltip>
+							<Tooltip label={labels.floatingLyrics} placement="top">
+								<IconButton
+									icon="material-symbols:lyrics-outline-rounded"
+									label={labels.floatingLyrics}
+									size="xsmall"
+									toggle
+									checked={floatingOn}
+									onclick={toggleFloatingLyrics}
+								/>
+							</Tooltip>
+						</div>
+					{/if}
 				</div>
 			</div>
 		</div>
 
 		<div class="music-player__progress">
+			<span class="music-player__time-cap">{displayTime}</span>
 			<div class="music-player__progress-control">
 				<ProgressIndicator
 					variant="linear"
@@ -408,6 +404,7 @@ function setVolume(event: Event): void {
 					onchange={onProgressChange}
 				/>
 			</div>
+			<span class="music-player__time-cap">{displayDuration}</span>
 		</div>
 
 		<div class="music-player__controls">

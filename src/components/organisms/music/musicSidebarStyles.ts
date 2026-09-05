@@ -80,19 +80,15 @@ export const musicSidebarStylus = `
 		display: flex
 		justify-content: space-between
 		align-items: center
+		gap: 0.25rem
 		margin-top: 0.125rem
 		min-height: 1.25rem
 
-	&__time-display
-		display: inline-flex
-		align-items: center
-		gap: 0.25rem
+	&__time-cap
+		flex-shrink: 0
 		font: var(--m3e-type-label-small)
 		font-variant-numeric: tabular-nums
 		color: var(--on-surface-variant)
-
-	&__time-separator
-		opacity: 0.5
 
 	&__volume-inline
 		display: flex
@@ -221,12 +217,13 @@ export const musicSidebarStylus = `
 
 	&__progress
 		display: flex
-		flex-direction: column
-		gap: 0.125rem
+		align-items: center
+		gap: 0.375rem
 
 	&__progress-control
 		position: relative
-		width: 100%
+		flex: 1
+		min-width: 0
 		height: 1.25rem
 		display: flex
 		align-items: center
