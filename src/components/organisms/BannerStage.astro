@@ -1126,13 +1126,18 @@ const videoMode =
 				requestHeroTitleParallax();
 				requestClassicScrollState();
 			});
-			// 下滑箭头点击：平滑滚动到内容区（事件委托，箭头随页面 SSR 常驻）
+			// 下滑箭头点击：平滑滚动到内容区（事件委托，箭头随页面 SSR 常驻）。
+			// 目标位置 = 内容区顶部 − 固定顶栏高度，避免内容首栏被顶栏遮住
 			stage.addEventListener("click", (event) => {
 				const target = event.target as Element | null;
 				if (!target?.closest("[data-banner-scroll-down]")) return;
-				document
-					.getElementById("main-layout")
-					?.scrollIntoView({ behavior: "smooth" });
+				const main = document.getElementById("main-layout");
+				if (!main) return;
+				const headerHeight =
+					document.querySelector(".top-app-bar")?.getBoundingClientRect().height ??
+					64;
+				const top = main.getBoundingClientRect().top + window.scrollY - headerHeight;
+				window.scrollTo({ top, behavior: "smooth" });
 			});
 			window.matchMedia("(min-width: 1024px)").addEventListener("change", () => syncBanner());
 				window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", () => {
