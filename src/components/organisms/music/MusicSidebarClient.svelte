@@ -420,8 +420,10 @@ $effect(() => {
 	}
 });
 
+/** 按住 dock 可拖部分（唱片 / 信息层表面）启动拖动；交互元素照常点击 */
 function onDiscPointerDown(event: PointerEvent): void {
 	if (discPos === null) return;
+	if ((event.target as HTMLElement).closest("input, button, a")) return;
 	discDragging = true;
 	discMoved = false;
 	discPointerId = event.pointerId;
@@ -488,24 +490,32 @@ function onDiscKeydown(event: KeyboardEvent): void {
 	}
 }
 
-/** 鼠标进入控件任意组件：无论播放与否直接展开 bar */
-function onDockPointerEnter(): void {
-	dockHover = true;
-	if (collapseTimer !== null) {
-		clearTimeout(collapseTimer);
-		collapseTimer = null;
+/**
+ * 全局指针命中测试替代容器 enter/leave：
+ * 容器盒子只覆盖工具栏区域，信息层/面板向上生长超出盒子的部分会误判「离开」。
+ * 改为逐次判断指针是否命中 dock 子树（composedPath），命中即悬停。
+ * 仅处理鼠标——触屏没有悬浮概念，展开/收起由点击驱动。
+ */
+function onDocumentPointerMove(event: PointerEvent): void {
+	if (event.pointerType !== "mouse") return;
+	if (!hasTracks || options.showFloatPlayer === false) return;
+	const inside = discEl !== null && event.composedPath().includes(discEl);
+	if (inside === dockHover) return;
+	dockHover = inside;
+	if (inside) {
+		if (collapseTimer !== null) {
+			clearTimeout(collapseTimer);
+			collapseTimer = null;
+		}
+		if (dockShape !== "bar") dockShape = "bar";
+		return;
 	}
-	if (dockShape !== "bar") dockShape = "bar";
-}
-
-/** 鼠标离开：bar 态延迟收回（播放中回静置形态，未播放收回唱片） */
-function onDockPointerLeave(): void {
-	dockHover = false;
-	if (dockShape !== "bar" || discDragging) return;
+	// 离开：bar 态延迟收回（播放中回静置形态，未播放收回唱片）
+	if (dockShape !== "bar" || discDragging || floatPanelOpen) return;
 	if (collapseTimer !== null) clearTimeout(collapseTimer);
 	collapseTimer = setTimeout(() => {
 		collapseTimer = null;
-		if (!dockHover && dockShape === "bar" && !discDragging) {
+		if (!dockHover && dockShape === "bar" && !discDragging && !floatPanelOpen) {
 			dockShape = playing ? dockRestingShape() : "disc";
 			if (dockShape !== "bar") floatPanelOpen = false;
 		}
@@ -873,7 +883,7 @@ function setVolume(event: Event): void {
 	</div>
 {/if}
 
-<svelte:document onclick={onDocumentClick} />
+<svelte:document onclick={onDocumentClick} onpointermove={onDocumentPointerMove} />
 
 {#if hasTracks && options.showFloatPlayer !== false}
 	<div
@@ -884,8 +894,6 @@ function setVolume(event: Event): void {
 		class:music-float-player--pill={dockShape === "pill"}
 		class:music-float-player--panel-open={floatPanelOpen}
 		class:music-float-player--dragging={discDragging}
-		onpointerenter={onDockPointerEnter}
-		onpointerleave={onDockPointerLeave}
 		style={
 			discPos
 				? `transform: translate(${Math.round(discPos.x)}px, ${Math.round(discPos.y)}px);`
@@ -983,7 +991,13 @@ function setVolume(event: Event): void {
 		</div>
 			<div class="music-float-player__info">
 				<div class="music-float-player__info-clip">
-					<div class="music-float-player__info-surface">
+					<!-- 信息层表面也可按住拖动（按钮/进度条除外） -->
+				<div
+					class="music-float-player__info-surface"
+					onpointerdown={onDiscPointerDown}
+					onpointermove={onDiscPointerMove}
+					onpointerup={onDiscPointerUp}
+				>
 						<strong class="music-float-player__title" title={currentTitle}>
 							{currentTitle}
 						</strong>

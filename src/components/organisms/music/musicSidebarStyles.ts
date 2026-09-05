@@ -639,6 +639,8 @@ html.motion-reduced .music-floating-lyrics
 		pointer-events: auto
 		position: relative
 		display: block
+		/* 触屏：按住即可拖动，不触发放页面滚动（避免 pointercancel） */
+		touch-action: none
 		width: 100%
 		height: 100%
 		padding: 0
@@ -730,6 +732,7 @@ html.motion-reduced .music-float-disc__spin
 
 	&--dragging
 		.music-float-disc__hit
+		.music-float-player__info-surface
 			cursor: grabbing
 
 		.music-float-disc__spin
@@ -861,8 +864,13 @@ html.motion-reduced .music-float-disc__spin
 
 	&__info-surface
 		margin-inline: 1.25rem
+		/* 容器 pointer-events: none，信息层必须显式打开，否则悬停判定与进度条交互全部穿透 */
+		pointer-events: auto
 		/* 底部 padding 需大于工具栏上叠高度，否则进度条会被遮住 */
 		padding: 0.875rem 1.25rem 1.625rem unquote("calc(var(--fp-slot-pad) - 1.25rem)")
+		/* 按住信息层空白处可拖动（按钮/进度条照常交互）；触屏同理 */
+		cursor: grab
+		touch-action: none
 		border-radius: var(--shape-corner-l)
 		background: var(--fp-surface)
 		-webkit-backdrop-filter: blur(12px)
