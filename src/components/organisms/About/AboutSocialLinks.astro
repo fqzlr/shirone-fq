@@ -3,54 +3,11 @@
  * 关于页 · 站长社交链接卡片网格（2 × 2）。
  *
  * 品牌色图标 + 内容区 + 外链箭头，悬停上浮 + 边框转 primary。
- * 数据内联（关于页专属），新增 / 删除站点直接改 socialLinks 数组。
+ * 数据来自内容仓 data/about.ts（物化为 src/data/about.ts），
+ * 新增 / 删除站点直接改内容仓数据文件。
  */
 import { Icon } from "astro-icon/components";
-
-interface SocialLink {
-	platform: string;
-	handle: string;
-	note?: string;
-	href: string;
-	icon: string;
-	/** 品牌色键（驱动 --about-social-brand 变量） */
-	brand: "github" | "bilibili" | "qq" | "email" | "rss" | "twitter";
-}
-
-const socialLinks: SocialLink[] = [
-	{
-		platform: "GitHub",
-		handle: "fqzlr",
-		note: "代码与项目",
-		href: "https://github.com/fqzlr",
-		icon: "simple-icons:github",
-		brand: "github",
-	},
-	{
-		platform: "B站",
-		handle: "番茄煮理人",
-		note: "关注一下，谢谢喵～",
-		href: "https://space.bilibili.com/2017273493",
-		icon: "simple-icons:bilibili",
-		brand: "bilibili",
-	},
-	{
-		platform: "QQ群",
-		handle: "加入群聊",
-		note: "吹水摸鱼都可以喵～",
-		href: "https://qm.qq.com/q/wrmF4FI9pu",
-		icon: "simple-icons:qq",
-		brand: "qq",
-	},
-	{
-		platform: "Email",
-		handle: "fqzlr@outlook.com",
-		note: "商务合作 / 交流都行喵～",
-		href: "mailto:fqzlr@outlook.com",
-		icon: "material-symbols:mail-outline-rounded",
-		brand: "email",
-	},
-];
+import { aboutSocialLinks as socialLinks } from "@/data/about.ts";
 ---
 
 <section class="about-social-links not-prose" aria-label="站长社交账号">

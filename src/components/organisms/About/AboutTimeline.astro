@@ -3,43 +3,12 @@
  * 关于页 · 站点魔改时间线（时间戳 + 圆点轨道 + 节点卡片）。
  *
  * 节点按 index stagger 渐入，轨道竖线由 transform-origin: top 同步生长。
- * 数据内联，新增节点直接 push。
+ * 数据来自内容仓 data/about.ts（物化为 src/data/about.ts）。
  *
  * 注意：@keyframes 必须全部位于 Stylus 顶层，不得嵌在选择器块中间，
  * 否则 Stylus 会把后续 `&` 嵌套选择器编译错位（规则 body 丢失）。
  */
-interface Milestone {
-	date: string;
-	title: string;
-	desc: string;
-	tag?: string;
-}
-
-const milestones: Milestone[] = [
-	{
-		date: "2025.10",
-		title: "fork 一份博客，开始魔改",
-		desc: "把开源模板 fork 回家，拉着本喵开始了大改造喵～",
-		tag: "起点",
-	},
-	{
-		date: "2026.07",
-		title: "友链自动检测上线",
-		desc: "给友链页接上了失效检测，掉线的小站自动进「暂留区」喵～",
-		tag: "功能",
-	},
-	{
-		date: "2026.08",
-		title: "时间线 & 图形化视图上线",
-		desc: "更新日志变成时间线+图形化双视图，魔改的手就没停过喵～",
-	},
-	{
-		date: "2026.09",
-		title: "打赏名单 & 关于页重构",
-		desc: "打赏页加上捐助者名单，关于页复刻了旧博客的人物卡片体验喵～",
-		tag: "体验",
-	},
-];
+import { aboutMilestones as milestones } from "@/data/about.ts";
 ---
 
 <section class="about-timeline not-prose" aria-label="站点更新时间线">
