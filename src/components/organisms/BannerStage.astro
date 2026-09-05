@@ -241,8 +241,26 @@ const videoMode =
 			hidden={!initialSupportingText && !initialDate}
 		>
 			<span class="banner-stage__context-divider" aria-hidden="true"></span>
-			<p data-banner-context-description hidden={!initialSupportingText}>
-				{initialSupportingText}
+			<p
+				class="banner-stage__context-description"
+				data-banner-context-description
+				hidden={!initialSupportingText}
+			>
+				<span
+					class="banner-stage__context-quote banner-stage__context-quote--start"
+					aria-hidden="true"
+				>
+					<Icon name="material-symbols:format-quote-rounded" />
+				</span>
+				<span class="banner-stage__context-text" data-banner-context-text>
+					{initialSupportingText}
+				</span>
+				<span
+					class="banner-stage__context-quote banner-stage__context-quote--end"
+					aria-hidden="true"
+				>
+					<Icon name="material-symbols:format-quote-rounded" />
+				</span>
 			</p>
 			<div class="banner-stage__context-meta" data-banner-context-meta hidden={!initialDate}>
 				<Icon name="material-symbols:calendar-today-rounded" aria-hidden="true" />
@@ -805,7 +823,11 @@ const videoMode =
 		contextTitle.style.removeProperty("font-size");
 		contextTitle.dataset.titleFit = "full";
 		contextTitle.textContent = title;
-		contextDescription.textContent = description;
+		// 描述文本在内层 span 上改写：外层是引言框（含首尾引号装饰图标）
+		const descriptionText = contextDescription.querySelector<HTMLElement>(
+			"[data-banner-context-text]",
+		);
+		if (descriptionText) descriptionText.textContent = description;
 		contextDescription.hidden = !description;
 		contextDate.textContent = date;
 		contextDate.dateTime = date;
@@ -1233,7 +1255,7 @@ const videoMode =
 		.banner-stage__context-title
 			font-size: clamp(2.5rem, 5rem, 5rem)
 
-		.banner-stage__copy p
+		.banner-stage__copy--home p
 			margin-top: 0.75rem
 			font: var(--m3e-type-headline-small)
 
@@ -1326,13 +1348,42 @@ const videoMode =
 			height: 1px
 			background: rgba(255, 255, 255, 0.72)
 
-		.banner-stage__copy--context p
+		/* 描述：参考站引言框样式（半透明暗底圆角框 + 首尾引号装饰） */
+		.banner-stage__context-description
+			position: relative
+			max-width: min(50rem, 78vw)
 			margin: var(--m3e-space-4) 0 0
-			font: var(--m3e-type-headline-small)
-			line-height: 1.5
-			opacity: 0.9
-			overflow-wrap: anywhere
+			padding: 0.85rem 2.25rem
+			border-radius: var(--shape-corner-l)
+			background: rgba(0, 0, 0, 0.16)
+			color: rgba(255, 255, 255, 0.85)
+			font-size: 0.95rem
+			font-weight: 400
+			line-height: 1.7
+			text-align: left
+			text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6)
 			text-wrap: pretty
+			overflow-wrap: anywhere
+
+		.banner-stage__context-quote
+			position: absolute
+			display: inline-flex
+			color: rgba(255, 255, 255, 0.35)
+			pointer-events: none
+
+			> :global(svg)
+				display: block
+				width: 1.5rem
+				height: 1.5rem
+
+			&--start
+				top: 0.45rem
+				left: 0.5rem
+				transform: rotate(180deg)
+
+			&--end
+				right: 0.5rem
+				bottom: 0.45rem
 
 		.banner-stage__context-meta
 			display: flex
@@ -1496,7 +1547,7 @@ const videoMode =
 			&__copy h1
 				font-size: 2.75rem
 
-			&__copy p
+			&__copy--home p
 				font-size: 1.125rem
 
 	@keyframes banner-subtitle-caret
