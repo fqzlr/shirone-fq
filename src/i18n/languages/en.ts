@@ -36,6 +36,7 @@ export const en: Translation = {
 	[Key.friendStep3Title]: "Wait for review",
 	[Key.friendStep3Desc]:
 		"Once your info is verified, your link will be added as soon as possible",
+	[Key.friendContactHeading]: "Or reach me through any of these channels",
 	[Key.friendCopyField]: "Copy {name}",
 	[Key.friendCopyTemplate]: "Copy application template",
 	[Key.friendLatency]: "{ms} MS",

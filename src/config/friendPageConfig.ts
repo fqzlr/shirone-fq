@@ -1,5 +1,6 @@
 import type {
 	FriendCheckOptions,
+	FriendContactItem,
 	FriendNoteItem,
 	FriendPageConfig,
 	FriendSiteInfo,
@@ -23,6 +24,8 @@ export const friendPageConfig: FriendPageConfig = withUserConfig("friendPage", {
 		"站点链接：您的站点链接",
 		"头像链接：您的站点头像",
 	].join("\n"),
+	// 申请友链联系方式：第 2 步联系方式区展示；留空数组则该区零 DOM
+	contacts: [],
 	notes: [
 		{
 			title: "互换原则",
@@ -152,4 +155,9 @@ export function resolveFriendNotes(): FriendNoteItem[] {
 /** 申请友链模板文本（未配置时回退空串，模块渲染时跳过复制块） */
 export function resolveFriendTemplate(): string {
 	return friendPageConfig.template ?? "";
+}
+
+/** 申请友链联系方式（未配置时返回空数组，模块渲染时跳过联系方式区） */
+export function resolveFriendContacts(): FriendContactItem[] {
+	return friendPageConfig.contacts ?? [];
 }

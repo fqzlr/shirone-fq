@@ -36,6 +36,7 @@ export const vi: Translation = {
 	[Key.friendStep3Title]: "Chờ duyệt",
 	[Key.friendStep3Desc]:
 		"Sau khi xác nhận thông tin, chúng tôi sẽ thêm liên kết của bạn sớm nhất có thể",
+	[Key.friendContactHeading]: "Bạn cũng có thể liên hệ qua các kênh sau",
 	[Key.friendCopyField]: "Sao chép {name}",
 	[Key.friendCopyTemplate]: "Sao chép mẫu đăng ký",
 	[Key.friendLatency]: "{ms} MS",

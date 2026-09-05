@@ -34,6 +34,8 @@ enum I18nKey {
 	friendStep2Desc = "friendStep2Desc",
 	friendStep3Title = "friendStep3Title",
 	friendStep3Desc = "friendStep3Desc",
+	/** 申请友链联系方式区标题 */
+	friendContactHeading = "friendContactHeading",
 	friendCopyField = "friendCopyField",
 	friendCopyTemplate = "friendCopyTemplate",
 	/** 友链检测（check-flink）：右上角延迟徽标（{ms} 为毫秒数） */

@@ -35,6 +35,7 @@ export const zh_TW: Translation = {
 	[Key.friendStep2Desc]: "將申請範本複製修改後，於下方留言區送出即可",
 	[Key.friendStep3Title]: "等待審核",
 	[Key.friendStep3Desc]: "確認資訊無誤後會盡快新增您的友鏈",
+	[Key.friendContactHeading]: "也可透過以下方式聯絡站長",
 	[Key.friendCopyField]: "複製{name}",
 	[Key.friendCopyTemplate]: "複製申請範本",
 	[Key.friendLatency]: "{ms} MS",

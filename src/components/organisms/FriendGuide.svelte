@@ -4,17 +4,24 @@ import Card from "@components/atoms/display/Card.svelte";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import Icon from "@iconify/svelte";
-import type { FriendNoteItem, FriendSiteInfo } from "@/types/friendPageConfig";
+import type {
+	FriendContactItem,
+	FriendNoteItem,
+	FriendSiteInfo,
+} from "@/types/friendPageConfig";
 
 let {
 	site,
 	template = "",
+	contacts = [] as FriendContactItem[],
 	notes = [] as FriendNoteItem[],
 }: {
 	/** 本站信息（avatar 已在 SSR 侧解析为可用 URL） */
 	site: FriendSiteInfo;
 	/** 申请友链模板（空串则跳过第 2 步的复制块） */
 	template?: string;
+	/** 申请友链联系方式（空数组则第 2 步不渲染联系方式区） */
+	contacts?: FriendContactItem[];
 	/** 注意事项列表 */
 	notes?: FriendNoteItem[];
 } = $props();
@@ -63,6 +70,19 @@ async function copyText(key: string, value: string) {
 	copyTimers = [setTimeout(() => (copiedKey = null), 1500)];
 }
 </script>
+
+<!-- 联系方式主体（图标 + 渠道名 + 标识），供链接/非链接两种容器复用 -->
+{#snippet contactBody(item)}
+	{#if item.icon}
+		<span class="friend-guide__contact-icon" aria-hidden="true">
+			<Icon icon={item.icon} />
+		</span>
+	{/if}
+	<span class="friend-guide__contact-meta">
+		<span class="friend-guide__contact-label">{item.label}</span>
+		<span class="friend-guide__contact-value">{item.value}</span>
+	</span>
+{/snippet}
 
 <div class="friend-guide">
 	<div class="friend-guide__grid">
@@ -163,6 +183,52 @@ async function copyText(key: string, value: string) {
 										/>
 									</button>
 									<pre class="friend-guide__template-text">{template}</pre>
+								</div>
+							{/if}
+							{#if index === 1 && contacts.length > 0}
+								<p class="friend-guide__contact-heading">
+									{i18n(I18nKey.friendContactHeading)}
+								</p>
+								<div class="friend-guide__contacts">
+									{#each contacts as contact (contact.label + contact.value)}
+										<div class="friend-guide__contact">
+											{#if contact.link}
+												<a
+													class="friend-guide__contact-main"
+													href={contact.link}
+													target={contact.link.startsWith("http")
+														? "_blank"
+														: undefined}
+													rel={contact.link.startsWith("http")
+														? "noopener noreferrer"
+														: undefined}
+												>
+													{@render contactBody(contact)}
+												</a>
+											{:else}
+												<span class="friend-guide__contact-main">
+													{@render contactBody(contact)}
+												</span>
+											{/if}
+											<button
+												type="button"
+												class="friend-guide__copy"
+												class:friend-guide__copy--done={copiedKey === contact.label}
+												aria-label={i18n(I18nKey.friendCopyField).replace("{name}", contact.label)}
+												onclick={() => copyText(contact.label, contact.value)}
+											>
+												<Icon
+													icon="material-symbols:content-copy-outline-rounded"
+													aria-hidden="true"
+												/>
+												<Icon
+													icon="material-symbols:check-rounded"
+													aria-hidden="true"
+													class="friend-guide__copy-done-icon"
+												/>
+											</button>
+										</div>
+									{/each}
 								</div>
 							{/if}
 						</div>
@@ -431,6 +497,71 @@ async function copyText(key: string, value: string) {
 		color: var(--on-surface-variant)
 		font: var(--m3e-type-body-small)
 		line-height: 1.6
+
+	/* 联系方式区：申请渠道 chips（图标 + 渠道名 + 联系标识 + 一键复制） */
+	&__contact-heading
+		margin: 0.875rem 0 0
+		color: var(--on-surface-variant)
+		font: var(--m3e-type-label-medium)
+		font-weight: 600
+
+	&__contacts
+		display: flex
+		flex-wrap: wrap
+		gap: 0.5rem
+		margin-top: 0.5rem
+
+	&__contact
+		display: inline-flex
+		align-items: center
+		gap: 0.25rem
+		padding: 0.375rem 0.5rem
+		border-radius: var(--shape-corner-m)
+		background: unquote("color-mix(in oklab, var(--on-surface) 5%, transparent)")
+
+	&__contact-main
+		display: inline-flex
+		align-items: center
+		gap: 0.5rem
+		min-width: 0
+		color: inherit
+		text-decoration: none
+
+		&:hover
+			.friend-guide__contact-label
+				color: var(--primary)
+			.friend-guide__contact-icon
+				transform: scale(1.08)
+
+	&__contact-icon
+		display: inline-flex
+		flex-shrink: 0
+		color: var(--primary)
+		transition: transform var(--m3e-duration-short) var(--m3e-easing-standard)
+		> :global(svg)
+			width: 1.125rem
+			height: 1.125rem
+
+	&__contact-meta
+		display: flex
+		min-width: 0
+		flex-direction: column
+
+	&__contact-label
+		color: var(--on-surface-variant)
+		font: var(--m3e-type-label-small)
+		line-height: 1.3
+		transition: color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+	&__contact-value
+		overflow: hidden
+		max-width: 14rem
+		text-overflow: ellipsis
+		white-space: nowrap
+		color: var(--on-surface)
+		font: var(--m3e-type-body-small)
+		font-weight: 500
+		line-height: 1.4
 
 	&__template
 		position: relative

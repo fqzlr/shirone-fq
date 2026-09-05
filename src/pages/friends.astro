@@ -7,6 +7,7 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 import {
 	friendPageConfig,
 	resolveFriendCheckOptions,
+	resolveFriendContacts,
 	resolveFriendNotes,
 	resolveFriendSiteInfo,
 	resolveFriendTemplate,
@@ -33,6 +34,7 @@ const friendCheck = resolveFriendCheckOptions();
             <FriendGuide
                 site={{ ...friendSite, avatar: friendAvatarUrl }}
                 template={resolveFriendTemplate()}
+                contacts={resolveFriendContacts()}
                 notes={resolveFriendNotes()}
                 client:visible
             />

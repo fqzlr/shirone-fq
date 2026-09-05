@@ -23,6 +23,18 @@ export interface FriendNoteItem {
 	content: string;
 }
 
+/** 申请友链联系方式单项（展示在申请步骤的联系方式区） */
+export interface FriendContactItem {
+	/** 渠道名，如「邮箱 / B站 / QQ群 / GitHub」 */
+	label: string;
+	/** 联系标识（邮箱地址 / 账号名），提供一键复制 */
+	value: string;
+	/** 可选 Iconify 图标名 */
+	icon?: string;
+	/** 可选跳转链接（如 B 站主页 / QQ 群加群链 / GitHub 主页） */
+	link?: string;
+}
+
 export interface FriendPageConfig {
 	/** 是否启用友链页信息模块（关闭时友链列表本身不受影响） */
 	enable: boolean;
@@ -30,6 +42,8 @@ export interface FriendPageConfig {
 	site?: FriendSiteInfo;
 	/** 申请友链模板（多行纯文本，第 2 步代码块展示并提供一键复制） */
 	template?: string;
+	/** 申请友链联系方式（第 2 步联系方式区展示；留空数组则不渲染该区） */
+	contacts?: FriendContactItem[];
 	/** 注意事项列表 */
 	notes?: FriendNoteItem[];
 	/** 友链可达性检测（check-flink），默认关闭；关闭时零请求、零徽标 DOM、零分区模块 */

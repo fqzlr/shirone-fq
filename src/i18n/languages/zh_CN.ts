@@ -35,6 +35,7 @@ export const zh_CN: Translation = {
 	[Key.friendStep2Desc]: "把申请模板复制修改后，到下方评论区发送即可",
 	[Key.friendStep3Title]: "等待审核",
 	[Key.friendStep3Desc]: "确认信息无误后会尽快添加您的友链",
+	[Key.friendContactHeading]: "也可通过以下方式联系站长",
 	[Key.friendCopyField]: "复制{name}",
 	[Key.friendCopyTemplate]: "复制申请模板",
 	[Key.friendLatency]: "{ms} MS",

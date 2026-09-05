@@ -35,6 +35,7 @@ export const ja: Translation = {
 		"申請テンプレートをコピーして編集し、下のコメント欄に送信してください",
 	[Key.friendStep3Title]: "審査待ち",
 	[Key.friendStep3Desc]: "情報を確認でき次第、できるだけ早くリンクを追加します",
+	[Key.friendContactHeading]: "以下の方法からもご連絡いただけます",
 	[Key.friendCopyField]: "{name}をコピー",
 	[Key.friendCopyTemplate]: "申請テンプレートをコピー",
 	[Key.friendLatency]: "{ms} MS",

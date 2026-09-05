@@ -40,6 +40,7 @@ export { footerConfig } from "./footerConfig";
 export {
 	friendPageConfig,
 	resolveFriendCheckOptions,
+	resolveFriendContacts,
 	resolveFriendNotes,
 	resolveFriendSiteInfo,
 	resolveFriendTemplate,
