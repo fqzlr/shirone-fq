@@ -75,7 +75,7 @@ const titleLabel =
 ---
 
 <article
-	class:list={["m3-blog-postcard", { "m3-blog-postcard--cover": hasCover }, className]}
+	class:list={["m3-blog-postcard", { "m3-blog-postcard--cover": hasCover, "m3-blog-postcard--pinned": pinned }, className]}
 	style={style}
 >
 	<div class="m3-blog-postcard__body">
@@ -152,11 +152,8 @@ const titleLabel =
 						: "this.parentElement?.previousElementSibling?.classList.add('m3-blog-postcard__cover-loading--done')"}
 				/>
 			</picture>
-			<span class="m3-blog-postcard__cover-mask" aria-hidden="true"></span>
-			<span class="m3-blog-postcard__cover-arrow" aria-hidden="true">
-				<Icon name="material-symbols:chevron-right-rounded" />
-			</span>
-		</a>
+			{/* 封面已作为卡片背景层融合，hover 反馈交由卡片阴影、标题变色与图片轻放大，不再叠加深色遮罩与箭头 */}
+			</a>
 	) : (
 		<a class="m3-blog-postcard__enter" href={href} aria-label={title}>
 			<Icon name="material-symbols:chevron-right-rounded" />
@@ -175,17 +172,33 @@ const titleLabel =
 	width: 100%
 	overflow: hidden
 	border-radius: var(--shape-corner-l)
+	/* 卡片边框：常态淡实线，hover（选中）变虚线加深（浅色近黑/暗色自动反转近白） */
+	border: 1px solid var(--line-divider)
 	/* 站点卡片色（浅色 = surface-container-lowest 近白），与侧栏等其它卡片一致 */
 	background: var(--card-bg)
 	color: var(--on-surface)
 	transition:
 		box-shadow var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate),
-		background-color var(--m3e-duration-medium) var(--m3e-easing-standard)
+		background-color var(--m3e-duration-medium) var(--m3e-easing-standard),
+		border-color 300ms ease
 	&:hover
 		box-shadow: var(--m3e-elevation-2)
 		background: unquote("color-mix(in oklab, var(--on-surface) 3%, var(--card-bg))")
+		border-color: var(--on-surface)
+		border-style: dashed
+
+	/* 置顶文章：常态红色实线边框（明暗一致），hover 变红色虚线 */
+	&--pinned
+		border-color: #e53e3e
+	&--pinned:hover
+		border-color: #e53e3e
+		border-style: dashed
 
 	&__body
+		position: relative
+		/* 文字层浮于封面渐变区之上：图片 absolute 且 DOM 靠后会覆盖同层文字，
+		   抬高层级后渐变区只作为文字下方的背景，不影响可读性 */
+		z-index: 2
 		flex: 1
 		min-width: 0
 		padding: 1.5rem 1.5rem 1.25rem
@@ -315,47 +328,27 @@ const titleLabel =
 
 		@media (min-width: bp-md)
 			position: absolute
-			top: 0.75rem
-			right: 0.75rem
-			bottom: 0.75rem
-			width: 28%
+			top: 0
+			right: 0
+			bottom: 0
+			/* 封面占卡片右侧 5/12，不与文字层交叉；左缘 1/4（卡片 5/48）羽化融入背景 */
+			width: 41.67%
 			height: auto
-			border-radius: var(--shape-corner-s)
+			border-radius: 0 var(--shape-corner-l) var(--shape-corner-l) 0
 			overflow: hidden
+			/* 封面占卡片右侧 5/12，不与文字层交叉；左缘渐变带宽 7/48（卡片大小） */
+			> picture > img
+				-webkit-mask-image: linear-gradient(270deg, rgb(0,0,0) 0%, rgb(0,0,0) 65%, rgba(0,0,0,0.72) 75%, rgba(0,0,0,0.35) 83%, rgba(0,0,0,0) 100%)
+				mask-image: linear-gradient(270deg, rgb(0,0,0) 0%, rgb(0,0,0) 65%, rgba(0,0,0,0.72) 75%, rgba(0,0,0,0.35) 83%, rgba(0,0,0,0) 100%)
+				filter: brightness(0.92)
+				transition: transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate), filter var(--m3e-duration-medium) var(--m3e-easing-standard)
+			.m3-blog-postcard:hover &
+				> picture > img
+					transform: scale(1.05)
+					filter: brightness(1)
 
-	/* 封面触摸箭头：卡片 hover 时深色遮罩 + 白色大箭头（与原版封面一致） */
-	&__cover-mask
-		position: absolute
-		inset: 0
-		/* 触摸箭头（原版）：默认隐藏，hover/触摸时深色遮罩 + 白色大箭头 */
-		background: transparent
-		transition: background-color var(--m3e-duration-medium) var(--m3e-easing-standard)
-		/* 移动端不显示（触摸触发的瞬时 hover 也不出现，对齐原版） */
-		@media (max-width: bp-md - 1px)
-			display: none
-		.m3-blog-postcard:hover &
-			background: unquote("color-mix(in srgb, #000 30%, transparent)")
-
-	&__cover-arrow
-		position: absolute
-		inset: 0
-		display: flex
-		align-items: center
-		justify-content: center
-		opacity: 0
-		transform: scale(0.5)
-		@media (max-width: bp-md - 1px)
-			display: none
-		transition:
-			opacity var(--m3e-duration-medium) var(--m3e-easing-standard),
-			transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
-		> :global(svg)
-			width: 3rem
-			height: 3rem
-			color: #fff
-		.m3-blog-postcard:hover &
-			opacity: 1
-			transform: scale(1)
+	/* 封面已融合为卡片背景层：不再使用 hover 深色遮罩 + 白色大箭头（已随模板移除），
+	   hover 反馈 = 卡片阴影抬升 + 标题变色 + 封面图轻放大提亮 */
 
 	&__enter
 		position: absolute
@@ -385,7 +378,8 @@ const titleLabel =
 	@media (min-width: bp-md)
 		flex-direction: column
 		&--cover &__body
-			padding-right: calc(28% + 1.5rem)
+			/* 文字右缘到卡片 7/12（渐变带中点）：避让卡片宽 5/12 */
+			padding-right: 41.67%
 		/* 无封面时给右侧进入按钮（3.25rem + 0.75rem 边距）预留空间，描述提前换行 */
 		&:not(.m3-blog-postcard--cover) &__body
 			padding-right: 4.75rem
@@ -442,6 +436,11 @@ const titleLabel =
 			aspect-ratio: 16 / 9
 			margin: var(--m3e-space-4) var(--m3e-space-4) 0
 			border-radius: var(--shape-corner-m)
+			/* grid 通栏置顶图不做左缘羽化（那是右侧贴边条形态专属） */
+			> picture > img
+				-webkit-mask-image: none
+				mask-image: none
+				filter: none
 
 		/* 显式加入卡片根类，提高优先级并覆写 list 的封面让位内边距。 */
 		:global({shell-selector} .m3e-post-list--grid .m3-blog-postcard) &__body
@@ -463,6 +462,11 @@ const titleLabel =
 				width: 1rem
 				height: 1rem
 
+		/* grid 密度：隐藏字数项（窄卡元信息行更清爽；list 模式保留展示）。
+		   修饰类来自 atoms/blog/PostMeta 的字数 item。 */
+		:global({shell-selector} .m3e-post-list--grid) & :global(.m3-blog-postmeta__item--wordcount)
+			display: none
+
 	@media (min-width: bp-md)
 		@container post-list-layout (min-width: 41rem)
 			grid-card-layout('.m3e-post-list-shell--compact')
@@ -477,9 +481,14 @@ const titleLabel =
 	@media (min-width: bp-md)
 		:global(.m3e-post-list--cover-left) &__cover
 			right: auto
-			left: 0.75rem
+			left: 0
+			border-radius: var(--shape-corner-l) 0 0 var(--shape-corner-l)
+			/* 镜像形态：羽化方向反转为右缘透明（渐变带宽 7/48 同步） */
+			> picture > img
+				-webkit-mask-image: linear-gradient(90deg, rgb(0,0,0) 0%, rgb(0,0,0) 65%, rgba(0,0,0,0.72) 75%, rgba(0,0,0,0.35) 83%, rgba(0,0,0,0) 100%)
+				mask-image: linear-gradient(90deg, rgb(0,0,0) 0%, rgb(0,0,0) 65%, rgba(0,0,0,0.72) 75%, rgba(0,0,0,0.35) 83%, rgba(0,0,0,0) 100%)
 
 		:global(.m3e-post-list--cover-left) &--cover &__body
 			padding-right: 1.5rem
-			padding-left: calc(28% + 1.5rem)
+			padding-left: 41.67%
 </style>

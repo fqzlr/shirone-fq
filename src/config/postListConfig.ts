@@ -10,7 +10,7 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  *   - mode："list"（经典纵向列表）| "grid"（双列/三列卡片网格）；
  *   - cover："left"（封面在左）| "right"（封面在右，默认）；
  *   - cardWidth（仅在 grid 模式下生效）：
- *     - "compact"：紧凑卡片（最小宽 20rem，适合高密度展示）；
+ *     - "compact"：紧凑卡片（最小宽 17rem，双栏布局下可排 3 列）；
  *     - "regular"：标准卡片（最小宽 24rem，默认推荐）；
  *     - "relaxed"：宽松大卡（最小宽 28rem，突出大图）。
  *
@@ -29,9 +29,10 @@ export const postListConfig: PostListConfig = withUserConfig("postList", {
 
 /** grid 档位 → 卡片最小宽度（--post-card-min 预设，与 shape/type 分档哲学同构）。
     页面框架 90rem：regular 24rem 保证宽屏为 2 列大卡（3 列窄卡会让
-    日期/分类/字数元信息行换行），compact 才给密排选项。 */
+    日期/分类/字数元信息行换行）；compact 17rem 在双栏容器（约 52rem）
+    下可排 3 列，供偏好密排的站点选择。 */
 export const POST_CARD_MIN_WIDTH: Record<PostCardWidth, string> = {
-	compact: "20rem",
+	compact: "17rem",
 	regular: "24rem",
 	relaxed: "28rem",
 };

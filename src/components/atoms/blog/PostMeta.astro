@@ -74,8 +74,9 @@ const {
 		)}
 	</span>
 
+	{/* 字数项：修饰类供容器模式联动按需隐藏（如 grid 紧凑卡片），本原子自身始终渲染 */}
 	{wordCount && (
-		<span class="m3-blog-postmeta__item">
+		<span class="m3-blog-postmeta__item m3-blog-postmeta__item--wordcount">
 			<MetaIcon icon="material-symbols:article-outline-rounded" />
 			<span class="m3-blog-postmeta__text">{wordCount}</span>
 		</span>
