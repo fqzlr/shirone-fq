@@ -1,5 +1,6 @@
 ---
 import AccentBar from "@components/atoms/display/AccentBar.svelte";
+import MetaIcon from "@components/atoms/display/MetaIcon.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 /**
@@ -9,7 +10,6 @@ import { i18n } from "@i18n/translation";
  * hover 抬升阴影 + 标题 primary + 箭头滑出；有封面时桌面端右侧 28% 图。
  */
 import { Icon } from "astro-icon/components";
-import MetaIcon from "@components/atoms/display/MetaIcon.astro";
 import type { BlogMetaLink } from "./PostMeta.astro";
 
 interface Props {

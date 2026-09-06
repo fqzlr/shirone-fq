@@ -15,14 +15,17 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  * 2. 端点要求：CloudFlare ImgBed /random API，需带 type=img 直接返回图片本体；
  * 3. 本地兜底图默认 public/images/default-cover.webp，可在覆盖层替换路径。
  */
-export const randomCoverConfig: RandomCoverConfig = withUserConfig("randomCover", {
-	/** 是否启用：未配置封面的文章回退显示图床随机图 */
-	enable: false,
-	/** 图床随机图端点（CloudFlare ImgBed /random，type=img 直接返回图片本体） */
-	endpoint: "",
-	/** 随机图加载失败时的本地兜底图（public/ 下路径） */
-	fallback: "/images/default-cover.webp",
-});
+export const randomCoverConfig: RandomCoverConfig = withUserConfig(
+	"randomCover",
+	{
+		/** 是否启用：未配置封面的文章回退显示图床随机图 */
+		enable: false,
+		/** 图床随机图端点（CloudFlare ImgBed /random，type=img 直接返回图片本体） */
+		endpoint: "",
+		/** 随机图加载失败时的本地兜底图（public/ 下路径） */
+		fallback: "/images/default-cover.webp",
+	},
+);
 
 export type ResolvedRandomCoverOptions = {
 	/** 随机图端点（可直接作为 <img src>） */
