@@ -1,7 +1,7 @@
 export const LIGHT_MODE = "light",
 	DARK_MODE = "dark",
 	AUTO_MODE = "auto";
-export const DEFAULT_THEME = AUTO_MODE;
+export const DEFAULT_THEME: string = AUTO_MODE;
 
 export const WALLPAPER_MODE_KEY = "wallpaper-mode";
 export const WALLPAPER_MODE_CHANGE_EVENT = "wallpaper-mode:change";
@@ -52,7 +52,7 @@ export const TEXTURE_PRESETS = [
 // Banner height unit: vh
 export const BANNER_HEIGHT = 35;
 export const BANNER_HEIGHT_EXTEND = 30;
-export const BANNER_HEIGHT_HOME = BANNER_HEIGHT + BANNER_HEIGHT_EXTEND;
+export const BANNER_HEIGHT_HOME: number = BANNER_HEIGHT + BANNER_HEIGHT_EXTEND;
 
 // The height the main panel overlaps the banner, unit: rem
 // Keep a small overlap so the content frame meets the wave edge naturally.

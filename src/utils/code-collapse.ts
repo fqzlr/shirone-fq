@@ -47,7 +47,7 @@ export class CodeBlockCollapser {
 		this.config = readConfig(document.getElementById("config-carrier"));
 	}
 
-	setupCodeBlocks(root: ParentNode = document) {
+	setupCodeBlocks(root: ParentNode = document): void {
 		if (!this.config.enabled) return;
 		requestAnimationFrame(() => {
 			for (const codeBlock of root.querySelectorAll(".expressive-code")) {

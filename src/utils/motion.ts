@@ -94,7 +94,7 @@ export function collapse(node: HTMLElement, params: CollapseParams) {
 	}
 
 	return {
-		update(next: CollapseParams) {
+		update(next: CollapseParams): void {
 			currentParams = next;
 			if (next.resetKey !== resetKey) {
 				resetKey = next.resetKey;
@@ -107,7 +107,7 @@ export function collapse(node: HTMLElement, params: CollapseParams) {
 			current = next.open;
 			play(current, next.animate !== false);
 		},
-		destroy() {
+		destroy(): void {
 			anim?.cancel();
 			node.style.height = "";
 			node.style.overflow = "";
@@ -158,11 +158,11 @@ export function reveal(node: HTMLElement, params: RevealParams = {}) {
 	play();
 
 	return {
-		update(next: RevealParams) {
+		update(next: RevealParams): void {
 			currentParams = next;
 			play();
 		},
-		destroy() {
+		destroy(): void {
 			anim?.cancel();
 		},
 	};

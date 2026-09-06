@@ -38,7 +38,7 @@ function normaliseBase(value: string): string {
  * The post schema. Kept identical to the source template so content authored
  * against the git-clone workflow works unchanged in package mode.
  */
-export const postSchema = z.object({
+const postSchemaObject = z.object({
 	title: z.string(),
 	published: z.date(),
 	publishedAt: z.date().optional(),
@@ -68,9 +68,10 @@ export const postSchema = z.object({
 	nextTitle: z.string().default(""),
 	nextSlug: z.string().default(""),
 });
+const postSchema: typeof postSchemaObject = postSchemaObject;
 
 /** Schema for the short-form "moments" timeline. */
-export const momentSchema = z.object({
+const momentSchemaObject = z.object({
 	published: z.date(),
 	pinned: z.boolean().optional().default(false),
 	location: z.string().optional().default(""),
@@ -88,14 +89,18 @@ export const momentSchema = z.object({
 		.default([]),
 	draft: z.boolean().optional().default(false),
 });
+const momentSchema: typeof momentSchemaObject = momentSchemaObject;
 
 /** Schema for free-form spec pages (currently just `about.md`). */
-export const specSchema = z.object({});
+const specSchemaObject = z.object({});
+const specSchema: typeof specSchemaObject = specSchemaObject;
 
 /**
  * Build the `collections` export for `src/content.config.ts`.
  */
-export function defineCollections(options: DefineCollectionsOptions = {}) {
+export function defineCollections(
+	options: DefineCollectionsOptions = {},
+): Record<"posts" | "spec" | "moments", ReturnType<typeof defineCollection>> {
 	const root = normaliseBase(options.contentDir ?? DEFAULT_CONTENT_DIR);
 
 	const postsBase = options.paths?.posts

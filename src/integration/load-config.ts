@@ -146,7 +146,7 @@ function outputDir(paths: ResolvedShironesPaths): string {
 export async function loadModuleFile(
 	paths: ResolvedShironesPaths,
 	entry: string,
-	cacheKey = entry,
+	cacheKey: string = entry,
 	registryRef?: OverrideRegistryRef,
 ): Promise<LoadedModule> {
 	const cached = cache.get(cacheKey);

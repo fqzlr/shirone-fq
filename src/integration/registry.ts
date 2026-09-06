@@ -7,8 +7,8 @@ import type { ResolvedShironesPaths } from "./types.ts";
  * Extensions probed when a user override is looked up without one.
  * Order matters: the first hit wins.
  */
-export const CONFIG_EXTENSIONS = [".ts", ".mts", ".js", ".mjs"];
-export const COMPONENT_EXTENSIONS = [".astro", ".svelte", ".ts", ".js"];
+export const CONFIG_EXTENSIONS: string[] = [".ts", ".mts", ".js", ".mjs"];
+export const COMPONENT_EXTENSIONS: string[] = [".astro", ".svelte", ".ts", ".js"];
 
 /** Strip a known source extension from a path. */
 function stripExtension(path: string): string {
