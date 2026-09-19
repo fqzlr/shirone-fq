@@ -1,5 +1,11 @@
 name: Shirone CI
 
+# 仓库 Secrets 需求：
+#   CONTENT_REPO_TOKEN —— 可读私有内容仓 fqzlr/shirone-content-fq 的
+#   Fine-grained PAT（仅该仓库、Contents: Read-only），用于 CI 内
+#   content sync 拉取内容；日志中凭据由 GitHub 自动脱敏，sync 脚本亦会
+#   redactUrl 兜底。
+
 on:
   push:
     branches: [main]
@@ -73,6 +79,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # astro check 前先物化内容：类型生成基于真实内容结构。
+      - name: Sync content repository
+        env:
+          CONTENT_REPO_URL: https://x-access-token:${{ secrets.CONTENT_REPO_TOKEN }}@github.com/fqzlr/shirone-content-fq.git
+        run: node scripts/content/sync.mjs
+
       - name: Check Astro diagnostics
         run: pnpm exec astro check
 
@@ -114,4 +126,6 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build production site
+        env:
+          CONTENT_REPO_URL: https://x-access-token:${{ secrets.CONTENT_REPO_TOKEN }}@github.com/fqzlr/shirone-content-fq.git
         run: pnpm build
