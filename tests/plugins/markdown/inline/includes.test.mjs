@@ -16,7 +16,7 @@ async function render(markdown) {
 
 test("expands a file region and records the include capability", async () => {
 	const result = await render(
-		"<!-- @include: src/content/snippets/include-example.md#public-api -->",
+		"<!-- @include: tests/fixtures/include-example.md#public-api -->",
 	);
 	assert.match(
 		result.code,
@@ -30,15 +30,14 @@ test("expands a file region and records the include capability", async () => {
 });
 
 test("supports inclusive line ranges and open bounds", () => {
-	const source =
-		"<!-- @include: src/content/snippets/include-example.md{2-4} -->";
+	const source = "<!-- @include: tests/fixtures/include-example.md{2-4} -->";
 	const expanded = expandMarkdownIncludes(source);
 	assert.equal(expanded.included, true);
 	assert.match(expanded.source, /This paragraph/);
 	assert.doesNotMatch(expanded.source, /Included API/);
 
 	const open = expandMarkdownIncludes(
-		"<!-- @include: src/content/snippets/include-example.md{-2} -->",
+		"<!-- @include: tests/fixtures/include-example.md{-2} -->",
 	);
 	assert.match(open.source, /Included API/);
 });
@@ -46,11 +45,11 @@ test("supports inclusive line ranges and open bounds", () => {
 test("keeps fenced, invalid, missing, and recursive includes literal", () => {
 	const source = [
 		"```markdown",
-		"<!-- @include: src/content/snippets/include-example.md -->",
+		"<!-- @include: tests/fixtures/include-example.md -->",
 		"```",
 		"",
-		"<!-- @include: src/content/snippets/missing.md -->",
-		"<!-- @include: src/content/snippets/include-example.md{0-2} -->",
+		"<!-- @include: tests/fixtures/snippets/missing.md -->",
+		"<!-- @include: tests/fixtures/include-example.md{0-2} -->",
 	].join("\n");
 	const expanded = expandMarkdownIncludes(source);
 	assert.match(expanded.source, /```markdown\n<!-- @include:/);
