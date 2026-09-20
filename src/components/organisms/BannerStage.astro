@@ -103,11 +103,20 @@ const carouselFadeDuration = Math.min(
 	3000,
 );
 const carouselAnimation = siteConfig.banner.carousel?.animation ?? "ken-burns";
-const initialDesktopSrc = desktopImages[0] ?? "";
-const initialMobileSrc = mobileImages[0] ?? "";
+// 视频轮播项：按扩展名识别。SSR 首图必须取第一张「图片」，
+// 避免 <img src>.mp4 的裂图首帧；视频项由运行时接管。
+const isVideoSlide = (src: string) => /\.(mp4|webm|mov)(\?|#|$)/i.test(src);
+const hasSlideVideo =
+	desktopImages.some(isVideoSlide) || mobileImages.some(isVideoSlide);
+const initialDesktopSrc = desktopImages.find((src) => !isVideoSlide(src)) ?? "";
+const initialMobileSrc = mobileImages.find((src) => !isVideoSlide(src)) ?? "";
 const initialSrc = initialDesktopSrc || initialMobileSrc;
-const initialDesktopImage = desktopResponsiveImages[0];
-const initialMobileImage = mobileResponsiveImages[0];
+const initialDesktopImage = desktopResponsiveImages.find(
+	({ fallback }) => !isVideoSlide(fallback),
+);
+const initialMobileImage = mobileResponsiveImages.find(
+	({ fallback }) => !isVideoSlide(fallback),
+);
 const initialImage = initialDesktopImage ?? initialMobileImage;
 const initialMobileBanner = page === "home";
 const homeLinks = (siteConfig.banner.homeText.links ?? []).filter(
@@ -185,6 +194,19 @@ const videoMode =
 		</picture>
 		<img class="banner-stage__image banner-stage__image--back" alt="" />
 		</div>
+		{/* 轮播视频层：banner.src 列表混入视频项时才渲染（零负担：无视频项零 DOM）。
+		    轮到视频时淡入并静音播放，播完自动切下一项；不参与 ken-burns 运镜 */}
+		{hasSlideVideo && (
+			<video
+				class="banner-stage__slide-video"
+				data-banner-slide-video
+				muted
+				playsinline
+				preload="metadata"
+				aria-hidden="true"
+				style={`object-position: ${siteConfig.banner.position ?? "center"};`}
+			></video>
+		)}
 		{videoEnabled && (
 			<video
 				class="banner-stage__video"
@@ -339,6 +361,14 @@ const videoMode =
 	const layers = stage
 		? [...stage.querySelectorAll<HTMLImageElement>(".banner-stage__image")]
 		: [];
+	// 轮播视频层：banner.src 列表混入视频项时才存在
+	const slideVideo = stage?.querySelector<HTMLVideoElement>(
+		"[data-banner-slide-video]",
+	);
+	// 视频轮播项判定（与 frontmatter 的识别规则一致）
+	function isVideoSource(src: string): boolean {
+		return /\.(mp4|webm|mov)(\?|#|$)/i.test(src);
+	}
 	const subtitle = stage?.querySelector<HTMLParagraphElement>(
 		"[data-banner-home-copy] p",
 	);
@@ -577,6 +607,8 @@ const videoMode =
 
 	function preloadNext(images: string[], index: number) {
 		if (images.length < 2) return;
+		// 下一项是视频：交给轮播视频层的 preload="metadata" 预取元数据
+		if (isVideoSource(images[(index + 1) % images.length])) return;
 		const schedulePreload = () => {
 			const load = () => {
 				runtime.preloaded = new Image();
@@ -636,6 +668,12 @@ const videoMode =
 
 	function showImage(src: string, immediate: boolean) {
 		if (!layers.length) return;
+		// 视频项：交给专用视频层（淡入 + 静音播放，播完由 ended 驱动切换）
+		if (isVideoSource(src)) {
+			showSlideVideo(src, immediate);
+			return;
+		}
+		hideSlideVideo(immediate);
 		const nextLayer = immediate ? runtime.activeLayer : runtime.activeLayer === 0 ? 1 : 0;
 		const next = layers[nextLayer];
 		const previous = layers[runtime.activeLayer];
@@ -680,8 +718,64 @@ const videoMode =
 		if (!immediate) startMotion();
 	}
 
+	/** 轮到视频项：图片层淡出，视频层淡入并静音播放（无固定间隔，播完切下一项） */
+	function showSlideVideo(src: string, immediate: boolean) {
+		if (!slideVideo) return;
+		const previous = layers[runtime.activeLayer];
+		previous.classList.remove("banner-stage__image--active");
+		if (immediate) {
+			previous.classList.remove("banner-stage__image--fading");
+		} else {
+			previous.classList.add("banner-stage__image--fading");
+		}
+		runtime.layerMotions[runtime.activeLayer]?.cancel();
+		runtime.layerMotions[runtime.activeLayer] = null;
+
+		if (slideVideo.src !== new URL(src, window.location.href).href) {
+			slideVideo.src = src;
+		}
+		// 同组唯一项时循环播放；否则播完由 ended 前进到下一项
+		slideVideo.loop = runtime.images[currentViewport()].length < 2;
+		slideVideo.classList.add("banner-stage__slide-video--active");
+		slideVideo.classList.toggle(
+			"banner-stage__slide-video--fading",
+			!immediate,
+		);
+		void slideVideo.play().catch(() => {
+			// 自动播放被拒（少见：非手势触发的静音播放也通常放行）：静置显示首帧
+		});
+	}
+
+	/** 离开视频项：视频层淡出并暂停，交还图片层 */
+	function hideSlideVideo(immediate: boolean) {
+		if (
+			!slideVideo ||
+			!slideVideo.classList.contains("banner-stage__slide-video--active")
+		) {
+			return;
+		}
+		slideVideo.pause();
+		slideVideo.classList.remove("banner-stage__slide-video--active");
+		slideVideo.classList.toggle(
+			"banner-stage__slide-video--fading",
+			!immediate,
+		);
+	}
+
+	/** 视频播完/出错：前进到轮播的下一项 */
+	function advanceFromSlideVideo() {
+		const images = runtime.images[currentViewport()];
+		if (images.length < 2) return;
+		runtime.activeIndex = (runtime.activeIndex + 1) % images.length;
+		showImage(images[runtime.activeIndex], false);
+		preloadNext(images, runtime.activeIndex);
+		scheduleRotation(images);
+	}
+
 	function scheduleRotation(images: string[]) {
 		stopRotation();
+		// 当前项是视频时不按固定间隔切换：由视频 ended 事件驱动前进
+		if (isVideoSource(images[runtime.activeIndex])) return;
 		const delay = Number.parseInt(stage?.dataset.carouselInterval || "6000", 10);
 		runtime.timer = window.setTimeout(() => {
 			runtime.activeIndex = (runtime.activeIndex + 1) % images.length;
@@ -863,7 +957,10 @@ const videoMode =
 		document.body.dataset.bannerLayout = state.contentLayout;
 		document.body.dataset.bannerTopAppBar = String(state.transparentTopAppBar);
 		stage.hidden = !state.visible;
-		if (stage.hidden) pauseBannerVideo();
+		if (stage.hidden) {
+			pauseBannerVideo();
+			slideVideo?.pause();
+		}
 		const hasContext =
 			state.copyMode === "context" && syncContext(context);
 		const copyMode = state.copyMode === "home" ? "home" : hasContext ? "context" : "none";
@@ -982,9 +1079,11 @@ const videoMode =
 		video.loop = videoSrcs.length === 1;
 		video.addEventListener("play", () => {
 			video.classList.add("banner-stage__video--active");
-			// 视频成为视觉主体：挂起图片轮播与运镜
+			// 视频成为视觉主体：挂起图片轮播与运镜；轮播视频层让位暂停
 			stopRotation();
 			stopLayerMotions();
+			slideVideo?.pause();
+			slideVideo?.classList.remove("banner-stage__slide-video--active");
 			dispatchVideoState(true);
 		});
 		video.addEventListener("pause", () => {
@@ -1000,6 +1099,12 @@ const videoMode =
 			dispatchVideoState(false);
 		});
 		window.addEventListener(BANNER_VIDEO_TOGGLE_EVENT, () => toggleBannerVideo());
+	}
+
+	// 轮播视频层：播完或出错自动前进到下一项；出错避免卡死
+	if (slideVideo) {
+		slideVideo.addEventListener("ended", advanceFromSlideVideo);
+		slideVideo.addEventListener("error", advanceFromSlideVideo);
 	}
 
 	// ---------------------------------------------------------------------
@@ -1215,7 +1320,8 @@ const videoMode =
 
 		/* 切换窗口内图片的形态差异（全屏/覆盖透明的 scale(1.05) 与模糊）同步插值，
 		   消除几何变化时的缩放/模糊突跳；opacity 保留轮播交叉淡化能力 */
-		:global(html[data-wallpaper-switching]) .banner-stage__image
+		:global(html[data-wallpaper-switching]) .banner-stage__image,
+		:global(html[data-wallpaper-switching]) .banner-stage__slide-video
 			transition: transform var(--m3e-duration-long) var(--m3e-easing-standard), filter var(--m3e-duration-long) var(--m3e-easing-standard), opacity var(--banner-fade-duration, 1200ms) var(--m3e-easing-standard)
 
 		.banner-stage__media,
@@ -1224,7 +1330,8 @@ const videoMode =
 			position: absolute
 			inset: 0
 
-		.banner-stage__image
+		.banner-stage__image,
+		.banner-stage__slide-video
 			position: absolute
 			inset: 0
 			width: 100%
@@ -1234,10 +1341,12 @@ const videoMode =
 			will-change: opacity, transform
 			transform-origin: center center
 
-		.banner-stage__image--fading
+		.banner-stage__image--fading,
+		.banner-stage__slide-video--fading
 			transition: opacity var(--banner-fade-duration, 1200ms) var(--m3e-easing-standard)
 
-		.banner-stage__image--active
+		.banner-stage__image--active,
+		.banner-stage__slide-video--active
 			opacity: 1
 
 		/* 横幅背景视频：默认透明（图片作海报层），播放时淡入覆盖 */
