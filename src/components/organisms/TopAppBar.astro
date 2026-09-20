@@ -57,7 +57,7 @@ function isActive(link: (typeof links)[number]): boolean {
 					<div class="top-app-bar__nav-group" data-nav-group>
 						{link.children ? (
 							<button class:list={[
-								"top-app-bar__nav-link m3-state-layer relative flex h-10 items-center gap-1 px-3 text-sm font-bold text-[var(--on-surface-variant)] transition-colors hover:text-[var(--on-surface)]",
+								"top-app-bar__nav-link m3-state-layer relative flex h-10 items-center gap-1 px-3 text-sm font-bold text-[var(--primary)] transition-colors",
 								active && "top-app-bar__nav-link--active",
 							]} aria-expanded="false">
 								{link.icon && <Icon name={link.icon} class="text-[1.1rem]"></Icon>}
@@ -67,7 +67,7 @@ function isActive(link: (typeof links)[number]): boolean {
 						) : (
 							<a href={href} target={link.external ? "_blank" : undefined} rel={link.external ? "noopener noreferrer" : undefined}
 								aria-current={active ? "page" : undefined} data-nav-key={link.pageKey ?? ""}
-								class:list={["top-app-bar__nav-link m3-state-layer relative flex h-10 items-center gap-1 px-3 text-sm font-bold text-[var(--on-surface-variant)] transition-colors hover:text-[var(--on-surface)]", active && "top-app-bar__nav-link--active"]}>
+								class:list={["top-app-bar__nav-link m3-state-layer relative flex h-10 items-center gap-1 px-3 text-sm font-bold text-[var(--primary)] transition-colors", active && "top-app-bar__nav-link--active"]}>
 								{link.icon && <Icon name={link.icon} class="text-[1.1rem]"></Icon>}{link.name}
 								{link.external && <Icon name="material-symbols:arrow-outward-rounded" class="ml-1 text-[0.875rem]"></Icon>}
 							</a>
@@ -85,13 +85,14 @@ function isActive(link: (typeof links)[number]): boolean {
 			})}
 		</nav>
 		<div class="flex-1"></div>
-		<Search client:only="svelte"></Search>
+		<!-- client:load（非 client:only）：SSR 首帧即渲染按钮，避免导航右侧图标水合后闪现 -->
+		<Search client:load></Search>
 		{!siteConfig.themeColor.fixed && (
 			<IconButton id="display-settings-switch" label="Display Settings" class="shrink-0">
 				<Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
 			</IconButton>
 		)}
-		<LightDarkSwitch client:only="svelte"></LightDarkSwitch>
+		<LightDarkSwitch client:load></LightDarkSwitch>
 		<DisplaySettings client:only="svelte" class="top-full right-4 max-w-[calc(100vw-2rem)] md:right-0"></DisplaySettings>
 	</div>
 </div>
@@ -245,6 +246,16 @@ document.addEventListener('swup:content:replace', bindSearchTriggers);
 			color: var(--on-surface);
 		}
 
+	/* 首帧透明桥接：横幅状态由 Layout 的 body 内联脚本在导航栏渲染前落位，
+	   此规则让首帧直接呈现透明态（未滚动时 banner-scrolled 尚未写入，:not 恒匹配）；
+	   scrollFunction（module）接管后类切换与本规则同步（banner-scrolled=true 时均不透明） */
+	:global(body[data-banner-visible="true"]:not([data-banner-scrolled="true"])) .top-app-bar {
+		background: transparent;
+		box-shadow: none;
+		backdrop-filter: none;
+		color: var(--on-surface);
+	}
+
 			:global(.top-app-bar--transparent .top-app-bar__search-shell--expanded) {
 				--on-surface: var(--mc-on-surface);
 				--on-surface-variant: var(--mc-on-surface-variant);
@@ -274,6 +285,22 @@ document.addEventListener('swup:content:replace', bindSearchTriggers);
 
 		.top-app-bar--transparent .top-app-bar__nav-link--active::after {
 		background: var(--primary);
+	}
+
+	/* 透明栏整体前景与导航链接同用主色：站点标题、搜索/调色盘/切换等图标
+	   在深色主题下同为高亮白（用户指定）；展开的搜索壳与浮动面板
+	   仍由下方各自的 mc 变量规则接管，不受影响 */
+	.top-app-bar--transparent {
+		--on-surface: var(--primary);
+	}
+
+	/* 透明导航栏悬停：状态层改用 surface 磨砂胶囊做局部底色——
+	   壁纸亮暗、主题亮暗组合下前景文字都保持可读（图像覆盖可读性场景，
+	   用语义 surface 令牌而非固定黑白）；静止时不可见，hero 观感不变 */
+	.top-app-bar--transparent .top-app-bar__nav-link::before {
+		background: color-mix(in oklab, var(--surface-container) 72%, transparent);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
 	}
 
 	.top-app-bar__nav-link--active {

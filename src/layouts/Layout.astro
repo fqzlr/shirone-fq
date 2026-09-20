@@ -5,6 +5,8 @@ import ConfigCarrier from "@components/system/ConfigCarrier.astro";
 import UmamiRuntime from "@components/system/UmamiRuntime.astro";
 import {
 	expressiveCodeConfig,
+	getDefaultSpec,
+	getDefaultStyle,
 	profileConfig,
 	resolvedFontOptions,
 	resolveTextureOptions,
@@ -55,6 +57,10 @@ const canonicalUrl = Astro.site
 	: Astro.url;
 
 const configHue = siteConfig.themeColor.hue;
+// 配色方案缓存的校验基准：用户未显式选择风格/规范时以站点默认值比对，
+// 站点默认值变更后旧缓存自动失效，避免首帧套用过期配色
+const defaultMcStyle = getDefaultStyle();
+const defaultMcSpec = getDefaultSpec();
 const lightTheme =
 	expressiveCodeConfig.lightTheme ?? expressiveCodeConfig.theme;
 const darkTheme = expressiveCodeConfig.darkTheme ?? expressiveCodeConfig.theme;
@@ -153,8 +159,10 @@ const hasMonoFont =
 			/>
 		))}
 
-		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, lightTheme, darkTheme, defaultWallpaperMode, defaultFullscreenLayout, defaultOverlayOpacity, defaultOverlayBlur, defaultOverlayCardOpacity, defaultBannerTitleEnabled, defaultBannerCarouselEnabled, defaultBannerWavesEnabled, defaultTexturePreset, defaultTextureOpacity, textureEnabled}}>
+		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, lightTheme, darkTheme, defaultWallpaperMode, defaultFullscreenLayout, defaultOverlayOpacity, defaultOverlayBlur, defaultOverlayCardOpacity, defaultBannerTitleEnabled, defaultBannerCarouselEnabled, defaultBannerWavesEnabled, defaultTexturePreset, defaultTextureOpacity, textureEnabled, defaultMcStyle, defaultMcSpec}}>
 			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
+			// 亮暗切换按钮图标由纯 CSS 消费 data-theme-mode，首帧前落位避免水合后闪现
+			document.documentElement.dataset.themeMode = theme;
 			let isDark = false;
 			switch (theme) {
 				case LIGHT_MODE:
@@ -176,6 +184,23 @@ const hasMonoFont =
 			document.documentElement.setAttribute('data-theme', isDark ? darkTheme : lightTheme);
 			const hue = localStorage.getItem('hue') || configHue;
 			document.documentElement.style.setProperty('--hue', hue);
+			// 配色方案缓存：applyCurrentScheme（theme-utils）每次重算后写入 mc-scheme-cache。
+			// 这里在首帧前直接套用已解析的 --mc-* 值，消除「回退近似色 → HCT 重算」的配色闪烁；
+			// 首次访问无缓存或 hue/亮暗/风格/规范任一不匹配时跳过，由 module 脚本稍后重算并刷新缓存
+			try {
+				const cachedScheme = JSON.parse(localStorage.getItem('mc-scheme-cache') || 'null');
+				const storedMcStyle = localStorage.getItem('mc-style');
+				const storedMcSpec = localStorage.getItem('mc-spec');
+				if (cachedScheme && cachedScheme.v === 1
+					&& cachedScheme.hue === Number.parseInt(hue, 10)
+					&& cachedScheme.isDark === isDark
+					&& cachedScheme.style === (storedMcStyle || defaultMcStyle)
+					&& cachedScheme.spec === (storedMcSpec || defaultMcSpec)) {
+					for (const [name, value] of Object.entries(cachedScheme.vars)) {
+						document.documentElement.style.setProperty(name, value);
+					}
+				}
+			} catch {}
 			if (localStorage.getItem('mc-motion') === 'reduced') {
 				document.documentElement.classList.add('motion-reduced');
 			}
@@ -258,6 +283,26 @@ const hasMonoFont =
 		data-banner-has-desktop={String(hasDesktopBanner)}
 		data-banner-has-mobile={String(hasMobileBanner)}
 	>
+		<script is:inline define:vars={{ initialPage, hasDesktopBanner, hasMobileBanner }}>
+			// 横幅状态首帧落位：syncBanner（BannerStage module）运行前，body 停留在
+			// SSR 兜底值 false/compact，导航栏带底色、横幅被压到导航栏下方，首帧闪动。
+			// 本脚本解析阻塞且是 body 第一个子节点，先于导航栏渲染执行。
+			// visible/layout 判定与 @utils/banner-state resolveBannerState 保持一致：
+			// 仅依赖 模式/页面/视口/有无横幅图（轮播与减动效只影响 rotate，不参与）。
+			// 壁纸模式复用头部内联脚本已写到 <html> 的 data-wallpaper-mode（stored || 默认）。
+			const bannerWallpaperMode = document.documentElement.dataset.wallpaperMode;
+			const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+			const hasImages = isDesktop ? hasDesktopBanner : hasMobileBanner;
+			const isHome = initialPage === 'home';
+			const bannerVisible =
+				bannerWallpaperMode === 'fullscreen' || bannerWallpaperMode === 'overlay'
+					? hasImages
+					: bannerWallpaperMode === 'banner' && hasImages && (isDesktop || isHome);
+			document.body.dataset.bannerVisible = String(bannerVisible);
+			document.body.dataset.bannerLayout =
+				bannerVisible && bannerWallpaperMode === 'banner' ? 'banner' : 'compact';
+			document.body.dataset.bannerTopAppBar = String(bannerVisible);
+		</script>
 		<ConfigCarrier></ConfigCarrier>
 		{umamiOptions && <UmamiRuntime />}
 		{textureEnabled && (
@@ -350,7 +395,7 @@ const hasMonoFont =
 <script>
 import { initLastUpdatedNotices } from "../utils/last-updated-notice";
 import {getHue, getStoredTheme, setHue, setTheme} from "../utils/setting-utils";
-import { WALLPAPER_MODE_CHANGE_EVENT, BANNER_HEIGHT, BANNER_HEIGHT_EXTEND, SAKURA_TOGGLE_EVENT } from "../constants/constants";
+import { WALLPAPER_MODE_CHANGE_EVENT, WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, BANNER_HEIGHT, BANNER_HEIGHT_EXTEND, SAKURA_TOGGLE_EVENT } from "../constants/constants";
 import { copyPageLink } from "../utils/copy-page-link";
 import { getSakuraEnabled } from "../utils/sakura-utils";
 
@@ -433,6 +478,22 @@ if (window.swup?.hooks) setup();
 else document.addEventListener('swup:enable', setup, { once: true });
 
 const backToTopBtn = document.getElementById('back-to-top-btn');
+// 全屏 hero 首页：顶部壁纸清晰，滚向内容区渐进到设置的背景模糊度。
+// 挂在 scrollFunction 内即可覆盖全部触发时机（滚动 / 壁纸切换 / swup 导航 / 初始）；
+// 仅在 全屏+hero+首页 时写 --wallpaper-blur-progress，其余场景移除避免残留
+function updateWallpaperBlurProgress() {
+	const html = document.documentElement;
+	if (
+		html.dataset.wallpaperMode !== 'fullscreen' ||
+		html.dataset.fullscreenLayout !== 'hero' ||
+		document.body.dataset.currentPage !== 'home'
+	) {
+		html.style.removeProperty('--wallpaper-blur-progress');
+		return;
+	}
+	const progress = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.8)));
+	html.style.setProperty('--wallpaper-blur-progress', progress.toFixed(3));
+}
 function scrollFunction() {
 	const scrollTop = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
 	const backToTopThreshold = window.innerHeight * (BANNER_HEIGHT / 100);
@@ -444,6 +505,7 @@ function scrollFunction() {
 	const overBanner = bannerVisible && scrollTop < Math.max(0, bannerBottom - 64);
 	document.body.dataset.bannerScrolled = String(!overBanner);
 	navbar?.classList.toggle('top-app-bar--transparent', overBanner);
+	updateWallpaperBlurProgress();
 }
 window.addEventListener('scroll', scrollFunction, { passive: true });
 window.addEventListener('resize', () => {
@@ -454,6 +516,7 @@ window.addEventListener('resize', () => {
 });
 new MutationObserver(scrollFunction).observe(document.body, { attributes: true, attributeFilter: ['data-banner-visible', 'data-banner-layout'] });
 window.addEventListener(WALLPAPER_MODE_CHANGE_EVENT, () => requestAnimationFrame(scrollFunction));
+window.addEventListener(WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, () => requestAnimationFrame(scrollFunction));
 document.addEventListener('swup:page:view', scrollFunction);
 scrollFunction();
 </script>

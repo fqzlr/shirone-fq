@@ -9,6 +9,8 @@ import { getDefaultSpec, getDefaultStyle } from "@/config";
 
 const STYLE_KEY = "mc-style";
 const SPEC_KEY = "mc-spec";
+const SCHEME_CACHE_KEY = "mc-scheme-cache";
+const SCHEME_CACHE_VERSION = 1;
 
 /** CSS custom-property names emitted for each M3/M3E role. */
 const ROLE_TO_CSS: Record<string, string> = {
@@ -73,9 +75,17 @@ export function isMcSpec(v: string): v is McSpec {
 	return (MC_SPECS as readonly string[]).includes(v);
 }
 
+// 配置层（site.yaml 的 themeColor.style）允许首字母大写（如 "Monochrome"），
+// 运行时 MC_STYLES 全小写：读取时统一归一化，否则 isMcStyle 校验失败
+// 会静默回落到 tonalSpot（buildScheme 的 default 分支）
 export function getStyle(): McStyle {
 	const stored = localStorage.getItem(STYLE_KEY);
-	return stored && isMcStyle(stored) ? stored : (getDefaultStyle() as McStyle);
+	if (stored) {
+		const normalized = stored.toLowerCase() as McStyle;
+		if (isMcStyle(normalized)) return normalized;
+	}
+	const def = String(getDefaultStyle()).toLowerCase() as McStyle;
+	return isMcStyle(def) ? def : "tonalSpot";
 }
 
 export function getSpec(): McSpec {
@@ -111,12 +121,33 @@ export function applyCurrentScheme(): void {
 	const spec = getSpec();
 	const scheme = resolveScheme(hue, isDark, style, spec);
 
+	const vars: Record<string, string> = {};
 	for (const [role, cssVar] of Object.entries(ROLE_TO_CSS)) {
 		const value = scheme[role];
 		if (value) {
 			root.style.setProperty(cssVar, value);
+			vars[cssVar] = value;
 		} else {
 			root.style.removeProperty(cssVar);
 		}
+	}
+
+	// 回访访客零闪烁：Layout 头部的 is:inline 脚本在首帧前读取这份缓存直接
+	// 套用 --mc-*，避免「回退近似色 → 本函数重算」之间的配色跳变。
+	// 键名以 CSS 变量名为键，内联脚本无需重复 ROLE_TO_CSS 映射表。
+	try {
+		localStorage.setItem(
+			SCHEME_CACHE_KEY,
+			JSON.stringify({
+				v: SCHEME_CACHE_VERSION,
+				hue,
+				isDark,
+				style,
+				spec,
+				vars,
+			}),
+		);
+	} catch {
+		// 隐私模式等存储不可用场景：仅失去首帧直出能力，运行时不受影响
 	}
 }
