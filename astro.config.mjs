@@ -33,10 +33,10 @@ const musicFeatureEnabled =
 const resolvedUmamiOptions = resolveUmamiOptions(umamiConfig);
 const umamiIntegration = resolvedUmamiOptions
 	? (await import("oddmisc/astro")).oddmisc({
-				umami: {
-					shareUrl: resolvedUmamiOptions.shareUrl,
-				},
-			})
+			umami: {
+				shareUrl: resolvedUmamiOptions.shareUrl,
+			},
+		})
 	: null;
 const musicSidebarModuleId = "virtual:shirone-music-sidebar";
 const resolvedMusicSidebarModuleId = `\0${musicSidebarModuleId}`;
@@ -73,10 +73,16 @@ const optionalMusicSidebarPlugin = {
 const isBuildCommand = process.argv.includes("build");
 const isDevCommand = process.argv.includes("dev");
 const iconifyOfflineIconPath = fileURLToPath(
-	new URL("./node_modules/@iconify/svelte/dist/OfflineIcon.svelte", import.meta.url),
+	new URL(
+		"./node_modules/@iconify/svelte/dist/OfflineIcon.svelte",
+		import.meta.url,
+	),
 );
 const iconifyOfflineFunctionsPath = fileURLToPath(
-	new URL("./node_modules/@iconify/svelte/dist/offline-functions.js", import.meta.url),
+	new URL(
+		"./node_modules/@iconify/svelte/dist/offline-functions.js",
+		import.meta.url,
+	),
 );
 
 function resolveVariantSrc(file) {
@@ -156,8 +162,8 @@ export default defineConfig({
 	trailingSlash: "always",
 	fonts: configuredFonts,
 	integrations: [
-			...(umamiIntegration ? [umamiIntegration] : []),
-			swup({
+		...(umamiIntegration ? [umamiIntegration] : []),
+		swup({
 			theme: false,
 			ignore: 'a[href="#"]',
 			animationClass: "transition-swup-",
@@ -275,10 +281,28 @@ export default defineConfig({
 		},
 		plugins: [optionalMusicSidebarPlugin, tailwindcss()],
 		ssr: {
-			// @material/material-color-utilities@0.4.0 的 color_spec_2025.js 内部
-			// 有无扩展名导入（'./dynamic_color'），Node 严格 ESM 解析直接失败；
-			// 交给 Vite 处理（vite:resolve 会尝试补 .js）以兼容 dev SSR 与 Node 24+
+			// @material/material-color-utilities@0.4.0 的源码内部有多处无扩展名
+			// 相对导入（如 color_spec_2025.js 的 './dynamic_color'），一旦被 SSR
+			// 外部化、由 Node 严格 ESM 原生加载就会 ERR_MODULE_NOT_FOUND；交给
+			// Vite 处理（vite:resolve 会补 .js）。
 			noExternal: ["@material/material-color-utilities"],
+		},
+		environments: {
+			// Vite 8 的 SSR import-analysis 在调用插件解析之前就用裸包名判定
+			// 外部化，resolveId 插件拦不住；唯一的杠杆是各环境的
+			// resolve.noExternal。Astro 7 构建「generating static routes」阶段
+			// 使用独立的 prerender 环境（configEnvironment 钩子只叠加
+			// ALWAYS_NOEXTERNAL 与 vitefu 探测的框架包），必须逐环境声明。
+			ssr: {
+				resolve: {
+					noExternal: ["@material/material-color-utilities"],
+				},
+			},
+			prerender: {
+				resolve: {
+					noExternal: ["@material/material-color-utilities"],
+				},
+			},
 		},
 		optimizeDeps: {
 			include: [
