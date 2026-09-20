@@ -1,5 +1,4 @@
 <script lang="ts">
-import AccentBar from "@components/atoms/display/AccentBar.svelte";
 import PanelStack from "@components/atoms/display/PanelStack.svelte";
 import Tabs from "@components/atoms/navigation/Tabs.svelte";
 import SegmentedButton from "@components/atoms/selection/SegmentedButton.svelte";
@@ -391,6 +390,18 @@ const tabItems = $derived([
 let activeTab = $state("appearance");
 const showTabBar = $derived(tabItems.length > 1);
 
+// 外观分区折叠：默认全部展开（仅面板内存态，不持久化）
+const sectionExpanded = $state<Record<string, boolean>>({
+	hue: true,
+	colorStyle: true,
+	colorSpec: true,
+	layout: true,
+	texture: true,
+});
+const toggleSection = (key: string) => {
+	sectionExpanded[key] = !sectionExpanded[key];
+};
+
 // 当前标签不可见时回退到第一个；进入覆盖透明 / 全屏模式时自动跳到壁纸页
 $effect(() => {
 	if (!tabItems.some((t) => t.value === activeTab) && tabItems.length) {
@@ -478,33 +489,57 @@ const stylePreviews = $derived(
         <!-- 外观：主题配色 + 布局 + 背景纹理 -->
         {#if activeTab === "appearance"}
             <div class="p-4 flex flex-col gap-3">
-                <div class="flex flex-row gap-2 items-center justify-between">
-                    <div class="flex gap-2 font-bold text-lg text-[var(--on-surface)] transition relative ml-3">
-                        <AccentBar size="small" class="absolute -left-3 top-[0.33rem]" />
-                        {i18n(I18nKey.themeColor)}
-                        <button aria-label="Reset to Default" class="float-control w-7 h-7 rounded-md active:scale-90 will-change-transform flex items-center justify-center"
-                                class:opacity-0={!isDirty} class:pointer-events-none={!isDirty} onclick={confirmReset}>
-                            <Icon icon="fa6-solid:arrow-rotate-left" class="text-[0.875rem]"></Icon>
-                        </button>
-                    </div>
-                    <div class="flex gap-1 items-center">
-                        <!-- 当前色相值展示（段内用低一级容器色保持对比） -->
-                        <div title={i18n(I18nKey.themeColor)}
-                             class="h-7 min-w-16 px-1 rounded-(--shape-corner-m) flex items-center justify-center
-                                    bg-(--surface-container) text-sm font-bold text-(--on-surface)">
-                            {hue}
+                <div class="settings-section flex flex-col gap-2" class:settings-section--collapsed={!sectionExpanded.hue}>
+                    <div class="flex flex-row gap-1.5 items-center justify-between">
+                        <div class="flex gap-1.5 items-center">
+                            <!-- 标题样式与下方分区统一（小号 on-surface-variant），可点击折叠 -->
+                            <button type="button"
+                                    class="settings-section__header text-sm font-bold text-[var(--on-surface-variant)] ml-1"
+                                    aria-expanded={sectionExpanded.hue}
+                                    onclick={() => toggleSection("hue")}>
+                                {i18n(I18nKey.themeColor)}
+                                <span class="settings-section__chevron" class:settings-section__chevron--collapsed={!sectionExpanded.hue} aria-hidden="true">
+                                    <Icon icon="material-symbols:keyboard-arrow-down" class="text-base" />
+                                </span>
+                            </button>
+                            <button aria-label="Reset to Default" class="float-control w-7 h-7 rounded-md active:scale-90 will-change-transform flex items-center justify-center"
+                                    class:opacity-0={!isDirty} class:pointer-events-none={!isDirty} onclick={confirmReset}>
+                                <Icon icon="fa6-solid:arrow-rotate-left" class="text-[0.875rem]"></Icon>
+                            </button>
                         </div>
-                        <!-- 当前主色实时预览 -->
-                        <div class="h-7 w-7 rounded-full" title={i18n(I18nKey.themeColor)}
-                             style={`background: ${currentColor}; box-shadow: inset 0 0 0 1px var(--outline-variant)`}></div>
+                        <div class="flex gap-1 items-center">
+                            <!-- 当前色相值展示（段内用低一级容器色保持对比） -->
+                            <div title={i18n(I18nKey.themeColor)}
+                                 class="h-7 min-w-16 px-1 rounded-(--shape-corner-m) flex items-center justify-center
+                                        bg-(--surface-container) text-sm font-bold text-(--on-surface)">
+                                {hue}
+                            </div>
+                            <!-- 当前主色实时预览 -->
+                            <div class="h-7 w-7 rounded-full" title={i18n(I18nKey.themeColor)}
+                                 style={`background: ${currentColor}; box-shadow: inset 0 0 0 1px var(--outline-variant)`}></div>
+                        </div>
+                    </div>
+                    <div class="settings-section__clip">
+                        <div class="settings-section__body">
+                            <Slider bind:value={hue} min={0} max={360} step={5} label={i18n(I18nKey.themeColor)} />
+                        </div>
                     </div>
                 </div>
-                <Slider bind:value={hue} min={0} max={360} step={5} label={i18n(I18nKey.themeColor)} />
 
                 {#if displayConfig.colorStyle}
-                    <div class="flex flex-col gap-2 pt-1">
-                        <span class="text-sm font-bold text-[var(--on-surface-variant)] ml-1">{i18n(I18nKey.colorStyle)}</span>
-                        <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label={i18n(I18nKey.colorStyle)}>
+                    <div class="settings-section flex flex-col gap-2 pt-1" class:settings-section--collapsed={!sectionExpanded.colorStyle}>
+                        <button type="button"
+                                class="settings-section__header text-sm font-bold text-[var(--on-surface-variant)] ml-1"
+                                aria-expanded={sectionExpanded.colorStyle}
+                                onclick={() => toggleSection("colorStyle")}>
+                            {i18n(I18nKey.colorStyle)}
+                            <span class="settings-section__chevron" class:settings-section__chevron--collapsed={!sectionExpanded.colorStyle} aria-hidden="true">
+                                <Icon icon="material-symbols:keyboard-arrow-down" class="text-base" />
+                            </span>
+                        </button>
+                        <div class="settings-section__clip">
+                            <div class="settings-section__body">
+                                <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label={i18n(I18nKey.colorStyle)}>
                             {#each stylePreviews as p (p.style)}
                                 <button
                                     type="button"
@@ -524,57 +559,95 @@ const stylePreviews = $derived(
                                     <span class="m3-style-cell__name">{p.label}</span>
                                 </button>
                             {/each}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {/if}
 
                 {#if displayConfig.colorSpec}
-                    <div class="flex flex-col gap-1.5 pt-1">
-                        <span class="text-sm font-bold text-[var(--on-surface-variant)] ml-1">{i18n(I18nKey.colorSpec)}</span>
-                        <SegmentedButton
-                            options={MC_SPECS.map((s) => ({
-                                value: s,
-                                label: s === "2021" ? i18n(I18nKey.spec2021) : i18n(I18nKey.spec2025),
-                            }))}
-                            bind:value={spec}
-                            label={i18n(I18nKey.colorSpec)}
-                        />
+                    <div class="settings-section flex flex-col gap-1.5 pt-1" class:settings-section--collapsed={!sectionExpanded.colorSpec}>
+                        <button type="button"
+                                class="settings-section__header text-sm font-bold text-[var(--on-surface-variant)] ml-1"
+                                aria-expanded={sectionExpanded.colorSpec}
+                                onclick={() => toggleSection("colorSpec")}>
+                            {i18n(I18nKey.colorSpec)}
+                            <span class="settings-section__chevron" class:settings-section__chevron--collapsed={!sectionExpanded.colorSpec} aria-hidden="true">
+                                <Icon icon="material-symbols:keyboard-arrow-down" class="text-base" />
+                            </span>
+                        </button>
+                        <div class="settings-section__clip">
+                            <div class="settings-section__body">
+                                <SegmentedButton
+                                    options={MC_SPECS.map((s) => ({
+                                        value: s,
+                                        label: s === "2021" ? i18n(I18nKey.spec2021) : i18n(I18nKey.spec2025),
+                                    }))}
+                                    bind:value={spec}
+                                    label={i18n(I18nKey.colorSpec)}
+                                />
+                            </div>
+                        </div>
                     </div>
                 {/if}
 
                 {#if displayConfig.layoutMode}
-                    <div class="flex flex-col gap-1.5 pt-1">
-                        <span class="text-sm font-bold text-[var(--on-surface-variant)] ml-1">{i18n(I18nKey.layoutMode)}</span>
-                        <SegmentedButton
-                            options={[
-                                { value: "list", label: i18n(I18nKey.layoutList) },
-                                { value: "grid", label: i18n(I18nKey.layoutGrid) },
-                            ]}
-                            bind:value={postListMode}
-                            label={i18n(I18nKey.layoutMode)}
-                        />
+                    <div class="settings-section flex flex-col gap-1.5 pt-1" class:settings-section--collapsed={!sectionExpanded.layout}>
+                        <button type="button"
+                                class="settings-section__header text-sm font-bold text-[var(--on-surface-variant)] ml-1"
+                                aria-expanded={sectionExpanded.layout}
+                                onclick={() => toggleSection("layout")}>
+                            {i18n(I18nKey.layoutMode)}
+                            <span class="settings-section__chevron" class:settings-section__chevron--collapsed={!sectionExpanded.layout} aria-hidden="true">
+                                <Icon icon="material-symbols:keyboard-arrow-down" class="text-base" />
+                            </span>
+                        </button>
+                        <div class="settings-section__clip">
+                            <div class="settings-section__body">
+                                <SegmentedButton
+                                    options={[
+                                        { value: "list", label: i18n(I18nKey.layoutList) },
+                                        { value: "grid", label: i18n(I18nKey.layoutGrid) },
+                                    ]}
+                                    bind:value={postListMode}
+                                    label={i18n(I18nKey.layoutMode)}
+                                />
+                            </div>
+                        </div>
                     </div>
                 {/if}
 
                 {#if displayConfig.texture}
-                    <div class="flex flex-col gap-2 pt-1">
-                        <span class="text-sm font-bold text-[var(--on-surface-variant)] ml-1">{i18n(I18nKey.texturePreset)}</span>
-                        <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label={i18n(I18nKey.texturePreset)}>
-                            {#each textureOptions as opt (opt.value)}
-                                <button
-                                    type="button"
-                                    role="radio"
-                                    aria-checked={texturePreset === opt.value}
-                                    title={i18n(opt.labelKey)}
-                                    aria-label={i18n(opt.labelKey)}
-                                    class="m3-style-cell"
-                                    class:selected={texturePreset === opt.value}
-                                    onclick={() => (texturePreset = opt.value)}
-                                >
-                                    <Icon icon={opt.icon} class="text-lg" />
-                                    <span class="m3-style-cell__name">{i18n(opt.labelKey)}</span>
-                                </button>
-                            {/each}
+                    <div class="settings-section flex flex-col gap-2 pt-1" class:settings-section--collapsed={!sectionExpanded.texture}>
+                        <button type="button"
+                                class="settings-section__header text-sm font-bold text-[var(--on-surface-variant)] ml-1"
+                                aria-expanded={sectionExpanded.texture}
+                                onclick={() => toggleSection("texture")}>
+                            {i18n(I18nKey.texturePreset)}
+                            <span class="settings-section__chevron" class:settings-section__chevron--collapsed={!sectionExpanded.texture} aria-hidden="true">
+                                <Icon icon="material-symbols:keyboard-arrow-down" class="text-base" />
+                            </span>
+                        </button>
+                        <div class="settings-section__clip">
+                            <div class="settings-section__body">
+                                <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label={i18n(I18nKey.texturePreset)}>
+                                    {#each textureOptions as opt (opt.value)}
+                                        <button
+                                            type="button"
+                                            role="radio"
+                                            aria-checked={texturePreset === opt.value}
+                                            title={i18n(opt.labelKey)}
+                                            aria-label={i18n(opt.labelKey)}
+                                            class="m3-style-cell"
+                                            class:selected={texturePreset === opt.value}
+                                            onclick={() => (texturePreset = opt.value)}
+                                        >
+                                            <Icon icon={opt.icon} class="text-lg" />
+                                            <span class="m3-style-cell__name">{i18n(opt.labelKey)}</span>
+                                        </button>
+                                    {/each}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {/if}
@@ -743,10 +816,70 @@ const stylePreviews = $derived(
 
 
 <style lang="stylus">
-    /* 设置面板标签栏：透明背景融入面板，仅保留主色下划线指示器 */
+    /* 设置面板标签栏：对齐 SegmentedButton（配色规范/布局切换）的分段视觉语言——
+       surface-container 轨道 + corner-m 外圆角，激活段 corner-s 填充 secondary-container */
     :global(.settings-panel-tabs.m3-tabs)
-        background: transparent
+        background: var(--surface-container)
         box-shadow: none
+        height: 2.25rem
+        border-radius: var(--shape-corner-m)
+        gap: 2px
+        padding: 2px
+
+    :global(.settings-panel-tabs .m3-tabs__indicator)
+        background: transparent
+
+    :global(.settings-panel-tabs .m3-tabs__tab)
+        border-radius: var(--shape-corner-s)
+        padding: 0 0.75rem
+        font: var(--m3e-type-label-medium)
+
+    :global(.settings-panel-tabs.m3-tabs .m3-tabs__tab--active)
+        background: var(--secondary-container)
+        color: var(--on-secondary-container)
+        box-shadow: var(--m3e-elevation-1)
+
+    :global(.settings-panel-tabs .m3-tabs__tab-icon > svg)
+        width: 1.25rem
+        height: 1.25rem
+
+    /* 外观分区折叠：标题行可点击，内容用 grid-rows 1fr↔0fr 平滑收展，
+       箭头随状态旋转（展开朝下 / 收起朝右） */
+    .settings-section
+        &__header
+            display: flex
+            align-items: center
+            gap: 0.125rem
+            width: fit-content
+            padding: 0
+            border: none
+            background: none
+            cursor: pointer
+            text-align: left
+
+        &__chevron
+            display: flex
+            transition: transform var(--m3e-duration-medium) var(--m3e-easing-standard)
+
+        &__chevron--collapsed
+            transform: rotate(-90deg)
+
+        &--collapsed &__clip
+            grid-template-rows: 0fr
+
+        &__clip
+            display: grid
+            grid-template-rows: 1fr
+            transition: grid-template-rows var(--m3e-duration-medium) var(--m3e-easing-standard)
+
+        &__body
+            min-height: 0
+            overflow: hidden
+
+    @media (prefers-reduced-motion: reduce)
+        .settings-section
+            &__clip, &__chevron
+                transition: none
 
     .m3-style-cell
         display: flex

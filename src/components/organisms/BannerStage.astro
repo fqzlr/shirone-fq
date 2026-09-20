@@ -1458,8 +1458,13 @@ const videoMode =
 		:global(html[data-wallpaper-mode="fullscreen"]) .banner-stage__image
 			transform: scale(1.05)
 
+		/* 全屏 hero：非首页保持整屏虚化；首页顶部清晰，
+		   滚动趋向内容区时由 scrollFunction 渐进写入模糊进度（0→1） */
 		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"] body:not([data-current-page="home"])) .banner-stage__image
 			filter: blur(var(--overlay-blur, 0px))
+
+		:global(html[data-wallpaper-mode="fullscreen"][data-fullscreen-layout="hero"] body[data-current-page="home"]) .banner-stage__image
+			filter: blur(calc(var(--overlay-blur, 0px) * var(--wallpaper-blur-progress, 0)))
 
 		/* 全屏壁纸 classic 布局：复刻文档流全屏——壁纸随页滚动，
 		   首页整屏（内容首屏之下），非首页与横幅模式一致（桌面横幅高度，不虚化） */
