@@ -294,7 +294,11 @@ const videoMode =
 		EASING_DECELERATE,
 		prefersReducedMotion,
 	} from "@utils/motion";
-	import { getStoredFullscreenLayout, getStoredWallpaperMode } from "@utils/setting-utils";
+	import {
+		beginWallpaperSwitchWindow,
+		getStoredFullscreenLayout,
+		getStoredWallpaperMode,
+	} from "@utils/setting-utils";
 	import {
 		BANNER_CAROUSEL_CHANGE_EVENT,
 		BANNER_GRADIENT_CHANGE_EVENT,
@@ -897,6 +901,11 @@ const videoMode =
 		}
 		runtime.navigationSyncFrame = window.requestAnimationFrame(() => {
 			runtime.navigationSyncFrame = null;
+			// Swup 切页时 body 页面属性变化会重算 --banner-stage-height
+			// （首页 ↔ 文章页横幅高度不同）。先打开几何过渡窗口再落位，
+			// 让舞台高度与 #main-layout top 的既有过渡同步，避免壁纸
+			// 瞬间缩短/拉长而内容还在动画的空档。
+			beginWallpaperSwitchWindow();
 			syncBanner();
 			updateHeroTitleParallax();
 			if (animateIn) animateContextIn();
@@ -945,10 +954,19 @@ const videoMode =
 	async function playBannerVideo() {
 		if (!video || stage?.hidden) return;
 		if (!video.src) advanceVideoSource(0);
+		// 播放由用户点击触发（处于用户手势上下文），优先带声音播放
+		video.muted = false;
+		try {
+			await video.play();
+			return;
+		} catch {
+			// 浏览器自动播放策略拒绝（无有效手势等）：降级为静音重试
+		}
+		video.muted = true;
 		try {
 			await video.play();
 		} catch {
-			// 自动播放策略拒绝（理论上静音可播）或源不可用：回退到暂停态
+			// 源不可用等原因：回退到暂停态
 			dispatchVideoState(false);
 		}
 	}
@@ -1087,9 +1105,10 @@ const videoMode =
 	}
 
 	// ---------------------------------------------------------------------
-	// 壁纸模式 / 布局切换的柔和过渡（淡出 → 落位 → 淡入）由 setting-utils
-	// 编排：几何由 html[data-wallpaper-mode] 直接驱动，落位必须发生在
-	// data-wallpaper-switching 淡出完成之后，这里只响应变更事件做同步。
+	// 壁纸模式 / 布局切换的几何平滑过渡由 setting-utils 编排：先打
+	// data-wallpaper-switching 激活高度/透明度过渡，再立即落位新几何
+	// （html[data-wallpaper-mode] 驱动），舞台全程可见不闪白。
+	// 这里只响应变更事件做状态同步（可见性 / 文案 / 轮播）。
 	// ---------------------------------------------------------------------
 	if (stage) {
 		syncBanner();
@@ -1176,21 +1195,28 @@ const videoMode =
 			inset: 0 0 auto
 			height: var(--banner-stage-height)
 			overflow: hidden
-			background: var(--surface-container-lowest)
-			/* 模式切换时由 html[data-wallpaper-switching] 驱动的渐隐过渡 */
+			/* 底色对齐页面背景：模式切换期间舞台全程可见（不再整体淡出露底），
+			   图片未就绪时露出的也是正文底色而非更浅的“白” */
+			background: var(--page-bg)
+			/* 常规态仅保留 opacity 短过渡（纯色模式显隐等）；
+			   模式切换的几何过渡由下方 data-wallpaper-switching 窗口规则接管 */
 			transition: opacity var(--m3e-duration-short) var(--m3e-easing-standard)
 
 			&[hidden]
 				display: none
 
-		/* 壁纸模式 / 布局切换：几何由 html[data-wallpaper-mode] 直接驱动，直接切换
-		   会突兀跳变（忽大忽小）。setting-utils 先打 data-wallpaper-switching 让
-		   舞台按旧形态淡出，220ms 后落位新几何并移除属性、淡入新形态。
-		   切换期间统一 short 时长：覆盖透明自身的 long 过渡会晚于落位计时器，
-		   导致几何在半透明状态被换掉；淡入由各模式自身的过渡接管 */
+		/* 壁纸模式 / 布局切换：setting-utils 打上 data-wallpaper-switching 后立即
+		   落位新几何（html[data-wallpaper-mode] 驱动），舞台全程可见不闪白。
+		   仅在切换窗口内启用高度过渡：横幅条 ↔ 整屏 fixed 之间平滑伸缩，
+		   位置 absolute↔fixed 的突变因两侧均 top:0 全宽而不可感知；
+		   窗口外不挂 transition，避免窗口缩放时 100lvh 高度被动画拖慢 */
 		:global(html[data-wallpaper-switching]) .banner-stage
-			opacity: 0 !important
-			transition-duration: var(--m3e-duration-short) !important
+			transition: height var(--m3e-duration-long) var(--m3e-easing-standard), opacity var(--m3e-duration-long) var(--m3e-easing-standard)
+
+		/* 切换窗口内图片的形态差异（全屏/覆盖透明的 scale(1.05) 与模糊）同步插值，
+		   消除几何变化时的缩放/模糊突跳；opacity 保留轮播交叉淡化能力 */
+		:global(html[data-wallpaper-switching]) .banner-stage__image
+			transition: transform var(--m3e-duration-long) var(--m3e-easing-standard), filter var(--m3e-duration-long) var(--m3e-easing-standard), opacity var(--banner-fade-duration, 1200ms) var(--m3e-easing-standard)
 
 		.banner-stage__media,
 		.banner-stage__scrim,
@@ -1436,7 +1462,9 @@ const videoMode =
 			z-index: -1
 			pointer-events: none
 			opacity: var(--overlay-opacity, 0.8)
-			transition: opacity var(--m3e-duration-long) var(--m3e-easing-standard)
+			/* 本规则比 data-wallpaper-switching 窗口规则更靠后（同特异性会胜出），
+			   height 必须并入此处过渡，否则切入覆盖透明时高度硬跳 */
+			transition: opacity var(--m3e-duration-long) var(--m3e-easing-standard), height var(--m3e-duration-long) var(--m3e-easing-standard)
 
 		:global(html[data-wallpaper-mode="overlay"]) .banner-stage__image
 			filter: blur(var(--overlay-blur, 0px))
@@ -1575,6 +1603,7 @@ const videoMode =
 		50%
 			transform: translateY(0.5rem)
 
+	:global(html.motion-reduced) .banner-stage,
 	:global(html.motion-reduced) .banner-stage__image,
 	:global(html.motion-reduced) .banner-stage__copy p[data-subtitle-state="typing"]::after,
 	:global(html.motion-reduced) .banner-stage__scroll-down > :global(svg)

@@ -19,6 +19,12 @@ const className = Astro.props.class;
 const links = resolveNavBarLinks(navBarConfig.links);
 const currentPageKey = resolvePageKey(Astro.url);
 
+// 零额外负担：未开启横幅背景视频（或未提供视频源）时导航栏不输出播放控件
+const isBannerVideoEnabled = Boolean(
+	siteConfig.banner.video?.enable &&
+		(siteConfig.banner.video.src?.length ?? 0) > 0,
+);
+
 function hrefFor(path?: string) {
 	return path ? url(path) : undefined;
 }
@@ -87,6 +93,13 @@ function isActive(link: (typeof links)[number]): boolean {
 		<div class="flex-1"></div>
 		<!-- client:load（非 client:only）：SSR 首帧即渲染按钮，避免导航右侧图标水合后闪现 -->
 		<Search client:load></Search>
+		<!-- 横幅背景视频播放/暂停：点击派发事件，由 BannerStage 监听处理（播放前不发任何视频请求） -->
+		{isBannerVideoEnabled && (
+			<IconButton id="banner-video-toggle" label="Background Video" class="shrink-0">
+				<Icon name="material-symbols:play-arrow-rounded" class="banner-video-icon banner-video-icon--play text-[1.25rem]" />
+				<Icon name="material-symbols:pause-rounded" class="banner-video-icon banner-video-icon--pause text-[1.25rem]" />
+			</IconButton>
+		)}
 		{!siteConfig.themeColor.fixed && (
 			<IconButton id="display-settings-switch" label="Display Settings" class="shrink-0">
 				<Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
@@ -99,6 +112,12 @@ function isActive(link: (typeof links)[number]): boolean {
 
 <script>
 	import { resolvePageKey } from "@utils/nav-utils";
+	import {
+		BANNER_VIDEO_STATE_CHANGE_EVENT,
+		BANNER_VIDEO_TOGGLE_EVENT,
+		WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT,
+		WALLPAPER_MODE_CHANGE_EVENT,
+	} from "@/constants/constants";
 
 	function syncTopAppBarNavigation() {
 		setTopAppBarNavigation(resolvePageKey(new URL(window.location.href)));
@@ -143,6 +162,37 @@ function isActive(link: (typeof links)[number]): boolean {
 					settingPanel.classList.toggle("float-panel-closed");
 				}
 			};
+		}
+
+		// 横幅背景视频播放/暂停：与 BannerStage 通过 window 事件解耦（持久壳元素，绑定一次）
+		const videoToggle = document.getElementById("banner-video-toggle");
+		if (videoToggle) {
+			videoToggle.onclick = () => {
+				window.dispatchEvent(new CustomEvent(BANNER_VIDEO_TOGGLE_EVENT));
+			};
+			const syncVideoToggleVisibility = () => {
+				// BannerStage 的同名事件监听器先行执行，延迟一拍读取最新舞台状态
+				window.setTimeout(() => {
+					const stage = document.getElementById("banner-wrapper");
+					videoToggle.setAttribute(
+						"data-banner-hidden",
+						stage?.hidden ? "true" : "false",
+					);
+				}, 0);
+			};
+			if (!videoToggle.dataset.videoBound) {
+				videoToggle.dataset.videoBound = "true";
+				window.addEventListener(BANNER_VIDEO_STATE_CHANGE_EVENT, (event) => {
+					const playing = (event as CustomEvent<{ playing?: boolean }>).detail
+						?.playing;
+					videoToggle.setAttribute("data-playing", playing ? "true" : "false");
+				});
+				window.addEventListener(WALLPAPER_MODE_CHANGE_EVENT, syncVideoToggleVisibility);
+				window.addEventListener(WALLPAPER_FULLSCREEN_LAYOUT_CHANGE_EVENT, syncVideoToggleVisibility);
+				window.addEventListener("resize", syncVideoToggleVisibility, { passive: true });
+				document.addEventListener("swup:page:view", syncVideoToggleVisibility);
+			}
+			syncVideoToggleVisibility();
 		}
 
 		syncTopAppBarNavigation();
@@ -245,6 +295,17 @@ document.addEventListener('swup:content:replace', bindSearchTriggers);
 			backdrop-filter: none;
 			color: var(--on-surface);
 		}
+
+	/* 横幅背景视频播放/暂停图标切换（SSR 初始无 data-playing 属性，用 :not 保证
+	   水合前也只显示播放图标）；纯色模式等舞台隐藏时隐藏按钮
+	   （IconButton 内部 button 非本模板元素，选择器需 :global） */
+	:global(#banner-video-toggle:not([data-playing="true"]) .banner-video-icon--pause),
+	:global(#banner-video-toggle[data-playing="true"] .banner-video-icon--play) {
+		display: none;
+	}
+	:global(#banner-video-toggle[data-banner-hidden="true"]) {
+		display: none;
+	}
 
 	/* 首帧透明桥接：横幅状态由 Layout 的 body 内联脚本在导航栏渲染前落位，
 	   此规则让首帧直接呈现透明态（未滚动时 banner-scrolled 尚未写入，:not 恒匹配）；

@@ -140,35 +140,40 @@ function syncWallpaperTransparentClass(mode: WallpaperMode): void {
 	);
 }
 
-// 壁纸模式 / 布局切换的柔和过渡：各模式几何差异大（横幅条 ↔ 整屏 fixed），
-// 直接切换会突兀跳变（忽大忽小）。时序上必须先淡出再落位：
-// 1. 给 <html> 打 data-wallpaper-switching，舞台按旧形态淡出（150ms）；
-// 2. 220ms 后（淡出已完成）再写入新模式属性并派发事件——几何变化发生在
-//    不可见窗口内，CSS 由 html[data-wallpaper-mode] 驱动，故落位必须延迟；
-// 3. 移除 data-wallpaper-switching，舞台以新形态淡入。
-// 快速连续切换时仅替换待执行的变更，不重置过渡计时，避免来回闪烁。
-const WALLPAPER_SWITCH_FADE_MS = 220;
+// 壁纸模式 / 布局切换的几何平滑过渡（参考 Firefly）：各模式几何差异大
+// （横幅条 ↔ 整屏 fixed），但舞台全程保持可见——旧的「淡出→落位→淡入」
+// 编排会露出页面底色造成闪白，且几何硬切表现为图片尺寸跳变。现改为：
+// 1. 给 <html> 打 data-wallpaper-switching，激活舞台的高度 / 透明度与图片
+//    scale-blur 过渡（仅切换窗口内生效，避免窗口缩放拖慢 100lvh 重排）；
+// 2. 立即写入新模式属性并派发事件，CSS 由 html[data-wallpaper-mode] 驱动
+//    平滑动画到新形态，图片元素不重载；
+// 3. 过渡计时结束后移除属性。快速连续切换时以最后一次为准，计时顺延。
+const WALLPAPER_SWITCH_TRANSITION_MS = 520;
 let wallpaperSwitchTimer: number | undefined;
-let pendingWallpaperChange: (() => void) | null = null;
 
-function applyWallpaperChangeWithFade(apply: () => void): void {
+/**
+ * 打开（或续期）壁纸几何过渡窗口：窗口内舞台高度/透明度与图片 scale-blur
+ * 变化按 M3E 时长平滑动画。除模式/布局切换外，Swup 切页导致的
+ * --banner-stage-height 变化（首页 ↔ 文章页横幅高度不同）也复用此窗口，
+ * 让壁纸高度与 #main-layout top 的既有 top 过渡同步，消除切页空档。
+ */
+export function beginWallpaperSwitchWindow(): void {
+	document.documentElement.dataset.wallpaperSwitching = "true";
+	window.clearTimeout(wallpaperSwitchTimer);
 	if (prefersReducedMotion()) {
-		window.clearTimeout(wallpaperSwitchTimer);
+		delete document.documentElement.dataset.wallpaperSwitching;
 		wallpaperSwitchTimer = undefined;
-		pendingWallpaperChange = null;
-		apply();
 		return;
 	}
-	pendingWallpaperChange = apply;
-	document.documentElement.dataset.wallpaperSwitching = "true";
-	if (wallpaperSwitchTimer !== undefined) return;
 	wallpaperSwitchTimer = window.setTimeout(() => {
 		wallpaperSwitchTimer = undefined;
-		const pending = pendingWallpaperChange;
-		pendingWallpaperChange = null;
-		pending?.();
 		delete document.documentElement.dataset.wallpaperSwitching;
-	}, WALLPAPER_SWITCH_FADE_MS);
+	}, WALLPAPER_SWITCH_TRANSITION_MS);
+}
+
+function applyWallpaperChangeWithFade(apply: () => void): void {
+	beginWallpaperSwitchWindow();
+	apply();
 }
 
 export function applyWallpaperModeToDocument(mode: WallpaperMode): void {

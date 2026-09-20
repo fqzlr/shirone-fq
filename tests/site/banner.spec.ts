@@ -517,6 +517,137 @@ test.describe("banner wallpaper", () => {
 		await waitForBannerState(page, true);
 	});
 
+	test("wallpaper mode switch animates geometry without fading the stage", async ({
+		page,
+	}) => {
+		// 几何平滑过渡契约：切换窗口内舞台全程不透明（不闪白），
+		// 高度连续插值（无硬跳），窗口结束后属性摘除
+		await page.setViewportSize({ width: 1440, height: 1000 });
+		await page.goto("/", { waitUntil: "domcontentloaded" });
+		await waitForBannerState(page, true);
+		await page.locator("#display-settings-switch").click();
+		await page.getByRole("tab", { name: /Wallpaper|壁纸/ }).click();
+		await page.evaluate(() => {
+			const samples: {
+				switching: boolean;
+				opacity: string;
+				height: string;
+			}[] = [];
+			(
+				window as typeof window & { __switchSamples?: typeof samples }
+			).__switchSamples = samples;
+			const timer = window.setInterval(() => {
+				const stage = document.getElementById("banner-wrapper");
+				if (!stage) return;
+				const style = getComputedStyle(stage);
+				samples.push({
+					switching:
+						document.documentElement.dataset.wallpaperSwitching === "true",
+					opacity: style.opacity,
+					height: style.height,
+				});
+			}, 60);
+			(
+				window as typeof window & { __stopSwitchSamples?: () => void }
+			).__stopSwitchSamples = () => window.clearInterval(timer);
+		});
+		await page.getByText(/Banner|横幅/).click();
+		await page.waitForFunction(() => {
+			const samples = (
+				window as typeof window & { __switchSamples?: unknown[] }
+			).__switchSamples;
+			return Boolean(
+				document.documentElement.dataset.wallpaperMode === "banner" &&
+					samples &&
+					samples.length > 0 &&
+					document.documentElement.dataset.wallpaperSwitching === undefined,
+			);
+		});
+		await page.evaluate(() => {
+			(
+				window as typeof window & { __stopSwitchSamples?: () => void }
+			).__stopSwitchSamples?.();
+		});
+		const samples =
+			await page.evaluate<
+				{ switching: boolean; opacity: string; height: string }[]
+			>(
+				() =>
+					(
+						window as typeof window & {
+							__switchSamples?: {
+								switching: boolean;
+								opacity: string;
+								height: string;
+							}[];
+						}
+					).__switchSamples ?? [],
+			);
+		expect(samples.length).toBeGreaterThan(3);
+		expect(samples.some((sample) => sample.switching)).toBe(true);
+		// 舞台全程可见：无淡出中间态（不闪白）
+		expect(
+			samples.every((sample) => Number(sample.opacity) === 1),
+		).toBe(true);
+		// 高度连续插值：出现至少一个中间值（非起止两态硬切）
+		expect(new Set(samples.map((sample) => sample.height)).size).toBeGreaterThanOrEqual(
+			3,
+		);
+	});
+
+	test("swup navigation animates stage height without a hard jump", async ({
+		page,
+	}) => {
+		// 切页几何契约：首页 ↔ 文章页横幅高度不同（70vh 档 ↔ 45vh 档），
+		// Swup 替换 body 页面属性后舞台高度必须与 #main-layout top 一样
+		// 走过渡动画，不允许单帧硬切（否则壁纸瞬间缩短、内容还在下方）
+		await page.setViewportSize({ width: 1440, height: 1000 });
+		await page.goto("/", { waitUntil: "domcontentloaded" });
+		await waitForBannerState(page, true);
+		// 确保从「横幅」模式开始（有明确的首页/文章页高度差）
+		await page.evaluate(() => window.localStorage.setItem("wallpaper-mode", "banner"));
+		await page.reload({ waitUntil: "domcontentloaded" });
+		await waitForBannerState(page, true);
+
+		await page.evaluate(() => {
+			const samples: number[] = [];
+			(
+				window as typeof window & { __navSamples?: number[] }
+			).__navSamples = samples;
+			const stage = document.querySelector<HTMLElement>(".banner-stage");
+			if (!stage) return;
+			let last = Number.parseFloat(getComputedStyle(stage).height);
+			const timer = window.setInterval(() => {
+				const current = Number.parseFloat(getComputedStyle(stage).height);
+				samples.push(Math.abs(current - last));
+				last = current;
+			}, 40);
+			(
+				window as typeof window & { __stopNavSamples?: () => void }
+			).__stopNavSamples = () => window.clearInterval(timer);
+		});
+
+		const postLink = page
+			.locator("#swup-container a[href*='/posts/']:not(.m3-blog-postcard__cover)")
+			.first();
+		await postLink.click();
+		await page.waitForURL(/\/posts\//);
+		await page.waitForTimeout(1200);
+		await page.evaluate(() => {
+			(
+				window as typeof window & { __stopNavSamples?: () => void }
+			).__stopNavSamples?.();
+		});
+		const jumps = await page.evaluate<number[]>(
+			() =>
+				(window as typeof window & { __navSamples?: number[] }).__navSamples ??
+				[],
+		);
+		expect(jumps.length).toBeGreaterThan(3);
+		// 单帧高度变化不允许超过 120px（45vh↔70vh 总差 ~250px 分摊到多帧）
+		expect(Math.max(...jumps)).toBeLessThan(120);
+	});
+
 	test("automatic carousel crossfades to the next desktop image", async ({
 		page,
 	}) => {
