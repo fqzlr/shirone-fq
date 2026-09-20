@@ -61,22 +61,27 @@ class FabController {
 				document.documentElement.scrollTop,
 				window.scrollY,
 			);
-			const topBtn = document.getElementById("fab-top-btn");
-			const configuredRatio = Number.parseFloat(
-				topBtn?.dataset.fabThreshold ?? "",
+			// 阈值门控按钮：回到顶部 + 公告板（及任何注入 data-fab-threshold 的项）。
+			// 未配置阈值时回退为 banner 高度比例，滚过横幅才显示。
+			const gatedItems = document.querySelectorAll<HTMLElement>(
+				"#fab-top-btn, #fab-board-btn, [data-fab-item][data-fab-threshold]",
 			);
-			const ratio = Number.isFinite(configuredRatio)
-				? configuredRatio
-				: this.state.bannerHeight;
-			const threshold = (window.innerHeight * ratio) / 100;
-
-			if (topBtn) {
+			let changed = false;
+			for (const item of gatedItems) {
+				const configuredRatio = Number.parseFloat(
+					item.dataset.fabThreshold ?? "",
+				);
+				const ratio = Number.isFinite(configuredRatio)
+					? configuredRatio
+					: this.state.bannerHeight;
+				const threshold = (window.innerHeight * ratio) / 100;
 				const nextAllowed = String(scrollTop > threshold);
-				if (topBtn.dataset.fabScrollAllowed !== nextAllowed) {
-					topBtn.dataset.fabScrollAllowed = nextAllowed;
-					this.scheduleVisibilitySync();
+				if (item.dataset.fabScrollAllowed !== nextAllowed) {
+					item.dataset.fabScrollAllowed = nextAllowed;
+					changed = true;
 				}
 			}
+			if (changed) this.scheduleVisibilitySync();
 		};
 
 		window.addEventListener("scroll", handleScroll, { passive: true });
@@ -291,9 +296,13 @@ class FabController {
 
 	private shouldShowItem(item: HTMLElement): boolean {
 		const pageAllowed = item.dataset.fabPageAllowed !== "false";
+		// 回到顶部与公告板（及任何带阈值属性的项）需滚过阈值才显示
+		const requiresScrollGate =
+			item.dataset.fabType === "top" ||
+			item.dataset.fabThreshold !== undefined ||
+			item.id === "fab-board-btn";
 		const scrollAllowed =
-			item.dataset.fabType !== "top" ||
-			item.dataset.fabScrollAllowed === "true";
+			!requiresScrollGate || item.dataset.fabScrollAllowed === "true";
 		return pageAllowed && scrollAllowed;
 	}
 

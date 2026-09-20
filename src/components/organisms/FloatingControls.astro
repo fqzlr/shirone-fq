@@ -109,7 +109,7 @@ const isHomeItemVisible = homeItem
 		</FloatingActionButton>
 	)}
 
-	<!-- 3. 公告板：仅当公告板开启且存在公告条目时渲染 -->
+	<!-- 3. 公告板：仅当公告板开启且存在公告条目时渲染（滚过横幅后才显示，与回到顶部一致） -->
 	{boardItem && isBoardEnabled && (
 		<FloatingActionButton
 			id="fab-board-btn"
@@ -118,6 +118,8 @@ const isHomeItemVisible = homeItem
 			devices={boardItem.devices}
 			pages={boardItem.pages}
 			size={fabConfig.size}
+			thresholdRatio={boardItem.scrollThresholdRatio}
+			class="is-hidden"
 		>
 			<Icon name="material-symbols:notifications-outline-rounded" class="text-xl" />
 		</FloatingActionButton>

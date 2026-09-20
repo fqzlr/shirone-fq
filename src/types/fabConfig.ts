@@ -63,6 +63,11 @@ export interface FabHomeConfig extends BaseFabItemConfig {
 /** 5. 公告板（AnnouncementBoard）：弹窗展示站点公告列表（数据来自 announcementConfig.board） */
 export interface FabBoardConfig extends BaseFabItemConfig {
 	type: "board";
+	/**
+	 * 滚动触发阈值（占视口高度的百分比，语义与回到顶部一致）。
+	 * 省略时回退为 BANNER 高度比例：滚过横幅后才显示，首屏不出现。
+	 */
+	scrollThresholdRatio?: number;
 }
 
 /** 判别联合类型：FAB 项配置集 */
