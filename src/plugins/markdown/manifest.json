@@ -4,193 +4,108 @@
 	"stylesheetPacks": [
 		{
 			"id": "abbreviations",
-			"syntaxes": [
-				"abbreviation"
-			],
-			"styles": [
-				"src/styles/markdown/abbreviations.css"
-			]
+			"syntaxes": ["abbreviation"],
+			"styles": ["src/styles/markdown/abbreviations.css"]
 		},
 		{
 			"id": "acfun",
-			"syntaxes": [
-				"acfun"
-			],
-			"styles": [
-				"src/styles/markdown/acfun.css"
-			]
+			"syntaxes": ["acfun"],
+			"styles": ["src/styles/markdown/acfun.css"]
 		},
 		{
 			"id": "admonitions",
-			"syntaxes": [
-				"admonition"
-			],
-			"styles": [
-				"src/styles/markdown/admonitions.css"
-			]
+			"syntaxes": ["admonition"],
+			"styles": ["src/styles/markdown/admonitions.css"]
 		},
 		{
 			"id": "artplayer",
-			"syntaxes": [
-				"artplayer"
-			],
-			"styles": [
-				"src/styles/markdown/artplayer.css"
-			]
+			"syntaxes": ["artplayer"],
+			"styles": ["src/styles/markdown/artplayer.css"]
 		},
 		{
 			"id": "audio-reader",
-			"syntaxes": [
-				"audio-reader"
-			],
-			"styles": [
-				"src/styles/markdown/audio-reader.css"
-			]
+			"syntaxes": ["audio-reader"],
+			"styles": ["src/styles/markdown/audio-reader.css"]
 		},
 		{
 			"id": "bilibili",
-			"syntaxes": [
-				"bilibili"
-			],
-			"styles": [
-				"src/styles/markdown/bilibili.css"
-			]
+			"syntaxes": ["bilibili"],
+			"styles": ["src/styles/markdown/bilibili.css"]
 		},
 		{
 			"id": "collapse-panels",
-			"syntaxes": [
-				"collapse-panels"
-			],
-			"styles": [
-				"src/styles/markdown/collapse-panels.css"
-			]
+			"syntaxes": ["collapse-panels"],
+			"styles": ["src/styles/markdown/collapse-panels.css"]
 		},
 		{
 			"id": "content-annotations",
-			"syntaxes": [
-				"content-annotation"
-			],
-			"styles": [
-				"src/styles/markdown/content-annotations.css"
-			]
+			"syntaxes": ["content-annotation"],
+			"styles": ["src/styles/markdown/content-annotations.css"]
 		},
 		{
 			"id": "expressive-code",
-			"syntaxes": [
-				"expressive-code"
-			],
-			"styles": [
-				"src/styles/markdown/expressive-code.css"
-			]
+			"syntaxes": ["expressive-code"],
+			"styles": ["src/styles/markdown/expressive-code.css"]
 		},
 		{
 			"id": "fields",
-			"syntaxes": [
-				"fields"
-			],
-			"styles": [
-				"src/styles/markdown/fields.css"
-			]
+			"syntaxes": ["fields"],
+			"styles": ["src/styles/markdown/fields.css"]
 		},
 		{
 			"id": "github-card",
-			"syntaxes": [
-				"github-card"
-			],
-			"styles": [
-				"src/styles/markdown/github-card.css"
-			]
+			"syntaxes": ["github-card"],
+			"styles": ["src/styles/markdown/github-card.css"]
 		},
 		{
 			"id": "image-grids",
-			"syntaxes": [
-				"image-grid"
-			],
-			"styles": [
-				"src/styles/markdown/image-grids.css"
-			]
+			"syntaxes": ["image-grid"],
+			"styles": ["src/styles/markdown/image-grids.css"]
 		},
 		{
 			"id": "image-presentations",
-			"syntaxes": [
-				"image-presentation"
-			],
-			"styles": [
-				"src/styles/markdown/image-presentations.css"
-			]
+			"syntaxes": ["image-presentation"],
+			"styles": ["src/styles/markdown/image-presentations.css"]
 		},
 		{
 			"id": "marker",
-			"syntaxes": [
-				"marker"
-			],
-			"styles": [
-				"src/styles/markdown/marker.css"
-			]
+			"syntaxes": ["marker"],
+			"styles": ["src/styles/markdown/marker.css"]
 		},
 		{
 			"id": "math",
-			"syntaxes": [
-				"math"
-			],
-			"styles": [
-				"src/styles/markdown/math.css"
-			]
+			"syntaxes": ["math"],
+			"styles": ["src/styles/markdown/math.css"]
 		},
 		{
 			"id": "mermaid",
-			"syntaxes": [
-				"mermaid"
-			],
-			"styles": [
-				"src/styles/mermaid.css"
-			]
+			"syntaxes": ["mermaid"],
+			"styles": ["src/styles/mermaid.css"]
 		},
 		{
 			"id": "option-groups",
-			"syntaxes": [
-				"option-groups"
-			],
-			"styles": [
-				"src/styles/markdown/option-groups.css"
-			]
+			"syntaxes": ["option-groups"],
+			"styles": ["src/styles/markdown/option-groups.css"]
 		},
 		{
 			"id": "spoiler",
-			"syntaxes": [
-				"spoiler"
-			],
-			"styles": [
-				"src/styles/markdown/spoiler.css"
-			]
+			"syntaxes": ["spoiler"],
+			"styles": ["src/styles/markdown/spoiler.css"]
 		},
 		{
 			"id": "steps",
-			"syntaxes": [
-				"steps"
-			],
-			"styles": [
-				"src/styles/markdown/steps.css"
-			]
+			"syntaxes": ["steps"],
+			"styles": ["src/styles/markdown/steps.css"]
 		},
 		{
 			"id": "trees",
-			"syntaxes": [
-				"code-tree",
-				"file-tree"
-			],
-			"styles": [
-				"src/styles/markdown/trees.css"
-			]
+			"syntaxes": ["code-tree", "file-tree"],
+			"styles": ["src/styles/markdown/trees.css"]
 		},
 		{
 			"id": "youtube",
-			"syntaxes": [
-				"youtube"
-			],
-			"styles": [
-				"src/styles/markdown/youtube.css"
-			]
+			"syntaxes": ["youtube"],
+			"styles": ["src/styles/markdown/youtube.css"]
 		}
 	],
 	"syntaxes": [
@@ -222,23 +137,15 @@
 					"default": null
 				}
 			],
-			"implementation": [
-				"src/plugins/markdown/remark-abbreviations.mjs"
-			],
+			"implementation": ["src/plugins/markdown/remark-abbreviations.mjs"],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/abbreviations.css"
-			],
+			"styles": ["src/styles/markdown/abbreviations.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/abbreviations.ts"
-				],
+				"modules": ["src/utils/abbreviations.ts"],
 				"network": []
 			},
-			"docs": [
-				"docs/markdown-extensions.md"
-			],
+			"docs": ["docs/markdown-extensions.md"],
 			"tests": [
 				"tests/plugins/markdown/inline/abbreviations.test.mjs",
 				"tests/site/abbreviations.spec.ts"
@@ -292,15 +199,10 @@
 				"src/plugins/rehype-component-acfun.mjs"
 			],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/acfun.css"
-			],
+			"styles": ["src/styles/markdown/acfun.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/acfun.ts",
-					"src/utils/video-facade.ts"
-				],
+				"modules": ["src/utils/acfun.ts", "src/utils/video-facade.ts"],
 				"network": [
 					"viewport preloading or explicit activation: https://www.acfun.cn/player/{acid}"
 				]
@@ -367,9 +269,7 @@
 				"modules": [],
 				"network": []
 			},
-			"docs": [
-				"docs/markdown-extensions.md"
-			],
+			"docs": ["docs/markdown-extensions.md"],
 			"tests": [
 				"tests/plugins/markdown/containers/admonitions.test.mjs",
 				"tests/site/admonitions.spec.ts"
@@ -421,9 +321,7 @@
 				"src/plugins/rehype-component-artplayer.mjs"
 			],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/artplayer.css"
-			],
+			"styles": ["src/styles/markdown/artplayer.css"],
 			"runtime": {
 				"mode": "none",
 				"modules": [],
@@ -476,21 +374,15 @@
 				"src/plugins/rehype-component-audio-reader.mjs"
 			],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/audio-reader.css"
-			],
+			"styles": ["src/styles/markdown/audio-reader.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/audio-reader.ts"
-				],
+				"modules": ["src/utils/audio-reader.ts"],
 				"network": [
 					"author-declared audio source only after activation; preload=none"
 				]
 			},
-			"docs": [
-				".agents/skills/shirone-markdown-syntax/SKILL.md"
-			],
+			"docs": [".agents/skills/shirone-markdown-syntax/SKILL.md"],
 			"tests": [
 				"tests/plugins/markdown/inline/audio-reader.test.mjs",
 				"tests/site/markdown-runtime.spec.ts"
@@ -548,15 +440,10 @@
 				"src/plugins/rehype-component-bilibili.mjs"
 			],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/bilibili.css"
-			],
+			"styles": ["src/styles/markdown/bilibili.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/bilibili.ts",
-					"src/utils/video-facade.ts"
-				],
+				"modules": ["src/utils/bilibili.ts", "src/utils/video-facade.ts"],
 				"network": [
 					"viewport preloading or explicit activation: https://player.bilibili.com/player.html?bvid={bvid}&p={p}&high_quality=1&danmaku=0"
 				]
@@ -628,14 +515,10 @@
 				"src/plugins/markdown/core/file-tree-icons.mjs"
 			],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/trees.css"
-			],
+			"styles": ["src/styles/markdown/trees.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/code-tree.ts"
-				],
+				"modules": ["src/utils/code-tree.ts"],
 				"network": []
 			},
 			"docs": [],
@@ -701,9 +584,7 @@
 				"modules": [],
 				"network": []
 			},
-			"docs": [
-				"docs/markdown-extensions.md"
-			],
+			"docs": ["docs/markdown-extensions.md"],
 			"tests": [
 				"tests/plugins/markdown/containers/collapse-panels.test.mjs",
 				"tests/plugins/markdown/core/disclosure.test.mjs",
@@ -742,13 +623,9 @@
 					"default": null
 				}
 			],
-			"implementation": [
-				"src/plugins/markdown/remark-content-annotations.mjs"
-			],
+			"implementation": ["src/plugins/markdown/remark-content-annotations.mjs"],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/content-annotations.css"
-			],
+			"styles": ["src/styles/markdown/content-annotations.css"],
 			"runtime": {
 				"mode": "native",
 				"modules": [],
@@ -840,24 +717,15 @@
 				"src/plugins/expressive-code/language-badge.ts"
 			],
 			"registeredIn": "astro.config.mjs",
-			"styles": [
-				"src/styles/markdown/expressive-code.css"
-			],
+			"styles": ["src/styles/markdown/expressive-code.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/code-copy.ts",
-					"src/utils/code-collapse.ts"
-				],
+				"modules": ["src/utils/code-copy.ts", "src/utils/code-collapse.ts"],
 				"network": []
 			},
 			"docs": [],
-			"tests": [
-				"tests/site/post-encryption.spec.ts"
-			],
-			"notes": [
-				"元数据具体解析规则由 Expressive Code 及已注册插件定义。"
-			]
+			"tests": ["tests/site/post-encryption.spec.ts"],
+			"notes": ["元数据具体解析规则由 Expressive Code 及已注册插件定义。"]
 		},
 		{
 			"id": "fields",
@@ -904,20 +772,14 @@
 				"src/plugins/markdown/containers/rehype-fields.mjs"
 			],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/fields.css"
-			],
+			"styles": ["src/styles/markdown/fields.css"],
 			"runtime": {
 				"mode": "none",
 				"modules": [],
 				"network": []
 			},
-			"docs": [
-				"docs/markdown-extensions.md"
-			],
-			"tests": [
-				"tests/plugins/markdown/containers/fields.test.mjs"
-			],
+			"docs": ["docs/markdown-extensions.md"],
+			"tests": ["tests/plugins/markdown/containers/fields.test.mjs"],
 			"notes": [
 				"无效或不完整的字段标签保留为可读 Markdown；组件为纯 SSR 输出，不增加客户端运行时。"
 			]
@@ -971,9 +833,7 @@
 				"modules": [],
 				"network": []
 			},
-			"docs": [
-				"docs/markdown-extensions.md"
-			],
+			"docs": ["docs/markdown-extensions.md"],
 			"tests": [
 				"tests/plugins/markdown/containers/file-tree.test.mjs",
 				"tests/plugins/markdown/core/disclosure.test.mjs",
@@ -1006,18 +866,12 @@
 					"default": null
 				}
 			],
-			"implementation": [
-				"src/plugins/rehype-component-github-card.mjs"
-			],
+			"implementation": ["src/plugins/rehype-component-github-card.mjs"],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/github-card.css"
-			],
+			"styles": ["src/styles/markdown/github-card.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/github-cards.ts"
-				],
+				"modules": ["src/utils/github-cards.ts"],
 				"network": [
 					"https://api.github.com/repos/{owner}/{repo}",
 					"avatar_url returned by the GitHub API"
@@ -1067,30 +921,20 @@
 					"default": "cover"
 				}
 			],
-			"implementation": [
-				"src/plugins/rehype-component-image-grid.mjs"
-			],
+			"implementation": ["src/plugins/rehype-component-image-grid.mjs"],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/image-grids.css"
-			],
+			"styles": ["src/styles/markdown/image-grids.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/fancybox-handler.ts"
-				],
-				"network": [
-					"author-declared image URLs only"
-				]
+				"modules": ["src/utils/fancybox-handler.ts"],
+				"network": ["author-declared image URLs only"]
 			},
 			"docs": [],
 			"tests": [
 				"tests/plugins/image-grid.test.mjs",
 				"tests/site/image-grid.spec.ts"
 			],
-			"notes": [
-				"容器至少包含一张 Markdown 图片；非图片子节点不会成为画廊项。"
-			]
+			"notes": ["容器至少包含一张 Markdown 图片；非图片子节点不会成为画廊项。"]
 		},
 		{
 			"id": "image-presentation",
@@ -1120,29 +964,17 @@
 					"default": null
 				}
 			],
-			"implementation": [
-				"src/plugins/rehype-markdown-images.mjs"
-			],
+			"implementation": ["src/plugins/rehype-markdown-images.mjs"],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/image-presentations.css"
-			],
+			"styles": ["src/styles/markdown/image-presentations.css"],
 			"runtime": {
 				"mode": "none",
 				"modules": [],
-				"network": [
-					"author-declared image URLs only"
-				]
+				"network": ["author-declared image URLs only"]
 			},
-			"docs": [
-				"docs/markdown-extensions.md"
-			],
-			"tests": [
-				"tests/plugins/rehype-markdown-images.test.mjs"
-			],
-			"notes": [
-				"非法或越界宽度令牌保留在 alt，不静默改写。"
-			]
+			"docs": ["docs/markdown-extensions.md"],
+			"tests": ["tests/plugins/rehype-markdown-images.test.mjs"],
+			"notes": ["非法或越界宽度令牌保留在 alt，不静默改写。"]
 		},
 		{
 			"id": "include",
@@ -1182,9 +1014,7 @@
 					"default": null
 				}
 			],
-			"implementation": [
-				"src/plugins/markdown/remark-includes.mjs"
-			],
+			"implementation": ["src/plugins/markdown/remark-includes.mjs"],
 			"registeredIn": "src/utils/markdown-processor.mjs",
 			"styles": [],
 			"runtime": {
@@ -1192,12 +1022,8 @@
 				"modules": [],
 				"network": []
 			},
-			"docs": [
-				"docs/markdown-extensions.md"
-			],
-			"tests": [
-				"tests/plugins/markdown/inline/includes.test.mjs"
-			],
+			"docs": ["docs/markdown-extensions.md"],
+			"tests": ["tests/plugins/markdown/inline/includes.test.mjs"],
 			"notes": [
 				"只处理独立一行且位于 fenced code 之外的注释；缺失、越界、未闭合或递归包含保留原注释。",
 				"文件读取限制在仓库根目录内，展开结果继续经过同一 Markdown 处理链。",
@@ -1236,17 +1062,13 @@
 				"src/plugins/rehype-component-marker.mjs"
 			],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/marker.css"
-			],
+			"styles": ["src/styles/markdown/marker.css"],
 			"runtime": {
 				"mode": "none",
 				"modules": [],
 				"network": []
 			},
-			"docs": [
-				"docs/markdown-extensions.md"
-			],
+			"docs": ["docs/markdown-extensions.md"],
 			"tests": [
 				"tests/plugins/markdown/inline/markers.test.mjs",
 				"tests/site/markers.spec.ts"
@@ -1278,21 +1100,15 @@
 			"attributes": [],
 			"implementation": [],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/math.css"
-			],
+			"styles": ["src/styles/markdown/math.css"],
 			"runtime": {
 				"mode": "none",
 				"modules": [],
 				"network": []
 			},
 			"docs": [],
-			"tests": [
-				"tests/site/post-encryption.spec.ts"
-			],
-			"notes": [
-				"解析由 remark-math 与 rehype-katex 提供。"
-			]
+			"tests": ["tests/site/post-encryption.spec.ts"],
+			"notes": ["解析由 remark-math 与 rehype-katex 提供。"]
 		},
 		{
 			"id": "mermaid",
@@ -1309,25 +1125,16 @@
 				}
 			],
 			"attributes": [],
-			"implementation": [
-				"src/plugins/remark-mermaid.mjs"
-			],
+			"implementation": ["src/plugins/remark-mermaid.mjs"],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/mermaid.css"
-			],
+			"styles": ["src/styles/mermaid.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/mermaid.ts",
-					"src/utils/mermaid-interaction.ts"
-				],
+				"modules": ["src/utils/mermaid.ts", "src/utils/mermaid-interaction.ts"],
 				"network": []
 			},
 			"docs": [],
-			"tests": [
-				"tests/site/mermaid.spec.ts"
-			],
+			"tests": ["tests/site/mermaid.spec.ts"],
 			"notes": [
 				"客户端脚本与样式仅在页面含 Mermaid 语法时按需加载；初始化必须覆盖直接加载、Swup、主题变化和文章解密。"
 			]
@@ -1371,19 +1178,13 @@
 				"src/plugins/markdown/containers/rehype-option-groups.mjs"
 			],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/option-groups.css"
-			],
+			"styles": ["src/styles/markdown/option-groups.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/option-groups.ts"
-				],
+				"modules": ["src/utils/option-groups.ts"],
 				"network": []
 			},
-			"docs": [
-				"docs/markdown-extensions.md"
-			],
+			"docs": ["docs/markdown-extensions.md"],
 			"tests": [
 				"tests/plugins/markdown/containers/option-groups.test.mjs",
 				"tests/site/option-groups.spec.ts"
@@ -1409,18 +1210,12 @@
 				}
 			],
 			"attributes": [],
-			"implementation": [
-				"src/plugins/rehype-component-spoiler.mjs"
-			],
+			"implementation": ["src/plugins/rehype-component-spoiler.mjs"],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/spoiler.css"
-			],
+			"styles": ["src/styles/markdown/spoiler.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/spoilers.ts"
-				],
+				"modules": ["src/utils/spoilers.ts"],
 				"network": []
 			},
 			"docs": [],
@@ -1428,9 +1223,7 @@
 				"tests/plugins/markdown/inline/spoilers.test.mjs",
 				"tests/site/spoilers.spec.ts"
 			],
-			"notes": [
-				"保留兼容；缺少触屏与键盘契约，不作为新行内语法样板。"
-			]
+			"notes": ["保留兼容；缺少触屏与键盘契约，不作为新行内语法样板。"]
 		},
 		{
 			"id": "steps",
@@ -1465,13 +1258,9 @@
 					"default": 1
 				}
 			],
-			"implementation": [
-				"src/plugins/markdown/containers/rehype-steps.mjs"
-			],
+			"implementation": ["src/plugins/markdown/containers/rehype-steps.mjs"],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/steps.css"
-			],
+			"styles": ["src/styles/markdown/steps.css"],
 			"runtime": {
 				"mode": "none",
 				"modules": [],
@@ -1528,15 +1317,10 @@
 				"src/plugins/rehype-component-youtube.mjs"
 			],
 			"registeredIn": "src/utils/markdown-processor.mjs",
-			"styles": [
-				"src/styles/markdown/youtube.css"
-			],
+			"styles": ["src/styles/markdown/youtube.css"],
 			"runtime": {
 				"mode": "client-enhanced",
-				"modules": [
-					"src/utils/youtube.ts",
-					"src/utils/video-facade.ts"
-				],
+				"modules": ["src/utils/youtube.ts", "src/utils/video-facade.ts"],
 				"network": [
 					"viewport preloading or explicit activation: https://www.youtube-nocookie.com/embed/{id}?rel=0&modestbranding=1"
 				]

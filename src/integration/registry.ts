@@ -8,7 +8,12 @@ import type { ResolvedShironesPaths } from "./types.ts";
  * Order matters: the first hit wins.
  */
 export const CONFIG_EXTENSIONS: string[] = [".ts", ".mts", ".js", ".mjs"];
-export const COMPONENT_EXTENSIONS: string[] = [".astro", ".svelte", ".ts", ".js"];
+export const COMPONENT_EXTENSIONS: string[] = [
+	".astro",
+	".svelte",
+	".ts",
+	".js",
+];
 
 /** Strip a known source extension from a path. */
 function stripExtension(path: string): string {
