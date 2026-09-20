@@ -8,7 +8,7 @@
   "homepage": "https://shirone.mysqil.com/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LyraVoid/Shirone.git"
+    "url": "git+https://github.com/LyraVoid/Shirone.git"
   },
   "bugs": {
     "url": "https://github.com/LyraVoid/Shirone/issues"
@@ -158,5 +158,10 @@
       "uuid@<11.1.1": ">=11.1.1",
       "yaml@>=1.0.0 <1.10.3": "~1.10.3"
     }
+  },
+  "main": "svelte.config.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
   }
 }

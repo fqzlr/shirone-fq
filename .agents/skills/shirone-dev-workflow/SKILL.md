@@ -43,6 +43,15 @@ Shirone 是 Astro 7 + Svelte 5 + Tailwind 4 + Stylus + pnpm 的 M3E 博客主题
 - 视觉回归快照仅存本地(已 gitignore);确认每处差异都 intentional 才更新,不吸收无关的页高/环境漂移。
 - Playwright 单 worker,`reuseExistingServer`。
 
+## 临时文件管理
+
+AI 产生的所有临时产物——一次性批量修改脚本、网络/环境探测输出、配置草稿、分段写入碎片、临时测试文件——**必须创建在仓库根目录的 `.tmp/` 内**（主题仓与内容仓各自维护一个，均已 gitignore），不得散落在仓库根目录、`src/` 或内容仓根目录：
+
+- 文件名直接描述用途（如 `.tmp/fix-manifest.cjs`、`.tmp/probe-network.txt`），不再使用隐藏文件的点前缀。
+- `.tmp/` 内容永不提交、永不进入构建产物。
+- 任务交付前清理本次产生的临时文件：一次性脚本一旦改动应用即作废，直接删除，不保留"以后可能有用"的副本。
+- 提交前用 `git status --short` 核对，`git add -A` 的禁令（见下节）与 `.tmp/` 隔离是双重保险。
+
 ## 提交约定
 
 - Conventional commits:`type(scope): subject`,`type` 取 `feat`/`fix`/`test`/`docs`/`refactor`/`chore`;body 用英语。

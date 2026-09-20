@@ -59,6 +59,9 @@ public/assets/moments/thumbnails/*
 research/
 .trae/
 
+# AI 临时工作区：批量脚本、探测输出、草稿片段统一放这里，随任务结束清理
+.tmp/
+
 # playwright
 .playwright-cli/
 test-results/

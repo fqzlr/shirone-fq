@@ -13,7 +13,9 @@
 
 @theme {
     --font-sans: var(--m3e-font-sans);
-    --font-mono: var(--m3e-font-mono-family);
+    /* Tailwind's baseline must stay literal; Astro Fonts may override
+       --font-mono with the registered hashed family in custom mode. */
+    --font-mono: var(--m3e-font-mono-fallback);
 }
 
 @import "./transition.css" layer(components);

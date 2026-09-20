@@ -204,8 +204,14 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	height: 4.5rem;
-	background: linear-gradient(to bottom, transparent, var(--codeblock-bg));
+	height: 5.5rem;
+	background: linear-gradient(
+		to bottom,
+		transparent 0%,
+		color-mix(in srgb, var(--codeblock-bg) 35%, transparent) 35%,
+		color-mix(in srgb, var(--codeblock-bg) 85%, transparent) 75%,
+		var(--codeblock-bg) 100%
+	);
 	pointer-events: none;
 }
 

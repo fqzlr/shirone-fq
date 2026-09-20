@@ -5,6 +5,8 @@
 #
 # 仓库 Secrets 需求：
 #   DEPLOY_HOOK —— EdgeOne Pages 项目设置里创建的部署钩子 URL。
+#   CONTENT_REPO_TOKEN —— 可读私有内容仓 fqzlr/shirone-content-fq 的
+#   Fine-grained PAT（与 CI 用的同一 secret），用于核对内容 commit。
 # EdgeOne 构建环境需配置：
 #   CONTENT_REPO_URL=https://github.com/fqzlr/shirone-content-fq.git
 #
@@ -63,16 +65,24 @@ jobs:
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
       # 记录本次触发对应的内容 commit，便于在运行摘要里核对版本。
+      # GITHUB_TOKEN 只有本仓库权限，读私有内容仓的 commits API 会 404，
+      # 因此改用授权内容仓的 CONTENT_REPO_TOKEN；该步骤仅服务摘要核对，
+      # 失败时回退为 unknown，不阻断部署。
       - name: Record content commit
         id: content
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.CONTENT_REPO_TOKEN }}
         run: |
           set -euo pipefail
           api="repos/${CONTENT_REPOSITORY}/commits/$(jq -rn --arg v '${{ steps.target.outputs.ref }}' '$v|@uri')"
           sha="$(curl --fail-with-body --silent --show-error \
-            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/$api" | jq -r .sha)"
-          [ -n "$sha" ] && [ "$sha" != "null" ]
+          if [ -z "$sha" ] || [ "$sha" = "null" ]; then
+            sha="unknown"
+          fi
           echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
       # ─────────────────────────────────────────────────────────────────────
