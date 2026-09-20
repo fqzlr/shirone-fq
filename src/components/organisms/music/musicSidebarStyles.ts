@@ -725,6 +725,13 @@ html.motion-reduced .music-float-disc__spin
 	pointer-events: none
 	will-change: transform
 	transition: width 420ms var(--m3e-easing-standard)
+	/* 水合定位前隐藏：SSR 阶段它嵌在侧栏卡片内，blur/transform 包含块
+	   会把 fixed 基准变成卡片左上角，出现错位唱片；portal 到 body 并
+	   写入 transform（--ready）后才显示，避免首屏裸奔与跳动 */
+	visibility: hidden
+
+	&--ready
+		visibility: visible
 
 	&--bar
 	&--pill

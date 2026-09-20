@@ -445,6 +445,10 @@ export function setHue(hue: number): void {
 }
 
 export function applyThemeToDocument(theme: LIGHT_DARK_MODE): void {
+	// 原始模式（light/dark/auto）写入 <html>，供亮暗切换按钮在 SSR 首帧
+	// 由纯 CSS 显示正确图标（水合前 Svelte 状态不可用）
+	document.documentElement.dataset.themeMode = theme;
+
 	switch (theme) {
 		case LIGHT_MODE:
 			document.documentElement.classList.remove("dark");

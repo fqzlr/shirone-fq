@@ -4,7 +4,6 @@ import SearchPanel from "@components/atoms/blog/SearchPanel.svelte";
 import SearchBar from "@components/molecules/SearchBar.svelte";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
-import Icon from "@iconify/svelte";
 import { url } from "@utils/url-utils.ts";
 import { onMount } from "svelte";
 import type { SearchResult } from "@/global";
@@ -165,14 +164,20 @@ $: if (initialized && keywordMobile) {
 
 <!-- toggle btn for phone/tablet view -->
 <IconButton
-    icon="material-symbols:search"
     label="Search Panel"
     id="search-switch"
     size="small"
     shape="round"
     onclick={togglePanel}
-    class="lg:!hidden !w-10 !h-10 active:scale-90 !text-[1.25rem]"
-/>
+    class="lg:!hidden !w-10 !h-10 active:scale-90"
+>
+    {#snippet children()}
+        <!-- 内联 SVG：children 模式保证 SSR 首帧即有图标（icon prop 走 @iconify，水合前空白） -->
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14" />
+        </svg>
+    {/snippet}
+</IconButton>
 
 <!-- search panel（blog/SearchPanel 原子；开合由调用方 classList 控制，与 DisplaySettings 同款） -->
 <SearchPanel

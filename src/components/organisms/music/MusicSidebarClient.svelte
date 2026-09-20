@@ -890,6 +890,7 @@ function setVolume(event: Event): void {
 		use:portal
 		bind:this={discEl}
 		class="music-float-player"
+		class:music-float-player--ready={discPos !== null}
 		class:music-float-player--bar={dockShape === "bar"}
 		class:music-float-player--pill={dockShape === "pill"}
 		class:music-float-player--panel-open={floatPanelOpen}
