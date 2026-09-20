@@ -1,0 +1,208 @@
+---
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { url } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
+import { announcementConfig } from "@/config/announcementConfig";
+
+/**
+ * BoardPanel.astro — 公告板弹窗面板（分子）。
+ * 数据来自 announcementConfig.board（零额外负担：列表为空时不输出任何 DOM）；
+ * 纯 SSR 展示，打开/关闭由悬浮控制流有机体通过 data-open 属性驱动。
+ */
+const board = announcementConfig.board;
+const items = board?.items ?? [];
+const title = announcementConfig.title || i18n(I18nKey.announcement);
+---
+
+{
+	items.length > 0 && (
+		<div id="board-panel" class="board-panel" role="dialog" aria-modal="true" aria-label={title} hidden>
+			<div class="board-panel__scrim" data-board-close aria-hidden="true" />
+			<section class="board-panel__card">
+				<header class="board-panel__header">
+					<Icon
+						name="material-symbols:notifications-outline"
+						class="board-panel__bell"
+						aria-hidden="true"
+					/>
+					<h2 class="board-panel__title">{title}</h2>
+					<button type="button" class="board-panel__close" data-board-close aria-label={i18n(I18nKey.close)}>
+						<Icon name="material-symbols:close" class="text-lg" aria-hidden="true" />
+					</button>
+				</header>
+				<div class="board-panel__list">
+					{items.map((item) => {
+						const link = item.link;
+						const showLink = link?.url && link.enable !== false;
+						const external =
+							link?.external ?? /^https?:\/\//.test(link?.url ?? "");
+						return (
+							<article class="board-panel__item">
+								<div class="board-panel__item-head">
+									{item.tag && <span class="board-panel__chip">{item.tag}</span>}
+									<h3 class="board-panel__item-title">{item.title}</h3>
+									{item.date && (
+										<time class="board-panel__date">{item.date}</time>
+									)}
+								</div>
+								<p class="board-panel__content">{item.content}</p>
+								{showLink && (
+									<a
+										class="board-panel__link"
+										href={link.url.startsWith("/") ? url(link.url) : link.url}
+										target={external ? "_blank" : undefined}
+										rel={external ? "noreferrer noopener" : undefined}
+									>
+										{link.text || i18n(I18nKey.more)}
+										<Icon
+											name="material-symbols:arrow-forward-rounded"
+											class="text-sm"
+											aria-hidden="true"
+										/>
+									</a>
+								)}
+							</article>
+						);
+					})}
+				</div>
+			</section>
+		</div>
+	)
+}
+
+<style lang="stylus">
+.board-panel
+	position: fixed
+	inset: 0
+	z-index: 90
+	display: flex
+	align-items: center
+	justify-content: center
+	padding: 1rem
+
+	&[hidden]
+		display: none
+
+	&__scrim
+		position: absolute
+		inset: 0
+		background: unquote("color-mix(in srgb, var(--surface-container-lowest) 32%, transparent)")
+		backdrop-filter: blur(8px)
+		-webkit-backdrop-filter: blur(8px)
+		opacity: 0
+		transition: opacity var(--m3e-duration-medium) var(--m3e-easing-standard)
+
+	&__card
+		position: relative
+		width: min(26.25rem, 100%)
+		max-height: min(36rem, 100%)
+		display: flex
+		flex-direction: column
+		background: var(--card-bg)
+		color: var(--on-surface)
+		border-radius: var(--shape-corner-xl)
+		box-shadow: var(--m3e-elevation-3)
+		opacity: 0
+		transform: translateY(0.75rem) scale(0.96)
+		transition:
+			opacity var(--m3e-duration-medium) var(--m3e-easing-decelerate),
+			transform var(--m3e-duration-medium) var(--m3e-easing-emphasized-decelerate)
+
+	&[data-open] &__scrim
+		opacity: 1
+
+	&[data-open] &__card
+		opacity: 1
+		transform: translateY(0) scale(1)
+
+	&__header
+		display: flex
+		align-items: center
+		gap: 0.5rem
+		padding: 0.75rem 1rem
+		border-bottom: 1px solid var(--outline-variant)
+
+	&__bell
+		width: 1.125rem
+		height: 1.125rem
+		flex-shrink: 0
+		color: var(--on-surface-variant)
+
+	&__title
+		flex: 1
+		font: var(--m3e-type-title-small)
+		font-weight: 700
+
+	&__close
+		display: inline-flex
+		align-items: center
+		justify-content: center
+		width: 1.875rem
+		height: 1.875rem
+		border: 1px solid var(--outline)
+		border-radius: var(--shape-corner-full)
+		background: transparent
+		color: var(--on-surface)
+		cursor: pointer
+
+	&__list
+		overflow-y: auto
+		display: flex
+		flex-direction: column
+		gap: 0.75rem
+		padding: 0.875rem 1rem 1rem
+
+	&__item
+		display: flex
+		flex-direction: column
+		gap: 0.375rem
+		padding: 0.75rem 0.875rem
+		border: 1px solid var(--outline-variant)
+		border-radius: var(--shape-corner-l)
+
+	&__item-head
+		display: flex
+		align-items: center
+		gap: 0.5rem
+
+	&__chip
+		flex-shrink: 0
+		padding: 0.0625rem 0.4375rem
+		border: 1px solid var(--outline)
+		border-radius: var(--shape-corner-s)
+		font: var(--m3e-type-label-small)
+		color: var(--on-surface-variant)
+
+	&__item-title
+		flex: 1
+		min-width: 0
+		font: var(--m3e-type-title-small)
+		font-weight: 700
+
+	&__date
+		flex-shrink: 0
+		font: var(--m3e-type-label-small)
+		color: var(--on-surface-variant)
+
+	&__content
+		font: var(--m3e-type-body-small)
+		line-height: 1.65
+		color: var(--on-surface-variant)
+
+	&__link
+		align-self: flex-start
+		display: inline-flex
+		align-items: center
+		gap: 0.25rem
+		margin-top: 0.125rem
+		padding: 0.3125rem 0.75rem
+		border: 1px solid var(--outline)
+		border-radius: var(--shape-corner-full)
+		font: var(--m3e-type-label-medium)
+		color: var(--on-surface)
+		transition: background-color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+		&:hover
+			background: unquote("color-mix(in srgb, var(--on-surface) 8%, transparent)")
+</style>

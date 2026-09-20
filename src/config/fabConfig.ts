@@ -53,5 +53,10 @@ export const fabConfig: FabConfig = withUserConfig("fab", {
 			devices: ["mobile", "tablet"],
 			onlySubPages: true,
 		},
+		{
+			type: "board",
+			enable: true,
+			devices: ["mobile", "tablet", "desktop"],
+		},
 	],
 });
