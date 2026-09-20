@@ -278,6 +278,7 @@ export const id: Translation = {
 	[Key.musicNowPlaying]: "Sedang diputar: {title}",
 	[Key.musicLyrics]: "Lirik",
 	[Key.musicFloatingLyrics]: "Lirik mengambang",
+	[Key.musicFloatPlayer]: "Pemutar mengambang",
 	[Key.musicTabPlaylist]: "Daftar",
 	[Key.musicNoLyrics]: "Lirik tidak tersedia",
 	[Key.musicLoadingLyrics]: "Memuat lirik…",

@@ -275,6 +275,7 @@ export const ja: Translation = {
 	[Key.musicNowPlaying]: "再生中: {title}",
 	[Key.musicLyrics]: "歌詞",
 	[Key.musicFloatingLyrics]: "フローティング歌詞",
+	[Key.musicFloatPlayer]: "フローティングプレーヤー",
 	[Key.musicTabPlaylist]: "リスト",
 	[Key.musicNoLyrics]: "歌詞がありません",
 	[Key.musicLoadingLyrics]: "歌詞を読み込み中…",

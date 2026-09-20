@@ -277,6 +277,7 @@ export const es: Translation = {
 	[Key.musicNowPlaying]: "Reproduciendo ahora: {title}",
 	[Key.musicLyrics]: "Letra",
 	[Key.musicFloatingLyrics]: "Letra flotante",
+	[Key.musicFloatPlayer]: "Reproductor flotante",
 	[Key.musicTabPlaylist]: "Lista",
 	[Key.musicNoLyrics]: "Sin letra disponible",
 	[Key.musicLoadingLyrics]: "Cargando letra…",

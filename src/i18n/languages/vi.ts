@@ -277,6 +277,7 @@ export const vi: Translation = {
 	[Key.musicNowPlaying]: "Đang phát: {title}",
 	[Key.musicLyrics]: "Lời bài hát",
 	[Key.musicFloatingLyrics]: "Lời bài hát nổi",
+	[Key.musicFloatPlayer]: "Trình phát nổi",
 	[Key.musicTabPlaylist]: "Danh sách",
 	[Key.musicNoLyrics]: "Chưa có lời bài hát",
 	[Key.musicLoadingLyrics]: "Đang tải lời bài hát…",

@@ -38,6 +38,7 @@ interface Labels {
 	nowPlaying: string;
 	lyrics: string;
 	floatingLyrics: string;
+	floatPlayer: string;
 	tabPlaylist: string;
 	noLyrics: string;
 	loadingLyrics: string;
@@ -74,6 +75,8 @@ const playlistId = "sidebar-music-playlist";
 // ── 歌词（侧栏抽屉 + 悬浮歌词条）：纯 UI 层状态，播放引擎保持解耦 ──
 type LyricsStatus = "idle" | "loading" | "loaded" | "none" | "failed";
 const FLOATING_LYRICS_KEY = "shirone:music:floating-lyrics";
+/** 悬浮唱片关闭状态持久化 key（关闭后可从侧栏工具栏重新开启） */
+const FLOAT_PLAYER_KEY = "shirone:music:float-player-dismissed";
 /** 用户手动滚动歌词后，暂停自动跟随的时长（毫秒） */
 const LYRICS_USER_SCROLL_HOLD_MS = 3000;
 
@@ -92,6 +95,14 @@ const initialFloatingOn = (() => {
 	}
 })();
 let floatingOn = $state(initialFloatingOn);
+const initialFloatPlayerDismissed = (() => {
+	try {
+		return localStorage.getItem(FLOAT_PLAYER_KEY) === "true";
+	} catch {
+		return false;
+	}
+})();
+let floatPlayerDismissed = $state(initialFloatPlayerDismissed);
 let lyricsGeneration = 0;
 let lyricsScrolling = false;
 let lyricsScrollTimer: ReturnType<typeof setTimeout> | null = null;
@@ -208,8 +219,10 @@ const lyricsFeatureOn = $derived(options.showLyrics !== false && hasTracks);
 const currentLrcIndex = $derived.by(() =>
 	currentLrcIndexAt(lyrics.lines, snapshot.currentTime),
 );
-// 悬浮歌词条显示（原有逻辑：开关开启且有歌词）
-const floatingShown = $derived(floatingOn && lyrics.lines.length > 0);
+// 悬浮歌词条显示：开关开启、有歌词且正在播放（未播放时不显示，避免只剩关闭按钮）
+const floatingShown = $derived(
+	floatingOn && lyrics.lines.length > 0 && playing,
+);
 
 onMount(() => {
 	let unsubscribe = () => {};
@@ -336,6 +349,16 @@ function toggleFloatingLyrics(): void {
 	}
 	if (playing && dockShape !== "bar") {
 		dockShape = dockHover ? "bar" : dockRestingShape();
+	}
+}
+
+/** 悬浮唱片显隐（带持久化）：关闭仅隐藏悬浮球，不影响播放 */
+function setFloatPlayerDismissed(dismissed: boolean): void {
+	floatPlayerDismissed = dismissed;
+	try {
+		localStorage.setItem(FLOAT_PLAYER_KEY, dismissed ? "true" : "false");
+	} catch {
+		// localStorage 不可用（隐私模式）时仅本次会话生效
 	}
 }
 
@@ -641,32 +664,47 @@ function setVolume(event: Event): void {
 							/>
 						</div>
 					</div>
-					{#if lyricsFeatureOn}
+					{#if lyricsFeatureOn || options.showFloatPlayer !== false}
 						<div class="music-player__lyrics-actions">
-							<Tooltip label={labels.lyrics} placement="top">
-								<IconButton
-									icon="material-symbols:subtitles-off-outline-rounded"
-									checkedIcon="material-symbols:subtitles-outline-rounded"
-									label={labels.lyrics}
-									size="small"
-									toggle
-									checked={lyricsOpen}
-									ariaExpanded={lyricsOpen}
-									ariaControls="sidebar-music-lyrics"
-									onclick={toggleLyrics}
-								/>
-							</Tooltip>
-							<Tooltip label={labels.floatingLyrics} placement="top">
-								<IconButton
-									icon="material-symbols:speaker-notes-off-rounded"
-									checkedIcon="material-symbols:speaker-notes-rounded"
-									label={labels.floatingLyrics}
-									size="small"
-									toggle
-									checked={floatingOn}
-									onclick={toggleFloatingLyrics}
-								/>
-							</Tooltip>
+							{#if lyricsFeatureOn}
+								<Tooltip label={labels.lyrics} placement="top">
+									<IconButton
+										icon="material-symbols:subtitles-off-outline-rounded"
+										checkedIcon="material-symbols:subtitles-outline-rounded"
+										label={labels.lyrics}
+										size="small"
+										toggle
+										checked={lyricsOpen}
+										ariaExpanded={lyricsOpen}
+										ariaControls="sidebar-music-lyrics"
+										onclick={toggleLyrics}
+									/>
+								</Tooltip>
+								<Tooltip label={labels.floatingLyrics} placement="top">
+									<IconButton
+										icon="material-symbols:speaker-notes-off-rounded"
+										checkedIcon="material-symbols:speaker-notes-rounded"
+										label={labels.floatingLyrics}
+										size="small"
+										toggle
+										checked={floatingOn}
+										onclick={toggleFloatingLyrics}
+									/>
+								</Tooltip>
+							{/if}
+							{#if options.showFloatPlayer !== false}
+								<Tooltip label={labels.floatPlayer} placement="top">
+									<IconButton
+										icon="material-symbols:album-outline-rounded"
+										checkedIcon="material-symbols:album-rounded"
+										label={labels.floatPlayer}
+										size="small"
+										toggle
+										checked={!floatPlayerDismissed}
+										onclick={() => setFloatPlayerDismissed(!floatPlayerDismissed)}
+									/>
+								</Tooltip>
+							{/if}
 						</div>
 					{/if}
 				</div>
@@ -885,7 +923,7 @@ function setVolume(event: Event): void {
 
 <svelte:document onclick={onDocumentClick} onpointermove={onDocumentPointerMove} />
 
-{#if hasTracks && options.showFloatPlayer !== false}
+{#if hasTracks && options.showFloatPlayer !== false && !floatPlayerDismissed}
 	<div
 		use:portal
 		bind:this={discEl}
@@ -999,7 +1037,17 @@ function setVolume(event: Event): void {
 					onpointermove={onDiscPointerMove}
 					onpointerup={onDiscPointerUp}
 				>
-						<strong class="music-float-player__title" title={currentTitle}>
+					<!-- 关闭悬浮球：hover 展开（bar 态）后显示在信息卡片右上角，点击仅隐藏悬浮球不停止播放 -->
+					<button
+						type="button"
+						class="music-float-player__close"
+						aria-label={labels.close}
+						title={labels.close}
+						onclick={() => setFloatPlayerDismissed(true)}
+					>
+						<Icon icon="material-symbols:close-rounded" />
+					</button>
+					<strong class="music-float-player__title" title={currentTitle}>
 							{currentTitle}
 						</strong>
 						<span class="music-float-player__artist" title={currentArtist}>

@@ -274,6 +274,7 @@ export const ko: Translation = {
 	[Key.musicNowPlaying]: "지금 재생 중: {title}",
 	[Key.musicLyrics]: "가사",
 	[Key.musicFloatingLyrics]: "플로팅 가사",
+	[Key.musicFloatPlayer]: "플로팅 플레이어",
 	[Key.musicTabPlaylist]: "목록",
 	[Key.musicNoLyrics]: "가사가 없습니다",
 	[Key.musicLoadingLyrics]: "가사를 불러오는 중…",

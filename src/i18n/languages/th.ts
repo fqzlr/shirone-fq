@@ -262,6 +262,7 @@ export const th: Translation = {
 	[Key.musicNowPlaying]: "กำลังเล่น: {title}",
 	[Key.musicLyrics]: "เนื้อเพลง",
 	[Key.musicFloatingLyrics]: "เนื้อเพลงลอย",
+	[Key.musicFloatPlayer]: "เครื่องเล่นลอย",
 	[Key.musicTabPlaylist]: "รายการ",
 	[Key.musicNoLyrics]: "ยังไม่มีเนื้อเพลง",
 	[Key.musicLoadingLyrics]: "กำลังโหลดเนื้อเพลง…",

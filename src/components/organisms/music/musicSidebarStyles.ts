@@ -870,6 +870,7 @@ html.motion-reduced .music-float-disc__spin
 		min-height: 0
 
 	&__info-surface
+		position: relative
 		margin-inline: 1.25rem
 		/* 容器 pointer-events: none，信息层必须显式打开，否则悬停判定与进度条交互全部穿透 */
 		pointer-events: auto
@@ -897,6 +898,7 @@ html.motion-reduced .music-float-disc__spin
 
 	&__title
 		margin: 0
+		padding-right: 2rem
 		color: var(--on-surface)
 		font: var(--m3e-type-title-small)
 		overflow: hidden
@@ -904,11 +906,46 @@ html.motion-reduced .music-float-disc__spin
 		white-space: nowrap
 
 	&__artist
+		padding-right: 2rem
 		color: var(--on-surface-variant)
 		font: var(--m3e-type-body-small)
 		overflow: hidden
 		text-overflow: ellipsis
 		white-space: nowrap
+
+	/* 关闭悬浮球：hover 展开（bar 态）时显示在信息卡片右上角，点击仅隐藏悬浮球 */
+	&__close
+		position: absolute
+		top: 0.5rem
+		right: 0.5rem
+		z-index: 2
+		display: grid
+		place-items: center
+		width: 1.5rem
+		height: 1.5rem
+		padding: 0
+		border: none
+		border-radius: var(--shape-corner-full)
+		background: transparent
+		color: var(--on-surface-variant)
+		cursor: pointer
+		opacity: 0
+		pointer-events: none
+		transform: scale(0.6)
+		transition: opacity var(--m3e-duration-short) var(--m3e-easing-standard), transform var(--m3e-duration-short) var(--m3e-easing-standard), color var(--m3e-duration-short) var(--m3e-easing-standard)
+
+		> svg
+			width: 1rem
+			height: 1rem
+
+	&--bar &__close
+		opacity: 0.7
+		pointer-events: auto
+		transform: scale(1)
+
+		&:hover
+			opacity: 1
+			color: var(--primary)
 
 	/* 工具栏：胶囊 dock，bar 态上叠在信息层下缘；pill 态变为歌词胶囊 */
 	&__bar
@@ -1089,4 +1126,13 @@ html.motion-reduced .music-float-disc__spin
 	&__disc img
 		-webkit-user-drag: none
 		user-select: none
+
+html.motion-reduced .music-float-player__close
+	transition: none
+
+.music-float-player__close:focus-visible
+	opacity: 1
+	pointer-events: auto
+	transform: scale(1)
+	box-shadow: 0 0 0 2px var(--page-bg), 0 0 0 4px var(--primary)
 `;

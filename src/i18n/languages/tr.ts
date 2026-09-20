@@ -277,6 +277,7 @@ export const tr: Translation = {
 	[Key.musicNowPlaying]: "Şimdi çalıyor: {title}",
 	[Key.musicLyrics]: "Şarkı sözleri",
 	[Key.musicFloatingLyrics]: "Yüzen şarkı sözleri",
+	[Key.musicFloatPlayer]: "Yüzen oynatıcı",
 	[Key.musicTabPlaylist]: "Liste",
 	[Key.musicNoLyrics]: "Şarkı sözü yok",
 	[Key.musicLoadingLyrics]: "Şarkı sözleri yükleniyor…",

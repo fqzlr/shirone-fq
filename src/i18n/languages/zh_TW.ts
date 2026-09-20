@@ -265,6 +265,7 @@ export const zh_TW: Translation = {
 	[Key.musicNowPlaying]: "正在播放：{title}",
 	[Key.musicLyrics]: "歌詞",
 	[Key.musicFloatingLyrics]: "浮動歌詞",
+	[Key.musicFloatPlayer]: "懸浮播放器",
 	[Key.musicTabPlaylist]: "列表",
 	[Key.musicNoLyrics]: "暫無歌詞",
 	[Key.musicLoadingLyrics]: "歌詞載入中…",
