@@ -274,6 +274,12 @@ export default defineConfig({
 			],
 		},
 		plugins: [optionalMusicSidebarPlugin, tailwindcss()],
+		ssr: {
+			// @material/material-color-utilities@0.4.0 的 color_spec_2025.js 内部
+			// 有无扩展名导入（'./dynamic_color'），Node 严格 ESM 解析直接失败；
+			// 交给 Vite 处理（vite:resolve 会尝试补 .js）以兼容 dev SSR 与 Node 24+
+			noExternal: ["@material/material-color-utilities"],
+		},
 		optimizeDeps: {
 			include: [
 				"mermaid",
