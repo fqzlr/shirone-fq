@@ -188,6 +188,9 @@ export function createMusicRuntime(
 			},
 			error: () => {
 				if (!isCurrent()) return;
+				// 预热期间的加载失败（用户尚未点播放）保持静默：等用户真正
+				// 点播放时 play() reject，再走 recoverFromSourceError 跳曲。
+				if (!playbackRequested) return;
 				void recoverFromSourceError();
 			},
 		};
@@ -248,6 +251,7 @@ export function createMusicRuntime(
 								duration: currentPlaylist[0]?.duration ?? 0,
 								error: null,
 							});
+							warmupSource();
 						}
 					} else if (options.provider === "meting") {
 						patch({ status: "error", error: "empty-playlist" });
@@ -262,11 +266,16 @@ export function createMusicRuntime(
 
 			if (generation !== lifecycleGeneration || audio) return;
 			audio = createAudio();
-			audio.preload = "none";
+			// metadata 预载：换曲 load() 时先拉音频头部信息，点击播放后
+			// 浏览器直接进入渐进拉流，避免远程源（Meting 外链 302）从零
+			// 建连导致的首播长时间静默；不整曲预下载，不偷跑流量。
+			audio.preload = "metadata";
 			const volume = readStoredVolume();
 			audio.volume = volume;
 			audio.muted = state.muted;
 			patch({ volume });
+			// 本地/混合模式此时歌单已就绪，立即预热首曲
+			warmupSource();
 		});
 		initializePromise = pending;
 		try {
@@ -274,6 +283,23 @@ export function createMusicRuntime(
 		} finally {
 			if (initializePromise === pending) initializePromise = null;
 		}
+	}
+
+	/**
+	 * 预热当前曲目：提前设 src 并 load()，配合 preload=metadata 只拉音频
+	 * 头部。首次点播放时连接已建立、时长已知，省去 Meting 外链建连 +
+	 * 302 重定向的等待；不预下载整曲，不偷跑流量。
+	 */
+	function warmupSource(): void {
+		if (!audio || currentPlaylist.length === 0) return;
+		const index = state.currentIndex >= 0 ? state.currentIndex : 0;
+		const track = currentPlaylist[index];
+		if (!track?.source) return;
+		if (loadedIndex === index && audio.getAttribute("src")) return;
+		loadedIndex = index;
+		audio.src = track.source;
+		bindMediaListeners(sourceGeneration);
+		audio.load();
 	}
 
 	async function ensureSource(): Promise<number | null> {
