@@ -669,8 +669,8 @@ function setVolume(event: Event): void {
 							{#if lyricsFeatureOn}
 								<Tooltip label={labels.lyrics} placement="top">
 									<IconButton
-										icon="material-symbols:subtitles-off-outline-rounded"
-										checkedIcon="material-symbols:subtitles-outline-rounded"
+										icon="material-symbols:graphic-eq-outline-rounded"
+										checkedIcon="material-symbols:graphic-eq-rounded"
 										label={labels.lyrics}
 										size="small"
 										toggle
@@ -682,8 +682,8 @@ function setVolume(event: Event): void {
 								</Tooltip>
 								<Tooltip label={labels.floatingLyrics} placement="top">
 									<IconButton
-										icon="material-symbols:speaker-notes-off-rounded"
-										checkedIcon="material-symbols:speaker-notes-rounded"
+										icon="material-symbols:picture-in-picture-outline-rounded"
+										checkedIcon="material-symbols:picture-in-picture-rounded"
 										label={labels.floatingLyrics}
 										size="small"
 										toggle
@@ -1107,8 +1107,8 @@ function setVolume(event: Event): void {
 					{#if options.showLyrics !== false}
 						<Tooltip label={labels.lyrics} placement="top">
 							<IconButton
-								icon="material-symbols:subtitles-off-outline-rounded"
-								checkedIcon="material-symbols:subtitles-outline-rounded"
+								icon="material-symbols:graphic-eq-outline-rounded"
+								checkedIcon="material-symbols:graphic-eq-rounded"
 								label={labels.lyrics}
 								size="xsmall"
 								toggle
