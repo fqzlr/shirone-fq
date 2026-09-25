@@ -160,6 +160,9 @@ let focused = $state(false);
 
     input
         flex: 1
+        /* width:0 清除 size=20 的固有宽度，避免把 grid/flex 祖先的
+           自动最小值撑破（320px 窄屏下表单溢出卡片的根因） */
+        width: 0
         min-width: 0
         background: transparent
         border: none

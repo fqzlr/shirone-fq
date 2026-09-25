@@ -314,10 +314,13 @@ async function unlock() {
 
 	&__form
 		display: grid
+		/* minmax(0,1fr) 阻断 grid item 自动最小值上传，窄屏下列不再被内容固有宽度撑破 */
+		grid-template-columns: minmax(0, 1fr)
 		gap: var(--m3e-space-4)
 		width: 100%
 
 	&__field
+		min-width: 0
 		min-height: 4.5rem
 
 	:global(.password-gate__input)
