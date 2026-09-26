@@ -225,7 +225,9 @@ const hasMonoFont =
 				return value === null ? fallback : value === 'true';
 			};
 			document.documentElement.dataset.bannerTitleEnabled = String(storedToggle('wallpaper-banner-title', defaultBannerTitleEnabled));
-			document.documentElement.dataset.bannerCarouselEnabled = String(storedToggle('wallpaper-banner-carousel', defaultBannerCarouselEnabled));
+			// 站点下线轮播（banner.carousel.enable: false）时访客残留偏好不参与，功能强制关闭；
+			// 仅站点默认开启轮播时，访客面板开关（localStorage）才可覆盖
+			document.documentElement.dataset.bannerCarouselEnabled = String(defaultBannerCarouselEnabled && storedToggle('wallpaper-banner-carousel', true));
 			document.documentElement.dataset.bannerWavesEnabled = String(storedToggle('wallpaper-banner-waves', defaultBannerWavesEnabled));
 			document.documentElement.dataset.bannerGradientEnabled = String(storedToggle('wallpaper-banner-gradient', true));
 			const storedOverlayOpacity = parseFloat(localStorage.getItem('wallpaper-overlay-opacity') || '');

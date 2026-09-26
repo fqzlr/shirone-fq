@@ -151,6 +151,8 @@ export type SiteConfig = {
 			mobile: string[];
 		};
 		position?: "top" | "center" | "bottom";
+		/** 轮播关闭（静态 Banner）时的主图选择："first" 用列表第一项（默认）| "random" 每次访问随机选一项（随机到视频播完停最后一帧）；轮播开启时不生效 */
+		pick?: "first" | "random";
 		dim: {
 			enable: boolean;
 			opacity: number;

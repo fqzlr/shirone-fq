@@ -133,6 +133,8 @@ const videoSrcs = videoEnabled
 	: [];
 const videoMode =
 	siteConfig.banner.video?.mode === "random" ? "random" : "order";
+// 静态 Banner（轮播关闭）主图选择策略：first=第一项（默认）；random=每次访问随机
+const bannerPick = siteConfig.banner.pick === "random" ? "random" : "first";
 ---
 
 <section
@@ -147,6 +149,7 @@ const videoMode =
 	data-carousel-interval={String(Math.max(siteConfig.banner.carousel.interval, 3000))}
 	data-carousel-fade-duration={String(carouselFadeDuration)}
 	data-carousel-animation={carouselAnimation}
+	data-banner-pick={bannerPick}
 	style={`--banner-fade-duration: ${carouselFadeDuration}ms;`}
 	data-position={siteConfig.banner.position ?? "center"}
 	data-home-title={siteConfig.banner.homeText.title}
@@ -734,8 +737,11 @@ const videoMode =
 		if (slideVideo.src !== new URL(src, window.location.href).href) {
 			slideVideo.src = src;
 		}
-		// 同组唯一项时循环播放；否则播完由 ended 前进到下一项
-		slideVideo.loop = runtime.images[currentViewport()].length < 2;
+		// 同组唯一项时循环播放；否则播完由 ended 前进到下一项。
+		// 静态 Banner（轮播关闭，随机主图）时播完停在最后一帧，不循环不前进。
+		slideVideo.loop = isCarouselEnabled()
+			? runtime.images[currentViewport()].length < 2
+			: false;
 		slideVideo.classList.add("banner-stage__slide-video--active");
 		slideVideo.classList.toggle(
 			"banner-stage__slide-video--fading",
@@ -762,8 +768,9 @@ const videoMode =
 		);
 	}
 
-	/** 视频播完/出错：前进到轮播的下一项 */
+	/** 视频播完/出错：前进到轮播的下一项（静态 Banner 不前进，停在最后一帧） */
 	function advanceFromSlideVideo() {
+		if (!isCarouselEnabled()) return;
 		const images = runtime.images[currentViewport()];
 		if (images.length < 2) return;
 		runtime.activeIndex = (runtime.activeIndex + 1) % images.length;
@@ -982,10 +989,18 @@ const videoMode =
 
 		if (runtime.activeGroup !== state.assetGroup) {
 			runtime.activeGroup = state.assetGroup;
-			runtime.activeIndex = 0;
-			showImage(images[0], true);
+			// 静态 Banner（轮播关闭）且配置 pick=random 时，每次访问随机选一项
+			// 作为主图；轮播开启或列表只有一项时固定第一项。
+			const startIndex =
+				!state.rotate &&
+				stage?.dataset.bannerPick === "random" &&
+				images.length > 1
+					? Math.floor(Math.random() * images.length)
+					: 0;
+			runtime.activeIndex = startIndex;
+			showImage(images[startIndex], true);
 			layers[runtime.activeLayer]?.setAttribute("fetchpriority", "high");
-			preloadNext(images, 0);
+			preloadNext(images, startIndex);
 		}
 
 		if (state.rotate && !document.hidden) scheduleRotation(images);

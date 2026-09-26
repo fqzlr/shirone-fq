@@ -117,6 +117,10 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		},
 		// 图片裁切焦点："top"、"center" 或 "bottom"。
 		position: "center",
+		// 轮播关闭（静态 Banner）时的主图选择策略："first" 用列表第一项（默认）；
+		// "random" 每次访问从当前组（desktop/mobile）随机选一项——随机到视频时
+		// 静音播放，播完暂停在最后一帧。开启轮播时此配置不生效。
+		pick: "first",
 		dim: {
 			// 在图片上覆盖黑色遮罩以提高标题和顶部栏的对比度；opacity 范围为 0-1。
 			enable: true,

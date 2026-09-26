@@ -373,6 +373,8 @@ export function getDefaultBannerCarouselEnabled(): boolean {
 }
 
 export function getStoredBannerCarouselEnabled(): boolean {
+	// 站点默认关闭轮播时，访客残留偏好不参与（面板开关也不渲染），与 Layout 内联脚本同语义
+	if (!siteConfig.banner.carousel.enable) return false;
 	return (
 		readStoredToggle(BANNER_CAROUSEL_ENABLED_KEY) ??
 		getDefaultBannerCarouselEnabled()
